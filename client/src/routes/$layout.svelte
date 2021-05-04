@@ -1,11 +1,9 @@
+<script>
+import HeaderComponent from "$lib/header-component.svelte";
+</script>
+
 <!-- src/routes/$layout.svelte -->
-<header>
-	<nav>
-		<a href=".">Home</a>
-		<a href="about">About</a>
-		<a href="settings">Settings</a>
-	</nav>
-</header>
+<HeaderComponent></HeaderComponent>
 
 <slot></slot>
 
@@ -15,22 +13,18 @@
 
 
 <style>
-	header, footer {
+	footer {
 		width: 100%;
 		display: flex;
 		flex-direction: row;
-		justify-content: space-between;
+		justify-content: flex-start;
 		align-items: center;
 		background: black;
 		color: white;
 		font-family: sans-serif;
 	}
-	header a, footer a {
+	footer a {
 		color: white;
-	}
-
-	header {
-		height: 30px;
 	}
 
 	footer {

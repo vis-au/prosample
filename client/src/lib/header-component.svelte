@@ -1,0 +1,75 @@
+<header>
+	<h1 class="title">Sampling Pipeline</h1>
+	<div class="pick-dataset">
+		<h2>Pick Dataset</h2>
+		<div class="datasets">
+			<button class="dataset selected">Mountain peaks</button>
+			<button class="dataset">Burger places</button>
+			<button class="dataset">Dataset ABC</button>
+			<button class="dataset">Dataset XYZ</button>
+		</div>
+	</div>
+</header>
+
+<style>
+	header {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		background: black;
+		color: white;
+		font-family: sans-serif;
+		box-sizing: border-box;
+		padding: 5px;
+	}
+	header {
+		height: 30px;
+	}
+	header h1.title {
+		width: 200px;
+		font-size: 20px;
+		margin-right: 75px;
+	}
+
+	header .pick-dataset {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		align-items: center;
+		font-size: 14px
+	}
+	header .pick-dataset h2 {
+		font-size: 16px;
+		min-width: 120px;
+	}
+	header .pick-dataset .datasets {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		align-items: center;
+	}
+
+	header .pick-dataset .datasets .dataset {
+		font-family: sans-serif;
+		background: black;
+		color: white;
+		font-weight: bold;
+		text-decoration: underline;
+		padding: 2px 15px 1.5px;
+		border: 2px solid transparent;
+		border-radius: 20px;
+		cursor: pointer;
+	}
+	header .pick-dataset .datasets .dataset:hover {
+		border-color: white;
+		text-decoration: none;
+	}
+	header .pick-dataset .datasets .dataset.selected {
+		background: white;
+		color: black;
+		border-color: black;
+		text-decoration: none;
+	}
+</style>
