@@ -44,7 +44,7 @@
         new OrthographicView({
           id: `${id}-view`,
           flipY: true,
-          controller: true,
+          controller: false,
           x: 0,
           y: 0,
           width: width,

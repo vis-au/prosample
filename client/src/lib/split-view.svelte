@@ -14,7 +14,7 @@
   $: color = scaleSequential(interpolateViridis);
 
   // [random x, random y, random attribute]
-  const randomData = range(0, 1000000).map(() => [Math.random()**2, Math.random(), Math.random()]);
+  const randomData = range(0, 100).map(() => [Math.random()**2, Math.random(), Math.random()]);
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />
@@ -27,7 +27,7 @@
       width={ plotWidth - margin }
       height={ plotHeight }
       orientation={ "left" }
-      color={ color }
+      { color }
       data={ randomData }
       renderer={ "binned-scatterplot" }
     />

@@ -2,8 +2,8 @@
   import { scaleSequential } from "d3-scale";
   import { interpolateViridis } from "d3-scale-chromatic";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
-
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
+  import ZoomOverlay from "./zoom-overlay.svelte";
 
   export let renderer: "gl-scatterplot" | "binned-scatterplot" = "gl-scatterplot";
   export let id = "left";
@@ -17,20 +17,27 @@
 <div class="data-view">
   { #if renderer === "gl-scatterplot"}
     <ScatterplotGlView
-      id={ id }
-      orientation={ orientation }
-      radius={ 1 }
-      width={ width }
-      height={ height }
-      data={ data }
+      { id }
+      { orientation }
+      radius={ 5 }
+      { width }
+      { height }
+      { data }
     />
   { :else if renderer === "binned-scatterplot" }
     <BinnedScatterplotView
-      id={ id }
-      width={ width }
-      height={ height }
-      data={ data }
-      color={ color }
+      { id }
+      { width }
+      { height }
+      { data }
+      { color }
     />
   { /if }
+
+  <ZoomOverlay
+    id={ id }
+    orientation={ orientation }
+    width={ width }
+    height={ height }
+  />
 </div>
