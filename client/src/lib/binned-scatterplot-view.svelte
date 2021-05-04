@@ -3,7 +3,6 @@
   import { max } from 'd3-array';
   import { scaleLinear } from 'd3-scale';
   import { hexbin } from 'd3-hexbin';
-  import { select } from 'd3-selection';
 
   export let id: string;
   export let data: number[][];
@@ -54,7 +53,7 @@
 
 <style>
   canvas.bins-canvas {
-    border: 1px solid black;
+    border: medium white;
     box-sizing: border-box;
   }
 </style>
