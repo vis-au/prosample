@@ -2,16 +2,15 @@
   import { range } from 'd3-array';
   import { scaleSequential } from 'd3-scale';
   import { interpolateViridis } from 'd3-scale-chromatic';
-  import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
-  import ScatterplotGlView from "./scatterplot-gl-view.svelte";
   import ConfigWidget from './config-widget.svelte';
+  import DataView from './data-view.svelte';
 
   let innerWidth = 500;
   let innerHeight = 350;
   let margin = 1;
 
   $: plotWidth = innerWidth / 2;
-  $: plotHeight = innerHeight - 121;
+  $: plotHeight = innerHeight - 125;
   $: color = scaleSequential(interpolateViridis);
 
   // [random x, random y, random attribute]
@@ -22,23 +21,27 @@
 
 <div class="split-view">
   <div class="left">
-    <PipelineConfigWidget id="A" />
-    <BinnedScatterplotView id={ "left" }
+    <ConfigWidget id="A" />
+    <DataView
+      id={ "left" }
       width={ plotWidth - margin }
       height={ plotHeight }
-      data={ randomData }
+      orientation={ "left" }
       color={ color }
+      data={ randomData }
+      renderer={ "binned-scatterplot" }
     />
   </div>
   <div class="right">
-    <PipelineConfigWidget id="B" />
-    <ScatterplotGlView
+    <ConfigWidget id="B" />
+    <DataView
       id={ "right" }
-      orientation={ "right" }
-      radius={ 1 }
       width={ plotWidth - margin }
       height={ plotHeight }
+      orientation={ "right" }
+      color={ color }
       data={ randomData }
+      renderer={ "gl-scatterplot" }
     />
   </div>
 </div>
