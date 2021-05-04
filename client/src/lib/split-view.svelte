@@ -9,12 +9,12 @@
   let innerHeight = 350;
   let margin = 1;
 
-  $: plotWidth = innerWidth / 2;
-  $: plotHeight = innerHeight - 125;
+  $: plotWidth = innerWidth / 2 - 1;
+  $: plotHeight = innerHeight - 130;
   $: color = scaleSequential(interpolateViridis);
 
   // [random x, random y, random attribute]
-  const randomData = range(0, 100).map(() => [Math.random()**2, Math.random(), Math.random()]);
+  const randomData = range(0, 10000).map(() => [Math.random()**2, Math.random(), Math.random()]);
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />

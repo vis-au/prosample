@@ -53,6 +53,8 @@
   div.pipeline-config-view {
     padding: 0 5px 10px;
     box-sizing: border-box;
+    border: 1px solid black;
+    border-bottom: 2px solid black;
   }
   div.pipeline-config-view .configuration {
     display: flex;
