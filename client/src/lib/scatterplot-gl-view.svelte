@@ -58,8 +58,8 @@
 
   function generateDeckComponent() {
     const style = orientation === "left"
-      ? { left: "0" }
-      : { right: "0" };
+      ? { left: "0", border: "none" }
+      : { right: "0", border: "none" };
 
     new Deck({
       id: id,
@@ -71,6 +71,11 @@
       style,
       initialViewState: INITIAL_VIEW_STATE,
     });
+
+    window.setTimeout(() => {
+      canvasElement.style["position"] = "relative",
+      canvasElement.style["border"] = "none";
+    }, 1);
   }
 </script>
 
