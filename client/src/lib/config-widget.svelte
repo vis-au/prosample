@@ -1,10 +1,14 @@
 <script lang="typescript">
+  import type { ViewType } from "./types";
+
   export let id = "0";
+  export let selectedViewType: ViewType = "scatterplot";
 
   const linearizationTypes = ["knn", "sort by attribute", "z-order"];
   const subdivisionTypes = ["equal size", "equal cardinality", "equal density", "equal attribute"];
   const selectionTypes = ["first", "median", "min/max", "random"];
-  const viewTypes = ["scatterplot", "hexagonal bins", "square bins"];
+  const viewTypes: ViewType[] = ["scatterplot", "hexagonal bins", "square bins"];
+
 </script>
 
 <div class="pipeline-config-view">
@@ -39,7 +43,7 @@
     <div class="view">
       <label for="{id}-view">
         <span>View</span>
-        <select id="{id}-view">
+        <select id="{id}-view" bind:value={ selectedViewType }>
           { #each viewTypes as type }
             <option>{ type }</option>
           { /each }

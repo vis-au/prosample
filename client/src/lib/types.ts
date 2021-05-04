@@ -1,0 +1,1 @@
+export type ViewType = "scatterplot" | "hexagonal bins" | "square bins";

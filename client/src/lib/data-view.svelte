@@ -3,9 +3,10 @@
   import { interpolateViridis } from "d3-scale-chromatic";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
+import type { ViewType } from "./types";
   import ZoomOverlay from "./zoom-overlay.svelte";
 
-  export let renderer: "gl-scatterplot" | "binned-scatterplot" = "gl-scatterplot";
+  export let renderer: ViewType = "scatterplot";
   export let id = "left";
   export let orientation: "left" | "right" = "left";
   export let width = 250;
@@ -15,7 +16,7 @@
 </script>
 
 <div class="data-view">
-  { #if renderer === "gl-scatterplot"}
+  { #if renderer === "scatterplot"}
     <ScatterplotGlView
       { id }
       { orientation }
@@ -24,7 +25,7 @@
       { height }
       { data }
     />
-  { :else if renderer === "binned-scatterplot" }
+  { :else if renderer === "hexagonal bins" }
     <BinnedScatterplotView
       { id }
       { width }

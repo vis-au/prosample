@@ -1,9 +1,10 @@
 <script lang="typescript">
   import { range } from 'd3-array';
-  import { scaleSequential } from 'd3-scale';
-  import { interpolateViridis } from 'd3-scale-chromatic';
+import { scaleSequential } from 'd3-scale';
+import { interpolateViridis } from 'd3-scale-chromatic';
   import ConfigWidget from './config-widget.svelte';
   import DataView from './data-view.svelte';
+  import type { ViewType } from './types';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -13,6 +14,9 @@
   $: plotHeight = innerHeight - 130;
   $: color = scaleSequential(interpolateViridis);
 
+  let leftSelectedViewType: ViewType = "hexagonal bins";
+  let rightSelectedViewType: ViewType = "scatterplot";
+
   // [random x, random y, random attribute]
   const randomData = range(0, 10000).map(() => [Math.random()**2, Math.random(), Math.random()]);
 </script>
@@ -21,7 +25,7 @@
 
 <div class="split-view">
   <div class="left">
-    <ConfigWidget id="A" />
+    <ConfigWidget id="A" bind:selectedViewType={ leftSelectedViewType }/>
     <DataView
       id={ "left" }
       width={ plotWidth - margin }
@@ -29,11 +33,11 @@
       orientation={ "left" }
       { color }
       data={ randomData }
-      renderer={ "binned-scatterplot" }
+      bind:renderer={ leftSelectedViewType }
     />
   </div>
   <div class="right">
-    <ConfigWidget id="B" />
+    <ConfigWidget id="B" bind:selectedViewType={ rightSelectedViewType } />
     <DataView
       id={ "right" }
       width={ plotWidth - margin }
@@ -41,7 +45,7 @@
       orientation={ "right" }
       color={ color }
       data={ randomData }
-      renderer={ "gl-scatterplot" }
+      bind:renderer={ rightSelectedViewType }
     />
   </div>
 </div>
