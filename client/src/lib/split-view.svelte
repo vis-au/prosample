@@ -1,7 +1,5 @@
 <script lang="typescript">
   import { range } from 'd3-array';
-import { scaleSequential } from 'd3-scale';
-import { interpolateViridis } from 'd3-scale-chromatic';
   import ConfigWidget from './config-widget.svelte';
   import DataView from './data-view.svelte';
   import type { ViewType } from './types';
@@ -12,13 +10,13 @@ import { interpolateViridis } from 'd3-scale-chromatic';
 
   $: plotWidth = innerWidth / 2 - 1;
   $: plotHeight = innerHeight - 130;
-  $: color = scaleSequential(interpolateViridis);
 
-  let leftSelectedViewType: ViewType = "hexagonal bins";
+  let leftSelectedViewType: ViewType = "bins (delta)";
   let rightSelectedViewType: ViewType = "scatterplot";
 
   // [random x, random y, random attribute]
-  const randomData = range(0, 10000).map(() => [Math.random()**2, Math.random(), Math.random()]);
+  const randomDataA = range(0, 100000).map(() => [Math.random()**2, Math.random(), Math.random()]);
+  const randomDataB = range(0, 100000).map(() => [Math.random(), Math.random()**2, Math.random()]);
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />
@@ -31,8 +29,8 @@ import { interpolateViridis } from 'd3-scale-chromatic';
       width={ plotWidth - margin }
       height={ plotHeight }
       orientation={ "left" }
-      { color }
-      data={ randomData }
+      primaryDataset={ randomDataA }
+      secondaryDataset={ randomDataB }
       bind:renderer={ leftSelectedViewType }
     />
   </div>
@@ -43,8 +41,8 @@ import { interpolateViridis } from 'd3-scale-chromatic';
       width={ plotWidth - margin }
       height={ plotHeight }
       orientation={ "right" }
-      color={ color }
-      data={ randomData }
+      primaryDataset={ randomDataB }
+      secondaryDataset={ randomDataA }
       bind:renderer={ rightSelectedViewType }
     />
   </div>

@@ -7,8 +7,7 @@
   const linearizationTypes = ["knn", "sort by attribute", "z-order"];
   const subdivisionTypes = ["equal size", "equal cardinality", "equal density", "equal attribute"];
   const selectionTypes = ["first", "median", "min/max", "random"];
-  const viewTypes: ViewType[] = ["scatterplot", "hexagonal bins", "square bins"];
-
+  const viewTypes: ViewType[] = ["scatterplot", "bins (absolute)", "bins (delta)"];
 </script>
 
 <div class="pipeline-config-view">

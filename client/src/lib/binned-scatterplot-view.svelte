@@ -1,11 +1,13 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
-  import { max } from 'd3-array';
+  import { max, min } from 'd3-array';
   import { scaleLinear } from 'd3-scale';
   import { hexbin } from 'd3-hexbin';
+import { getDifferenceBins } from './difference-bins';
 
   export let id: string;
   export let data: number[][];
+  export let differenceData: number[][];
   export let width: number = 100;
   export let height: number = 100;
   export let color: any;
@@ -25,13 +27,15 @@
         .x(d => scaleX(d[0]))
         .y(d => scaleY(d[1]));
 
-      const bins = hexbinning(data.map(d => [d[0], d[1]]));
+      const bins = getBins();
       const hexagon = hexbinning.hexagon();
       const hexagonPath = new Path2D(hexagon);
 
       const ctx = canvasElement.getContext("2d");
 
-      color.domain([0, (max(bins, d => (d as Array<any>).length) || 0) / 2]);
+      const minCount = (min(bins, d => (d as Array<any>).length) || 0);
+      const maxCount = (max(bins, d => (d as Array<any>).length) || 0);
+      color.domain([minCount, maxCount]);
 
       ctx.clearRect(0, 0, width, height);
       ctx.beginPath();
@@ -47,6 +51,17 @@
       ctx.closePath();
     }, 0);
   });
+
+  function getBins() {
+    if (differenceData === undefined) {
+      return hexbinning(data.map(d => [d[0], d[1]]));
+    }
+
+    const primaryBins = hexbinning(data.map(d => [d[0], d[1]]));
+    const secondaryBins = hexbinning(differenceData.map(d => [d[0], d[1]]));
+
+    return getDifferenceBins(primaryBins, secondaryBins);
+  }
 </script>
 
 <canvas id="{id}-bins-canvas" class="bins-canvas" bind:this={ canvasElement } width={ width } height={ height }></canvas>

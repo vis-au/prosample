@@ -1,1 +1,1 @@
-export type ViewType = "scatterplot" | "hexagonal bins" | "square bins";
+export type ViewType = "scatterplot" | "bins (absolute)" | "bins (delta)";

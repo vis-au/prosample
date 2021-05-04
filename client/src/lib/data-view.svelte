@@ -1,9 +1,9 @@
 <script lang="typescript">
   import { scaleSequential } from "d3-scale";
-  import { interpolateViridis } from "d3-scale-chromatic";
+  import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
-import type { ViewType } from "./types";
+  import type { ViewType } from "./types";
   import ZoomOverlay from "./zoom-overlay.svelte";
 
   export let renderer: ViewType = "scatterplot";
@@ -11,8 +11,12 @@ import type { ViewType } from "./types";
   export let orientation: "left" | "right" = "left";
   export let width = 250;
   export let height = 100;
-  export let data: number[][] = [];
-  export let color = scaleSequential(interpolateViridis);
+  export let primaryDataset: number[][] = [];
+  export let secondaryDataset: number[][] = [];
+
+  $: color = renderer !== "bins (delta)"
+    ? scaleSequential(interpolateViridis)
+    : scaleSequential(interpolatePiYG);
 </script>
 
 <div class="data-view">
@@ -20,18 +24,27 @@ import type { ViewType } from "./types";
     <ScatterplotGlView
       { id }
       { orientation }
-      radius={ 5 }
+      radius={ 1 }
       { width }
       { height }
-      { data }
+      data={ primaryDataset }
     />
-  { :else if renderer === "hexagonal bins" }
+  { :else if renderer === "bins (absolute)" }
     <BinnedScatterplotView
       { id }
       { width }
       { height }
-      { data }
       { color }
+      data={ primaryDataset }
+    />
+  { :else if renderer === "bins (delta)" }
+    <BinnedScatterplotView
+      { id }
+      { width }
+      { height }
+      { color }
+      data={ primaryDataset }
+      differenceData={ secondaryDataset }
     />
   { /if }
 
