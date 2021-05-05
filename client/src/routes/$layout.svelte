@@ -1,9 +1,9 @@
 <script>
-import HeaderComponent from "$lib/header-component.svelte";
+	import HeaderComponent from "$lib/header-component.svelte";
 </script>
 
 <!-- src/routes/$layout.svelte -->
-<HeaderComponent></HeaderComponent>
+<HeaderComponent ></HeaderComponent>
 
 <slot></slot>
 

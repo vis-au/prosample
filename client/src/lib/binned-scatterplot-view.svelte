@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
+  import { afterUpdate, onMount } from 'svelte';
   import { max, min } from 'd3-array';
   import { scaleLinear } from 'd3-scale';
   import { hexbin } from 'd3-hexbin';
@@ -21,7 +21,7 @@
 
   let canvasElement;
 
-  onMount(async () => {
+  afterUpdate(async () => {
     window.setTimeout(() => {
       hexbinning
         .x(d => scaleX(d[0]))

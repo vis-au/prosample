@@ -1,5 +1,8 @@
 <script lang="typescript">
   import { range } from 'd3-array';
+  import { onMount } from 'svelte';
+  import { samplingRate } from './sampling-rate';
+  import { samplingAmount } from './sampling-amount';
   import ConfigWidget from './config-widget.svelte';
   import DataView from './data-view.svelte';
   import type { PipelineConfig } from './types';
@@ -7,6 +10,12 @@
   let innerWidth = 500;
   let innerHeight = 350;
   let margin = 1;
+  let samplingInterval = -1;
+  let samplingRateValue = -1;
+  let samplingAmountValue = -1;
+
+  samplingRate.subscribe(value => samplingRateValue = value);
+  samplingAmount.subscribe(value => samplingAmountValue = value);
 
   $: plotWidth = innerWidth / 2 - 1;
   $: plotHeight = innerHeight - 130;
@@ -29,8 +38,26 @@
   $: console.log(rightPipeline);
 
   // [random x, random y, random attribute]
-  const randomDataA = range(0, 100000).map(() => [Math.random()**2, Math.random(), Math.random()]);
-  const randomDataB = range(0, 100000).map(() => [Math.random(), Math.random()**2, Math.random()]);
+  let rawA = [];
+  let rawB = [];
+
+  onMount(() => {
+    samplingRate.subscribe(value => {
+      samplingRateValue = value;
+      window.clearInterval(samplingInterval);
+      samplingInterval = startSampling();
+    });
+  });
+
+  $: randomDataA = rawA.slice(0);
+  $: randomDataB = rawB.slice(0);
+
+  function startSampling() {
+    return window.setInterval(() => {
+      rawA = rawA.concat(range(0, samplingAmountValue).map(() => [Math.random()**2, Math.random(), Math.random()]))
+      rawB = rawB.concat(range(0, samplingAmountValue).map(() => [Math.random(), Math.random()**2, Math.random()]))
+    }, samplingRateValue);
+  }
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />
