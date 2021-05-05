@@ -1,12 +1,15 @@
 <script lang="typescript">
-  import type { ViewType } from "./types";
+  import type { LinearizationType, SelectionType, SubdivisionType, ViewType } from "./types";
 
   export let id = "0";
   export let selectedViewType: ViewType = "scatterplot";
+  export let selectedSubdivisionType: SubdivisionType = "equal size";
+  export let selectedSelectionType: SelectionType = "first";
+  export let selectedLinearizationType: LinearizationType = "knn";
 
-  const linearizationTypes = ["knn", "sort by attribute", "z-order"];
-  const subdivisionTypes = ["equal size", "equal cardinality", "equal density", "equal attribute"];
-  const selectionTypes = ["first", "median", "min/max", "random"];
+  const linearizationTypes: LinearizationType[] = ["knn", "sort by attribute", "z-order"];
+  const subdivisionTypes: SubdivisionType[] = ["equal size", "equal cardinality", "equal density", "equal attribute"];
+  const selectionTypes: SelectionType[] = ["first", "median", "min/max", "random"];
   const viewTypes: ViewType[] = ["scatterplot", "bins (absolute)", "bins (delta)"];
 </script>
 
@@ -16,7 +19,7 @@
     <div class="pipeline">
       <label for="{id}-linearization">
         <span>Linearization</span>
-        <select id="{id}-linearization" name="{id}-linearization">
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ selectedLinearizationType }>
           { #each linearizationTypes as type }
           <option>{ type } </option>
           { /each }
@@ -24,7 +27,7 @@
       </label>
       <label for="{id}-linearization">
         <span>Subdivision</span>
-        <select id="{id}-linearization" name="{id}-linearization">
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ selectedSubdivisionType }>
           { #each subdivisionTypes as type }
             <option>{ type } </option>
           { /each }
@@ -32,7 +35,7 @@
       </label>
       <label for="{id}-linearization">
         <span>Selection</span>
-        <select id="{id}-linearization" name="{id}-linearization">
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ selectedSelectionType }>
           { #each selectionTypes as type }
             <option>{ type } </option>
           { /each }
@@ -42,7 +45,7 @@
     <div class="view">
       <label for="{id}-view">
         <span>View</span>
-        <select id="{id}-view" bind:value={ selectedViewType }>
+        <select id="{id}-view" name="{id}-view" bind:value={ selectedViewType }>
           { #each viewTypes as type }
             <option>{ type }</option>
           { /each }
