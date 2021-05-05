@@ -6,6 +6,10 @@ The tool allows to visually compare two pipeline configurations in a side-by-sid
 The repository contains two main directories: [client/](./client), which contains the web-based frontend, [server/](./server), which contains a and a Python-based backend.
 Both components communicate through an eel API.
 
+## Installation
+Client and server need to be installed separately.
+Follow the instructions in the respective directories for more details.
+
 ## Cite this Project
 We kindly ask you to include the following citation when referring to this tool in your publications:
 

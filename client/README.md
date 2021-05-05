@@ -1,38 +1,24 @@
-# create-svelte
+# PVA Sampling Comparison Tool - Client
+This directory contains the code for the browser interface to the pva sampling pipeline.
+It serves as a visual demonstration tool to visualize the impace of adjusting different steps of the progressive sampling pipeline.
+The client allows to configure two sampling pipelines and visualize their output next to each other.
+Both sampling pipelines retrieve the next sample of data at the same time, yet under the particular configuration.
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
+The client is web-based, using the visualization libraries [D3](https://d3js.org/) and [deck.gl](https://deck.gl/) under the hood, ontop of a lightweight [svelte](https://svelte.dev/) architecture.
 
-## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
+## Installation
+To install the client, you need a local installation of [nodeJS](https://nodejs.org/) (version 14.16.1 or higher) with the package manager npm (version 7.11.2 or higher).
+Run the following command inside this directory to load the required dependencies (see [package.json](./package.json) for more details).
+```sh
+npm intall
 ```
 
-> Note: the `@next` is temporary
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
+## Getting Started
+After installing the dependenices as described above, you may launch the client in your browser by running the following command inside this directory:
+```sh
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
-
-Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
-
-```bash
-npm run build
-```
-
-> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
+This will launch the development application server.
+You can now access the client by directing your browser to [http://localhost:3000](http://localhost:3000).
