@@ -25,17 +25,17 @@
           { /each }
         </select>
       </label>
-      <label for="{id}-linearization">
+      <label for="{id}-subdivision">
         <span>Subdivision</span>
-        <select id="{id}-linearization" name="{id}-linearization" bind:value={ selectedSubdivisionType }>
+        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ selectedSubdivisionType }>
           { #each subdivisionTypes as type }
             <option>{ type } </option>
           { /each }
         </select>
       </label>
-      <label for="{id}-linearization">
+      <label for="{id}-selection">
         <span>Selection</span>
-        <select id="{id}-linearization" name="{id}-linearization" bind:value={ selectedSelectionType }>
+        <select id="{id}-selection" name="{id}-selection" bind:value={ selectedSelectionType }>
           { #each selectionTypes as type }
             <option>{ type } </option>
           { /each }

@@ -2,7 +2,7 @@
   import { range } from 'd3-array';
   import ConfigWidget from './config-widget.svelte';
   import DataView from './data-view.svelte';
-  import type { ViewType } from './types';
+  import type { PipelineConfig } from './types';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -11,8 +11,22 @@
   $: plotWidth = innerWidth / 2 - 1;
   $: plotHeight = innerHeight - 130;
 
-  let leftSelectedViewType: ViewType = "bins (delta)";
-  let rightSelectedViewType: ViewType = "scatterplot";
+  const leftPipeline: PipelineConfig = {
+    linearization: "knn",
+    selection: "first",
+    subdivision: "equal attribute",
+    viewType: "bins (delta)"
+  };
+
+  const rightPipeline: PipelineConfig = {
+    linearization: "knn",
+    selection: "first",
+    subdivision: "equal attribute",
+    viewType: "scatterplot"
+  };
+
+  $: console.log(leftPipeline);
+  $: console.log(rightPipeline);
 
   // [random x, random y, random attribute]
   const randomDataA = range(0, 100000).map(() => [Math.random()**2, Math.random(), Math.random()]);
@@ -23,7 +37,13 @@
 
 <div class="split-view">
   <div class="left">
-    <ConfigWidget id="A" bind:selectedViewType={ leftSelectedViewType }/>
+    <ConfigWidget
+      id="A"
+      bind:selectedViewType={ leftPipeline.viewType }
+      bind:selectedSubdivisionType={ leftPipeline.subdivision }
+      bind:selectedLinearizationType={ leftPipeline.linearization }
+      bind:selectedSelectionType={ leftPipeline.selection }
+    />
     <DataView
       id={ "left" }
       width={ plotWidth - margin }
@@ -31,11 +51,17 @@
       orientation={ "left" }
       primaryDataset={ randomDataA }
       secondaryDataset={ randomDataB }
-      bind:renderer={ leftSelectedViewType }
+      bind:renderer={ leftPipeline.viewType }
     />
   </div>
   <div class="right">
-    <ConfigWidget id="B" bind:selectedViewType={ rightSelectedViewType } />
+    <ConfigWidget
+      id="B"
+      bind:selectedViewType={ rightPipeline.viewType }
+      bind:selectedSubdivisionType={ rightPipeline.subdivision }
+      bind:selectedLinearizationType={ rightPipeline.linearization }
+      bind:selectedSelectionType={ rightPipeline.selection }
+    />
     <DataView
       id={ "right" }
       width={ plotWidth - margin }
@@ -43,7 +69,7 @@
       orientation={ "right" }
       primaryDataset={ randomDataB }
       secondaryDataset={ randomDataA }
-      bind:renderer={ rightSelectedViewType }
+      bind:renderer={ rightPipeline.viewType }
     />
   </div>
 </div>
