@@ -2,6 +2,7 @@
   import { scaleSequential } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
+import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
   import type { ViewType } from "./types";
   import ZoomOverlay from "./zoom-overlay.svelte";
@@ -54,6 +55,20 @@
     width={ width }
     height={ height }
   />
+
+  { #if renderer !== "scatterplot" }
+    <LegendViewer
+      { id }
+      { color }
+      title={ "Density" }
+      left={ orientation==="left"?width-210:2*width-210 }
+      top={ height + 45 }
+      height={ 50 }
+      blockSize={ 10 }
+      steps={ 11 }
+      width={ 200 }
+    />
+  { /if }
 </div>
 
 <style>

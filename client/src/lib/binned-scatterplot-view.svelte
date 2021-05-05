@@ -3,7 +3,7 @@
   import { max, min } from 'd3-array';
   import { scaleLinear } from 'd3-scale';
   import { hexbin } from 'd3-hexbin';
-import { getDifferenceBins } from './difference-bins';
+  import { getDifferenceBins } from './difference-bins';
 
   export let id: string;
   export let data: number[][];
