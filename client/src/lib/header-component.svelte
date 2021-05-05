@@ -14,10 +14,10 @@
 	<div class="pick-dataset config-component">
 		<h2>Pick Dataset</h2>
 		<div class="datasets">
-			<button class="dataset selected">Mountain peaks</button>
+			<button class="dataset selected">Random</button>
 			<button class="dataset">Burger places</button>
 			<button class="dataset">Dataset ABC</button>
-			<button class="dataset">Dataset XYZ</button>
+			<button class="dataset">Mountain peaks</button>
 		</div>
 	</div>
 

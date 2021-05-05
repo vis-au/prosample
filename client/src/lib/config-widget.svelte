@@ -2,6 +2,7 @@
   import type { LinearizationType, SelectionType, SubdivisionType, ViewType } from "./types";
 
   export let id = "0";
+  export let orientation: "left" | "right" = "left";
   export let selectedViewType: ViewType = "scatterplot";
   export let selectedSubdivisionType: SubdivisionType = "equal size";
   export let selectedSelectionType: SelectionType = "first";
@@ -13,7 +14,7 @@
   const viewTypes: ViewType[] = ["scatterplot", "bins (absolute)", "bins (delta)"];
 </script>
 
-<div class="pipeline-config-view">
+<div class="pipeline-config-view {orientation}">
   <h1>Pipeline Configuration {id}</h1>
   <div class="configuration">
     <div class="pipeline">
@@ -61,6 +62,12 @@
     box-sizing: border-box;
     border: 1px solid black;
     border-bottom: 2px solid black;
+  }
+  div.pipeline-config-view.left {
+    border-right: none;
+  }
+  div.pipeline-config-view.right {
+    border-left: none;
   }
   div.pipeline-config-view .configuration {
     display: flex;

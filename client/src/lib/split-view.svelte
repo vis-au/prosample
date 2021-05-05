@@ -17,8 +17,8 @@
   samplingRate.subscribe(value => samplingRateValue = value);
   samplingAmount.subscribe(value => samplingAmountValue = value);
 
-  $: plotWidth = innerWidth / 2 - 1;
-  $: plotHeight = innerHeight - 130;
+  $: plotWidth = innerWidth / 2 - margin;
+  $: plotHeight = innerHeight - 125;
 
   const leftPipeline: PipelineConfig = {
     linearization: "knn",
@@ -66,6 +66,7 @@
   <div class="left">
     <ConfigWidget
       id="A"
+      orientation="left"
       bind:selectedViewType={ leftPipeline.viewType }
       bind:selectedSubdivisionType={ leftPipeline.subdivision }
       bind:selectedLinearizationType={ leftPipeline.linearization }
@@ -73,7 +74,7 @@
     />
     <DataView
       id={ "left" }
-      width={ plotWidth - margin }
+      width={ plotWidth }
       height={ plotHeight }
       orientation={ "left" }
       primaryDataset={ randomDataA }
@@ -81,9 +82,11 @@
       bind:renderer={ leftPipeline.viewType }
     />
   </div>
+  <div class="vertical-line" style="min-height:{plotHeight}px;border-left:2px solid black;"></div>
   <div class="right">
     <ConfigWidget
       id="B"
+      orientation="right"
       bind:selectedViewType={ rightPipeline.viewType }
       bind:selectedSubdivisionType={ rightPipeline.subdivision }
       bind:selectedLinearizationType={ rightPipeline.linearization }
@@ -91,7 +94,7 @@
     />
     <DataView
       id={ "right" }
-      width={ plotWidth - margin }
+      width={ plotWidth }
       height={ plotHeight }
       orientation={ "right" }
       primaryDataset={ randomDataB }

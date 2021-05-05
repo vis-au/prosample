@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
+  import { afterUpdate } from 'svelte';
   import { Deck, OrthographicView } from '@deck.gl/core';
   import { ScatterplotLayer } from '@deck.gl/layers';
 
@@ -22,44 +22,45 @@
   $: layers = [];
   $: views = [];
 
-  onMount(() => {
+  afterUpdate(render);
 
-    window.setTimeout(() => {
-      INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
+  function render() {
+    INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
 
-      layers = [
-        new ScatterplotLayer({
-          id: `${id}-layer`,
-          getPosition: d => [d[0] * width, d[1] * height],
-          getRadius: radius,
-          getLineWidth: 0,
-          opacity: 0.3,
-          lineWidthUnits: "pixels",
-          stroked: false,
-          data: data,
-        })
-      ];
+    layers = [
+      new ScatterplotLayer({
+        id: `${id}-layer`,
+        getPosition: d => [d[0] * width, d[1] * height],
+        getRadius: radius,
+        getLineWidth: 0,
+        opacity: 0.3,
+        lineWidthUnits: "pixels",
+        stroked: false,
+        data: data,
+      })
+    ];
 
-      views = [
-        new OrthographicView({
-          id: `${id}-view`,
-          flipY: true,
-          controller: false,
-          x: 0,
-          y: 0,
-          width: width,
-          height: height,
-        })
-      ];
+    views = [
+      new OrthographicView({
+        id: `${id}-view`,
+        flipY: true,
+        controller: false,
+        x: 0,
+        y: 0,
+        width: width,
+        height: height,
+      })
+    ];
 
-      generateDeckComponent();
-    }, 0);
-  });
+    generateDeckComponent();
+  }
 
   function generateDeckComponent() {
-    const style = orientation === "left"
+    const style: any = orientation === "left"
       ? { left: "0", border: "none" }
       : { right: "0", border: "none" };
+
+    style.position = "relative";
 
     new Deck({
       id: id,
@@ -79,4 +80,4 @@
   }
 </script>
 
-<canvas bind:this={ canvasElement } class="scatterplot-gl-view"></canvas>
+<canvas bind:this={ canvasElement } class="scatterplot-gl-view" {width} {height}></canvas>

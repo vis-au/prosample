@@ -68,7 +68,7 @@
 
 <style>
   canvas.bins-canvas {
-    border: medium white;
-    box-sizing: border-box;
+    /* border: none;
+    box-sizing: border-box; */
   }
 </style>
