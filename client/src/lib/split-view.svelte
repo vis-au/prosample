@@ -24,14 +24,14 @@
     linearization: "knn",
     selection: "first",
     subdivision: "equal attribute",
-    viewType: "bins (delta)"
+    viewType: "bins (absolute)"
   };
 
   const rightPipeline: PipelineConfig = {
     linearization: "knn",
     selection: "first",
     subdivision: "equal attribute",
-    viewType: "scatterplot"
+    viewType: "bins (absolute)"
   };
 
   $: console.log(leftPipeline);
