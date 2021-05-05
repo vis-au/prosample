@@ -28,6 +28,7 @@
 <style>
   .zoom-overlay {
     position: absolute;
+    top: 0;
   }
   .zoom-overlay.left {
     left: 0;

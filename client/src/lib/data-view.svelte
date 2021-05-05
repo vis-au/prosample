@@ -20,7 +20,7 @@ import LegendViewer from "./legend-viewer.svelte";
     : scaleSequential(interpolatePiYG);
 </script>
 
-<div class="data-view">
+<div class="data-view" style="width: {width}px; height: {height}px">
   { #if renderer === "scatterplot"}
     <ScatterplotGlView
       { id }
@@ -61,8 +61,8 @@ import LegendViewer from "./legend-viewer.svelte";
       { id }
       { color }
       title={ "Density" }
-      left={ orientation==="left"?width-210:2*width-210 }
-      top={ height + 45 }
+      left={ width - 310 }
+      top={ height - 145 }
       height={ 50 }
       blockSize={ 10 }
       steps={ 11 }
@@ -73,7 +73,6 @@ import LegendViewer from "./legend-viewer.svelte";
 
 <style>
   div.data-view {
-    box-sizing: border-box;
-    border: 1px solid black;
+    position: relative;
   }
 </style>

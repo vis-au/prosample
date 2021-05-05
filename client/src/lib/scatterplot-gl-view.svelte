@@ -1,7 +1,8 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
+  import { afterUpdate, onMount } from 'svelte';
   import { Deck, OrthographicView } from '@deck.gl/core';
   import { ScatterplotLayer } from '@deck.gl/layers';
+import { selectAll } from 'd3-selection';
 
   export let id = "deck-gl-scatterplot";
   export let data: number[][] = [];
@@ -23,43 +24,50 @@
   $: views = [];
 
   onMount(() => {
-
-    window.setTimeout(() => {
-      INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
-
-      layers = [
-        new ScatterplotLayer({
-          id: `${id}-layer`,
-          getPosition: d => [d[0] * width, d[1] * height],
-          getRadius: radius,
-          getLineWidth: 0,
-          opacity: 0.3,
-          lineWidthUnits: "pixels",
-          stroked: false,
-          data: data,
-        })
-      ];
-
-      views = [
-        new OrthographicView({
-          id: `${id}-view`,
-          flipY: true,
-          controller: false,
-          x: 0,
-          y: 0,
-          width: width,
-          height: height,
-        })
-      ];
-
-      generateDeckComponent();
-    }, 0);
+    window.setInterval(() => {
+      selectAll("div.deck-tooltip").remove()
+    }, 1000);
   });
 
+  afterUpdate(render);
+
+  function render() {
+    INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
+
+    layers = [
+      new ScatterplotLayer({
+        id: `${id}-layer`,
+        getPosition: d => [d[0] * width, d[1] * height],
+        getRadius: radius,
+        getLineWidth: 0,
+        opacity: 0.3,
+        lineWidthUnits: "pixels",
+        stroked: false,
+        data: data,
+      })
+    ];
+
+    views = [
+      new OrthographicView({
+        id: `${id}-view`,
+        flipY: true,
+        controller: false,
+        x: 0,
+        y: 0,
+        width: width,
+        height: height,
+      })
+    ];
+
+    generateDeckComponent();
+  }
+
   function generateDeckComponent() {
-    const style = orientation === "left"
+    const style: any = orientation === "left"
       ? { left: "0", border: "none" }
       : { right: "0", border: "none" };
+
+    style.position = "relative";
 
     new Deck({
       id: id,
@@ -71,12 +79,7 @@
       style,
       initialViewState: INITIAL_VIEW_STATE,
     });
-
-    window.setTimeout(() => {
-      canvasElement.style["position"] = "relative",
-      canvasElement.style["border"] = "none";
-    }, 1);
   }
 </script>
 
-<canvas bind:this={ canvasElement } class="scatterplot-gl-view"></canvas>
+<canvas bind:this={ canvasElement } class="scatterplot-gl-view" {width} {height}></canvas>

@@ -65,10 +65,3 @@
 </script>
 
 <canvas id="{id}-bins-canvas" class="bins-canvas" bind:this={ canvasElement } width={ width } height={ height }></canvas>
-
-<style>
-  canvas.bins-canvas {
-    border: medium white;
-    box-sizing: border-box;
-  }
-</style>
