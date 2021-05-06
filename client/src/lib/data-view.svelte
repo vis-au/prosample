@@ -61,8 +61,8 @@
       { id }
       { color }
       title={ "Density" }
-      left={ width - 310 }
-      top={ height - 145 }
+      left={ width - 210 }
+      top={ height - 60 }
       height={ 50 }
       blockSize={ 10 }
       steps={ 11 }
