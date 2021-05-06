@@ -2,7 +2,7 @@
   import { scaleSequential } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
-import LegendViewer from "./legend-viewer.svelte";
+  import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
   import type { ViewType } from "./types";
   import ZoomOverlay from "./zoom-overlay.svelte";

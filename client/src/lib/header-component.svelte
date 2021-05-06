@@ -1,9 +1,13 @@
 <script lang="typescript">
 	import { samplingAmount } from './sampling-amount';
 	import { samplingRate } from './sampling-rate';
+	import { samplingTotal } from './sampling-total';
 
 	let samplingRateValue = 1000;
 	let samplingAmountValue = 1000;
+	let samplingTotalValue = 0;
+
+	samplingTotal.subscribe(value => samplingTotalValue = value);
 
 	$: samplingRate.set(samplingRateValue);
 	$: samplingAmount.set(samplingAmountValue);
@@ -26,7 +30,8 @@
 		<input type="number" bind:value={ samplingAmountValue } />
 		<h2>points every</h2>
 		<input type="number" bind:value={ samplingRateValue } />
-		<h2>milliseconds.</h2>
+		<!-- src: https://stackoverflow.com/a/2901298 -->
+		<h2>milliseconds ({samplingTotalValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} so far).</h2>
 	</div>
 </header>
 

@@ -6,6 +6,7 @@
   import ConfigWidget from './config-widget.svelte';
   import DataView from './data-view.svelte';
   import type { PipelineConfig } from './types';
+  import { samplingTotal } from './sampling-total';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -51,6 +52,7 @@
 
   $: randomDataA = rawA.slice(0);
   $: randomDataB = rawB.slice(0);
+  $: samplingTotal.set(randomDataA.length);
 
   function startSampling() {
     return window.setInterval(() => {
