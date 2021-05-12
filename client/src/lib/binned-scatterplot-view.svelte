@@ -4,7 +4,7 @@
   import { scaleLinear } from 'd3-scale';
   import { afterUpdate } from 'svelte';
   import { hoveredPosition } from './state/hovered-position';
-  import {  hexagon, hexbinning } from './util/bin-generator';
+  import { hexagon, hexbinning } from './util/bin-generator';
 
   export let id: string;
   export let width: number = 100;
@@ -18,7 +18,10 @@
   $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
   $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
 
-  hoveredPosition.subscribe(value => hovered = value);
+  hoveredPosition.subscribe(value => {
+    hovered = value;
+    render();
+  });
 
 
   function renderDataBins(ctx: any, bins: any[], hexagonPath: any) {
@@ -44,7 +47,9 @@
 
     ctx.beginPath();
     ctx.translate(hoveredBin.x, hoveredBin.y);
-    ctx.fillStyle= "rgba(255, 255, 255, 1)";
+    ctx.strokeStyle = "rgba(255,255,255,1)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.0)";
+    ctx.lineWidth = 4;
     ctx.stroke(hexagonPath);
     ctx.fill(hexagonPath);
     ctx.translate(-hoveredBin.x, -hoveredBin.y);
@@ -59,7 +64,11 @@
     hoveredPosition.set([ x, y ]);
   }
 
-  afterUpdate(() => {
+  function render() {
+    if (canvasElement === undefined) {
+      return;
+    }
+
     hexbinning
       .x(d => scaleX(d[0]))
       .y(d => scaleY(d[1]));
@@ -75,7 +84,9 @@
 
     renderDataBins(ctx, bins, hexagonPath);
     renderHoveredBin(ctx, hexagonPath);
-  });
+  }
+
+  afterUpdate(render);
 
 </script>
 
