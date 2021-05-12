@@ -21,6 +21,7 @@
   let samplingInterval = -1;
   let samplingRateValue = -1;
   let samplingAmountValue = -1;
+  let hoveredPosition: [number, number] = [-1, -1];
 
   samplingRate.subscribe(value => samplingRateValue = value);
   samplingAmount.subscribe(value => samplingAmountValue = value);
@@ -117,6 +118,7 @@
       orientation={ "left" }
       primaryDataset={ randomDataA }
       secondaryDataset={ randomDataB }
+      bind:hoveredPosition={ hoveredPosition }
       bind:renderer={ leftPipeline.viewType }
     />
     <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
@@ -128,6 +130,7 @@
           orientation={ "center" }
           primaryDataset={ randomDataA }
           secondaryDataset={ randomDataB }
+          bind:hoveredPosition={ hoveredPosition }
           renderer={ "bins (delta)" }
         />
       { /if }
@@ -139,6 +142,7 @@
       orientation={ "right" }
       primaryDataset={ randomDataB }
       secondaryDataset={ randomDataA }
+      bind:hoveredPosition={ hoveredPosition }
       bind:renderer={ rightPipeline.viewType }
     />
   </div>

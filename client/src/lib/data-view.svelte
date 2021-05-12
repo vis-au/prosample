@@ -15,6 +15,7 @@
   export let primaryDataset: number[][] = [];
   export let secondaryDataset: number[][] = [];
   export let zoomable: boolean = false;
+  export let hoveredPosition: [number, number] = [-1, -1];
 
   $: color = renderer !== "bins (delta)"
     ? scaleSequential(interpolateViridis)
@@ -38,6 +39,7 @@
       { height }
       { color }
       data={ primaryDataset }
+      bind:hoveredPosition={ hoveredPosition }
     />
   { :else if renderer === "bins (delta)" }
     <BinnedScatterplotView
@@ -47,6 +49,7 @@
       { color }
       data={ primaryDataset }
       differenceData={ secondaryDataset }
+      bind:hoveredPosition={ hoveredPosition }
     />
   { /if }
 
