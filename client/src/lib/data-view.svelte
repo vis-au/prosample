@@ -1,25 +1,48 @@
 <script lang="typescript">
+  import type { HexbinBin } from "d3-hexbin";
   import { scaleSequential } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
+
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
+  import { generator, primaryBins, secondaryBins } from "./util/bin-generator";
   import type { ViewType } from "./util/types";
   import ZoomOverlay from "./zoom-overlay.svelte";
+
 
   export let renderer: ViewType = "scatterplot";
   export let id = "left";
   export let orientation: "left" | "right" | "center" = "left";
   export let width = 250;
   export let height = 100;
-  export let primaryDataset: number[][] = [];
-  export let secondaryDataset: number[][] = [];
+  export let dataset: number[][];
   export let zoomable: boolean = false;
-  export let hoveredPosition: [number, number] = [-1, -1];
 
   $: color = renderer !== "bins (delta)"
     ? scaleSequential(interpolateViridis)
     : scaleSequential(interpolatePiYG);
+
+  let bins: HexbinBin<[number, number]>[] = [];
+
+  primaryBins.subscribe(value => {
+    if (renderer === "bins (delta)") {
+      bins = generator.getDifferenceBins();
+    } else {
+      if (orientation === "left") {
+        bins = value;
+      }
+    }
+  });
+  secondaryBins.subscribe(value => {
+    if (renderer === "bins (delta)") {
+      bins = generator.getDifferenceBins();
+    } else {
+      if (orientation === "right") {
+        bins = value;
+      }
+    }
+  });
 </script>
 
 <div class="data-view" style="width: {width}px; height: {height}px">
@@ -30,26 +53,15 @@
       radius={ 1 }
       { width }
       { height }
-      data={ primaryDataset }
+      data={ dataset }
     />
-  { :else if renderer === "bins (absolute)" }
+  { :else }
     <BinnedScatterplotView
       { id }
       { width }
       { height }
       { color }
-      data={ primaryDataset }
-      bind:hoveredPosition={ hoveredPosition }
-    />
-  { :else if renderer === "bins (delta)" }
-    <BinnedScatterplotView
-      { id }
-      { width }
-      { height }
-      { color }
-      data={ primaryDataset }
-      differenceData={ secondaryDataset }
-      bind:hoveredPosition={ hoveredPosition }
+      { bins }
     />
   { /if }
 

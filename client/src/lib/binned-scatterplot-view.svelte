@@ -1,39 +1,25 @@
 <script lang="typescript">
-  import { afterUpdate } from 'svelte';
   import { max, min } from 'd3-array';
+  import type { HexbinBin } from 'd3-hexbin';
   import { scaleLinear } from 'd3-scale';
-  import { hexbin } from 'd3-hexbin';
-  import { getDifferenceBins } from './util/difference-bins';
+  import { afterUpdate } from 'svelte';
+  import { hoveredPosition } from './state/hovered-position';
+  import {  hexagon, hexbinning } from './util/bin-generator';
 
   export let id: string;
-  export let data: number[][];
-  export let differenceData: number[][];
   export let width: number = 100;
   export let height: number = 100;
   export let color: any;
-  export let binSize: number = 10;
-  export let hoveredPosition: [number, number] = [-1, -1];
+  export let bins: HexbinBin<[number, number]>[];
+
+  let canvasElement;
+  let hovered: [number, number] = [-1, -1];
 
   $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
   $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
 
-  const hexbinning = hexbin<[number, number]>()
-    .radius(binSize);
+  hoveredPosition.subscribe(value => hovered = value);
 
-  const hexagon = hexbinning.hexagon();
-
-  let canvasElement;
-
-  function getBins() {
-    if (differenceData === undefined) {
-      return hexbinning(data.map(d => [d[0], d[1]]));
-    }
-
-    const primaryBins = hexbinning(data.map(d => [d[0], d[1]]));
-    const secondaryBins = hexbinning(differenceData.map(d => [d[0], d[1]]));
-
-    return getDifferenceBins(primaryBins, secondaryBins);
-  }
 
   function renderDataBins(ctx: any, bins: any[], hexagonPath: any) {
     ctx.beginPath();
@@ -49,8 +35,13 @@
     ctx.closePath();
   }
 
-  function renderHoveredBin(ctx: any, bins: any[], hexagonPath: any) {
-    const hoveredBin = hexbinning([ hoveredPosition ])[0];
+  function renderHoveredBin(ctx: any, hexagonPath: any) {
+    const hoveredBin = hexbinning([ hovered ])[0];
+
+    if (!hoveredBin) {
+      return;
+    }
+
     ctx.beginPath();
     ctx.translate(hoveredBin.x, hoveredBin.y);
     ctx.fillStyle= "rgba(255, 255, 255, 1)";
@@ -65,28 +56,25 @@
     const x = (event.clientX - rect.left) / width;
     const y = (event.clientY - rect.top) / height;
 
-    hoveredPosition = [ x, y ];
+    hoveredPosition.set([ x, y ]);
   }
 
-  afterUpdate(async () => {
-    window.setTimeout(() => {
-      hexbinning
+  afterUpdate(() => {
+    hexbinning
       .x(d => scaleX(d[0]))
       .y(d => scaleY(d[1]));
 
-      const bins = getBins();
-      const ctx = canvasElement.getContext("2d");
-      const hexagonPath = new Path2D(hexagon);
+    const ctx = canvasElement.getContext("2d");
+    const hexagonPath = new Path2D(hexagon);
 
-      const minCount = (min(bins, d => (d as Array<any>).length) || 0);
-      const maxCount = (max(bins, d => (d as Array<any>).length) || 0);
-      color.domain([minCount, maxCount]);
+    const minCount = (min(bins, d => (d as Array<any>).length) || 0);
+    const maxCount = (max(bins, d => (d as Array<any>).length) || 0);
+    color.domain([minCount, maxCount]);
 
-      ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height);
 
-      renderDataBins(ctx, bins, hexagonPath);
-      renderHoveredBin(ctx, bins, hexagonPath);
-    }, 0);
+    renderDataBins(ctx, bins, hexagonPath);
+    renderHoveredBin(ctx, hexagonPath);
   });
 
 </script>

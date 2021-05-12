@@ -10,6 +10,7 @@
   import { progressionState } from './state/progression-state';
   import { viewConfig } from './state/view-config';
   import Toggle from './widgets/toggle.svelte';
+  import { generator } from './util/bin-generator';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -21,7 +22,6 @@
   let samplingInterval = -1;
   let samplingRateValue = -1;
   let samplingAmountValue = -1;
-  let hoveredPosition: [number, number] = [-1, -1];
 
   samplingRate.subscribe(value => samplingRateValue = value);
   samplingAmount.subscribe(value => samplingAmountValue = value);
@@ -70,6 +70,10 @@
 
   $: randomDataA = rawA.slice(0);
   $: randomDataB = rawB.slice(0);
+
+  $: generator.primaryData = randomDataA || [];
+  $: generator.secondaryData = randomDataB || [];
+
   $: samplingTotal.set(randomDataA.length);
 
   function startSampling() {
@@ -116,9 +120,7 @@
       width={ plotWidth }
       height={ plotHeight }
       orientation={ "left" }
-      primaryDataset={ randomDataA }
-      secondaryDataset={ randomDataB }
-      bind:hoveredPosition={ hoveredPosition }
+      dataset={ randomDataA }
       bind:renderer={ leftPipeline.viewType }
     />
     <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
@@ -128,9 +130,7 @@
           width={ plotWidth }
           height={ plotHeight }
           orientation={ "center" }
-          primaryDataset={ randomDataA }
-          secondaryDataset={ randomDataB }
-          bind:hoveredPosition={ hoveredPosition }
+          dataset={ randomDataA }
           renderer={ "bins (delta)" }
         />
       { /if }
@@ -140,9 +140,7 @@
       width={ plotWidth }
       height={ plotHeight }
       orientation={ "right" }
-      primaryDataset={ randomDataB }
-      secondaryDataset={ randomDataA }
-      bind:hoveredPosition={ hoveredPosition }
+      dataset={ randomDataB }
       bind:renderer={ rightPipeline.viewType }
     />
   </div>
