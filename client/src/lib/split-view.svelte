@@ -9,6 +9,7 @@
   import { samplingTotal } from './sampling-total';
   import { progressionState } from './progression-state';
   import { viewConfig } from './view-config';
+  import Toggle from './toggle.svelte';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -90,11 +91,14 @@
       bind:selectedLinearizationType={ leftPipeline.linearization }
       bind:selectedSelectionType={ leftPipeline.selection }
     />
-    <div class="center-config" style="min-width:{showCenter ? plotWidth : 50}px">
-      <label for="show-center-toggle" title="toggle difference view">
-        <div class="diff-toggle">{showCenter ? "-" : "+"}</div>
-        <input id="show-center-toggle" type="checkbox" bind:checked={ showCenter } />
-      </label>
+    <div class="center-config" style="min-width:{showCenter?plotWidth:50}px">
+      <Toggle
+        id="center-view-toggle"
+        bind:active={ showCenter }
+        activeText="-"
+        passiveText="+"
+        style="width:25px; height:25px; line-height:25px;"
+      />
     </div>
     <ConfigWidget
       id="B"
@@ -165,25 +169,5 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-  }
-  div.split-view div.config div.center-config label {
-    display: flex;
-    flex-direction: row;
-  }
-  div.split-view div.config div.center-config .diff-toggle {
-    border: 2px solid black;
-    border-radius: 2px;
-    background: white;
-    width: 25px;
-    height: 25px;
-    font-size: 25px;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-    line-height: 25px;
-    cursor: pointer;
-  }
-  div.split-view div.config div.center-config label input {
-    display: none;
   }
 </style>

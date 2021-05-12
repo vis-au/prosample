@@ -3,6 +3,7 @@
 	import { samplingAmount } from './sampling-amount';
 	import { samplingRate } from './sampling-rate';
 	import { samplingTotal } from './sampling-total';
+	import Toggle from './toggle.svelte';
 
 	let isProgressionRunning = false;
 	let samplingRateValue = 1000;
@@ -35,10 +36,13 @@
 		<input type="number" bind:value={ samplingRateValue } />
 		<!-- src: https://stackoverflow.com/a/2901298 -->
 		<h2>milliseconds ({samplingTotalValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} so far).</h2>
-		<label for="progression-running-indicator">
-			<div>{ isProgressionRunning ? "Pause." : "Go!" }</div>
-			<input type="checkbox" id="progression-running-indicator" name="progression-running-indicator" bind:checked={ isProgressionRunning } />
-		</label>
+		<Toggle
+			id="progression-running-indicator"
+			bind:active={ isProgressionRunning }
+			activeText="Pause."
+			passiveText="Go!"
+			style="width:75px;margin-left:20px"
+		/>
 	</div>
 </header>
 
@@ -107,23 +111,8 @@
 		text-decoration: none;
 	}
 
-	header .sampling-rate input {
+	header .sampling-rate input[type="number"] {
 		width: 50px;
 		margin: 0 10px;
-	}
-
-	header .sampling-rate label div {
-		font-weight: bold;
-		background: white;
-		color: black;
-		width: 45px;
-		text-align: center;
-		padding: 3.5px 10px;
-		margin-left: 20px;
-		border-radius: 2px;
-		cursor: pointer;
-	}
-	header .sampling-rate input[type="checkbox"] {
-		display: none;
 	}
 </style>
