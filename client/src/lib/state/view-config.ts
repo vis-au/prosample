@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
 
 export const viewConfig = writable({
-  showCenter: true
+  showCenter: false
 });

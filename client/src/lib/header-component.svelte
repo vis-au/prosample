@@ -1,10 +1,10 @@
 <script lang="typescript">
-	import Alternatives from './alternatives.svelte';
-import { progressionState } from './progression-state';
-	import { samplingAmount } from './sampling-amount';
-	import { samplingRate } from './sampling-rate';
-	import { samplingTotal } from './sampling-total';
-	import Toggle from './toggle.svelte';
+	import Alternatives from './widgets/alternatives.svelte';
+import { progressionState } from './state/progression-state';
+	import { samplingAmount } from './state/sampling-amount';
+	import { samplingRate } from './state/sampling-rate';
+	import { samplingTotal } from './state/sampling-total';
+	import Toggle from './widgets/toggle.svelte';
 
 	let isProgressionRunning = false;
 	let samplingRateValue = 1000;

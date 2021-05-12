@@ -4,7 +4,7 @@
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
-  import type { ViewType } from "./types";
+  import type { ViewType } from "./util/types";
   import ZoomOverlay from "./zoom-overlay.svelte";
 
   export let renderer: ViewType = "scatterplot";

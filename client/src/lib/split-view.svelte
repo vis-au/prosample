@@ -1,15 +1,15 @@
 <script lang="typescript">
   import { range } from 'd3-array';
   import { onMount } from 'svelte';
-  import { samplingRate } from './sampling-rate';
-  import { samplingAmount } from './sampling-amount';
+  import { samplingRate } from './state/sampling-rate';
+  import { samplingAmount } from './state/sampling-amount';
   import ConfigWidget from './config-widget.svelte';
   import DataView from './data-view.svelte';
-  import type { PipelineConfig } from './types';
-  import { samplingTotal } from './sampling-total';
-  import { progressionState } from './progression-state';
-  import { viewConfig } from './view-config';
-  import Toggle from './toggle.svelte';
+  import type { PipelineConfig } from './util/types';
+  import { samplingTotal } from './state/sampling-total';
+  import { progressionState } from './state/progression-state';
+  import { viewConfig } from './state/view-config';
+  import Toggle from './widgets/toggle.svelte';
 
   let innerWidth = 500;
   let innerHeight = 350;
