@@ -7,6 +7,7 @@
   import DataView from './data-view.svelte';
   import type { PipelineConfig } from './types';
   import { samplingTotal } from './sampling-total';
+import { progressionState } from './progression-state';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -47,6 +48,14 @@
       samplingRateValue = value;
       window.clearInterval(samplingInterval);
       samplingInterval = startSampling();
+    });
+
+    progressionState.subscribe(value => {
+      if (value === "running") {
+        samplingInterval = startSampling();
+      } else {
+        window.clearInterval(samplingInterval);
+      }
     });
   });
 

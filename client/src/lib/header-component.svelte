@@ -1,14 +1,17 @@
 <script lang="typescript">
+	import { progressionState } from './progression-state';
 	import { samplingAmount } from './sampling-amount';
 	import { samplingRate } from './sampling-rate';
 	import { samplingTotal } from './sampling-total';
 
+	let isProgressionRunning = false;
 	let samplingRateValue = 1000;
 	let samplingAmountValue = 1000;
 	let samplingTotalValue = 0;
 
 	samplingTotal.subscribe(value => samplingTotalValue = value);
 
+	$: progressionState.set(isProgressionRunning ? "running" : "paused");
 	$: samplingRate.set(samplingRateValue);
 	$: samplingAmount.set(samplingAmountValue);
 </script>
@@ -32,6 +35,10 @@
 		<input type="number" bind:value={ samplingRateValue } />
 		<!-- src: https://stackoverflow.com/a/2901298 -->
 		<h2>milliseconds ({samplingTotalValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} so far).</h2>
+		<label for="progression-running-indicator">
+			<div>{ isProgressionRunning ? "Pause." : "Go!" }</div>
+			<input type="checkbox" id="progression-running-indicator" name="progression-running-indicator" bind:checked={ isProgressionRunning } />
+		</label>
 	</div>
 </header>
 
@@ -103,5 +110,20 @@
 	header .sampling-rate input {
 		width: 50px;
 		margin: 0 10px;
+	}
+
+	header .sampling-rate label div {
+		font-weight: bold;
+		background: white;
+		color: black;
+		width: 45px;
+		text-align: center;
+		padding: 3.5px 10px;
+		margin-left: 20px;
+		border-radius: 2px;
+		cursor: pointer;
+	}
+	header .sampling-rate input[type="checkbox"] {
+		display: none;
 	}
 </style>
