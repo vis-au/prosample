@@ -1,5 +1,6 @@
 <script lang="typescript">
-	import { progressionState } from './progression-state';
+	import Alternatives from './alternatives.svelte';
+import { progressionState } from './progression-state';
 	import { samplingAmount } from './sampling-amount';
 	import { samplingRate } from './sampling-rate';
 	import { samplingTotal } from './sampling-total';
@@ -21,12 +22,10 @@
 	<h1 class="title">Sampling Pipeline</h1>
 	<div class="pick-dataset config-component">
 		<h2>Pick Dataset</h2>
-		<div class="datasets">
-			<button class="dataset selected">Random</button>
-			<button class="dataset">Burger places</button>
-			<button class="dataset">Dataset ABC</button>
-			<button class="dataset">Mountain peaks</button>
-		</div>
+		<Alternatives
+			alternatives={ ["Random", "Burger places", "Dataset ABC", "Mountain peaks"] }
+			activeAlternative={ "Random" }
+		/>
 	</div>
 
 	<div class="sampling-rate config-component">
@@ -81,34 +80,6 @@
 
 	header .pick-dataset h2 {
 		min-width: 120px;
-	}
-	header .pick-dataset .datasets {
-		display: flex;
-		flex-direction: row;
-		width: 100%;
-		align-items: center;
-	}
-
-	header .pick-dataset .datasets .dataset {
-		font-family: sans-serif;
-		background: black;
-		color: white;
-		font-weight: bold;
-		text-decoration: underline;
-		padding: 2px 15px 1.5px;
-		border: 2px solid transparent;
-		border-radius: 20px;
-		cursor: pointer;
-	}
-	header .pick-dataset .datasets .dataset:hover {
-		border-color: white;
-		text-decoration: none;
-	}
-	header .pick-dataset .datasets .dataset.selected {
-		background: white;
-		color: black;
-		border-color: black;
-		text-decoration: none;
 	}
 
 	header .sampling-rate input[type="number"] {
