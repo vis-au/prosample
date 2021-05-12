@@ -15,7 +15,7 @@
   let innerHeight = 350;
   let showCenter = true;
   let margin = {
-    horizontal: showCenter ? 1 : 0,
+    horizontal: showCenter ? 2 : 0,
     vertical: 125
   };
   let samplingInterval = -1;
@@ -91,7 +91,7 @@
       bind:selectedLinearizationType={ leftPipeline.linearization }
       bind:selectedSelectionType={ leftPipeline.selection }
     />
-    <div class="center-config" style="min-width:{showCenter?plotWidth:50}px">
+    <div class="center-config" style="min-width:{showCenter?plotWidth+margin.horizontal:50}px">
       <Toggle
         id="center-view-toggle"
         bind:active={ showCenter }
@@ -119,19 +119,19 @@
       secondaryDataset={ randomDataB }
       bind:renderer={ leftPipeline.viewType }
     />
-    { #if showCenter }
-      <DataView
-        id={ "center" }
-        width={ plotWidth }
-        height={ plotHeight }
-        orientation={ "center" }
-        primaryDataset={ randomDataA }
-        secondaryDataset={ randomDataB }
-        renderer={ "bins (delta)" }
-      />
-      { :else }
-      <div class="vertical-line" style="min-height:{plotHeight}px;border-left:2px solid black;"></div>
-    { /if }
+    <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
+      { #if showCenter }
+        <DataView
+          id={ "center" }
+          width={ plotWidth }
+          height={ plotHeight }
+          orientation={ "center" }
+          primaryDataset={ randomDataA }
+          secondaryDataset={ randomDataB }
+          renderer={ "bins (delta)" }
+        />
+      { /if }
+    </div>
     <DataView
       id={ "right" }
       width={ plotWidth }
