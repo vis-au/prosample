@@ -7,20 +7,27 @@
   import DataView from './data-view.svelte';
   import type { PipelineConfig } from './types';
   import { samplingTotal } from './sampling-total';
-import { progressionState } from './progression-state';
+  import { progressionState } from './progression-state';
+  import { viewConfig } from './view-config';
 
   let innerWidth = 500;
   let innerHeight = 350;
-  let margin = 1;
+  let showCenter = true;
+  let margin = {
+    horizontal: showCenter ? 1 : 0,
+    vertical: 125
+  };
   let samplingInterval = -1;
   let samplingRateValue = -1;
   let samplingAmountValue = -1;
 
   samplingRate.subscribe(value => samplingRateValue = value);
   samplingAmount.subscribe(value => samplingAmountValue = value);
+  viewConfig.subscribe(value => showCenter = value.showCenter);
 
-  $: plotWidth = innerWidth / 2 - margin;
-  $: plotHeight = innerHeight - 125;
+  $: plotWidth = innerWidth / (showCenter ? 3 : 2) - margin.horizontal;
+  $: plotHeight = innerHeight - margin.vertical;
+  $: viewConfig.set({ showCenter })
 
   const leftPipeline: PipelineConfig = {
     linearization: "knn",
@@ -74,7 +81,7 @@ import { progressionState } from './progression-state';
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />
 
 <div class="split-view">
-  <div class="left">
+  <div class="config">
     <ConfigWidget
       id="A"
       orientation="left"
@@ -83,6 +90,22 @@ import { progressionState } from './progression-state';
       bind:selectedLinearizationType={ leftPipeline.linearization }
       bind:selectedSelectionType={ leftPipeline.selection }
     />
+    <div class="center-config" style="min-width:{showCenter ? plotWidth : 50}px">
+      <label for="show-center-toggle" title="toggle difference view">
+        <div class="diff-toggle">{showCenter ? "-" : "+"}</div>
+        <input id="show-center-toggle" type="checkbox" bind:checked={ showCenter } />
+      </label>
+    </div>
+    <ConfigWidget
+      id="B"
+      orientation="right"
+      bind:selectedViewType={ rightPipeline.viewType }
+      bind:selectedSubdivisionType={ rightPipeline.subdivision }
+      bind:selectedLinearizationType={ rightPipeline.linearization }
+      bind:selectedSelectionType={ rightPipeline.selection }
+    />
+  </div>
+  <div class="data">
     <DataView
       id={ "left" }
       width={ plotWidth }
@@ -92,17 +115,19 @@ import { progressionState } from './progression-state';
       secondaryDataset={ randomDataB }
       bind:renderer={ leftPipeline.viewType }
     />
-  </div>
-  <div class="vertical-line" style="min-height:{plotHeight}px;border-left:2px solid black;"></div>
-  <div class="right">
-    <ConfigWidget
-      id="B"
-      orientation="right"
-      bind:selectedViewType={ rightPipeline.viewType }
-      bind:selectedSubdivisionType={ rightPipeline.subdivision }
-      bind:selectedLinearizationType={ rightPipeline.linearization }
-      bind:selectedSelectionType={ rightPipeline.selection }
-    />
+    { #if showCenter }
+      <DataView
+        id={ "center" }
+        width={ plotWidth }
+        height={ plotHeight }
+        orientation={ "center" }
+        primaryDataset={ randomDataA }
+        secondaryDataset={ randomDataB }
+        renderer={ "bins (delta)" }
+      />
+      { :else }
+      <div class="vertical-line" style="min-height:{plotHeight}px;border-left:2px solid black;"></div>
+    { /if }
     <DataView
       id={ "right" }
       width={ plotWidth }
@@ -118,13 +143,47 @@ import { progressionState } from './progression-state';
 <style>
   div.split-view {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     width: 100%;
   }
-  div.split-view div {
+  div.split-view div.config,
+  div.split-view div.data {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+  div.split-view div.config {
+    border-bottom: 1px solid black;
+  }
+  div.split-view div.config div.center-config {
+    width: 50px;
+    border: 1px solid black;
+    box-sizing: border-box;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  div.split-view div.config div.center-config label {
+    display: flex;
+    flex-direction: row;
+  }
+  div.split-view div.config div.center-config .diff-toggle {
+    border: 2px solid black;
+    border-radius: 2px;
+    background: white;
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    line-height: 25px;
+    cursor: pointer;
+  }
+  div.split-view div.config div.center-config label input {
+    display: none;
   }
 </style>

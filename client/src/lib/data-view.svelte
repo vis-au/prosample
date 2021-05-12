@@ -9,11 +9,12 @@
 
   export let renderer: ViewType = "scatterplot";
   export let id = "left";
-  export let orientation: "left" | "right" = "left";
+  export let orientation: "left" | "right" | "center" = "left";
   export let width = 250;
   export let height = 100;
   export let primaryDataset: number[][] = [];
   export let secondaryDataset: number[][] = [];
+  export let zoomable: boolean = false;
 
   $: color = renderer !== "bins (delta)"
     ? scaleSequential(interpolateViridis)
@@ -49,12 +50,14 @@
     />
   { /if }
 
-  <ZoomOverlay
-    id={ id }
-    orientation={ orientation }
-    width={ width }
-    height={ height }
-  />
+  { #if zoomable }
+    <ZoomOverlay
+      id={ id }
+      orientation={ orientation }
+      width={ width }
+      height={ height }
+    />
+  { /if }
 
   { #if renderer !== "scatterplot" }
     <LegendViewer

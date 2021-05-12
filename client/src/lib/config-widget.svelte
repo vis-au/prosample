@@ -2,7 +2,7 @@
   import type { LinearizationType, SelectionType, SubdivisionType, ViewType } from "./types";
 
   export let id = "0";
-  export let orientation: "left" | "right" = "left";
+  export let orientation: "left" | "right" | "center" = "left";
   export let selectedViewType: ViewType = "scatterplot";
   export let selectedSubdivisionType: SubdivisionType = "equal size";
   export let selectedSelectionType: SelectionType = "first";
@@ -19,7 +19,7 @@
   <div class="configuration">
     <div class="pipeline">
       <label for="{id}-linearization">
-        <span>Linearization</span>
+        <span title="linearization">Lin.</span>
         <select id="{id}-linearization" name="{id}-linearization" bind:value={ selectedLinearizationType }>
           { #each linearizationTypes as type }
           <option>{ type } </option>
@@ -27,7 +27,7 @@
         </select>
       </label>
       <label for="{id}-subdivision">
-        <span>Subdivision</span>
+        <span title="subdivision">Sub.</span>
         <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ selectedSubdivisionType }>
           { #each subdivisionTypes as type }
             <option>{ type } </option>
@@ -35,7 +35,7 @@
         </select>
       </label>
       <label for="{id}-selection">
-        <span>Selection</span>
+        <span title="selection">Sel.</span>
         <select id="{id}-selection" name="{id}-selection" bind:value={ selectedSelectionType }>
           { #each selectionTypes as type }
             <option>{ type } </option>
@@ -61,7 +61,7 @@
     padding: 0 5px 10px;
     box-sizing: border-box;
     border: 1px solid black;
-    border-bottom: 2px solid black;
+    width: 100%;
   }
   div.pipeline-config-view.left {
     border-right: none;
