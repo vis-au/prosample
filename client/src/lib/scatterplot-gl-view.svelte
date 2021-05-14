@@ -3,6 +3,7 @@
   import { Deck, OrthographicView } from '@deck.gl/core';
   import { ScatterplotLayer } from '@deck.gl/layers';
   import { selectAll } from 'd3-selection';
+import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 
   export let id = "deck-gl-scatterplot";
   export let data: number[][] = [];
@@ -82,4 +83,17 @@
   }
 </script>
 
-<canvas bind:this={ canvasElement } class="scatterplot-gl-view" {width} {height}></canvas>
+<div id="{id}-scatterplot-gl-view" class="scatterplot-gl-view">
+  <canvas id="{id}-scatterplot-gl-view-canvas" class="scatterplot-gl-view" {width} {height} bind:this={ canvasElement }></canvas>
+
+  <ViewInteractionLayer { id } { width } { height } color="black" lineWidth={1} />
+</div>
+
+<style>
+  div.scatterplot-gl-view {
+    position: relative;
+  }
+  div.scatterplot-gl-view canvas.scatterplot-gl-view {
+    position: absolute;
+  }
+</style>
