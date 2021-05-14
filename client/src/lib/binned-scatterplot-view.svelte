@@ -3,7 +3,9 @@
   import type { HexbinBin } from 'd3-hexbin';
   import { scaleLinear } from 'd3-scale';
   import { afterUpdate } from 'svelte';
+import { update_await_block_branch } from 'svelte/internal';
   import { hoveredPosition } from './state/hovered-position';
+import { selectedBins } from './state/selected-bin';
   import { hexagon, hexbinning } from './util/bin-generator';
 
   export let id: string;
@@ -14,6 +16,7 @@
 
   let canvasElement;
   let hovered: [number, number] = [-1, -1];
+  let selected: HexbinBin<[number, number]>[] = [];
 
   $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
   $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
@@ -23,14 +26,19 @@
     render();
   });
 
+  selectedBins.subscribe(value => {
+    selected = value;
+    render();
+  });
 
-  function renderDataBins(ctx: any, bins: any[], hexagonPath: any) {
+
+  function renderDataBins(ctx: any, hexagonPath: any) {
     ctx.beginPath();
+    ctx.strokeStyle="rgba(255,255,255,1)";
+    ctx.lineWidth = 2;
     bins.forEach(bin => {
       ctx.translate(bin.x, bin.y);
       ctx.fillStyle = color(bin.length);
-      ctx.strokeStyle="rgba(255,255,255,1)";
-      ctx.lineWidth = 2;
       ctx.stroke(hexagonPath);
       ctx.fill(hexagonPath);
       ctx.translate(-bin.x, -bin.y);
@@ -56,12 +64,45 @@
     ctx.closePath();
   }
 
+  function renderSelectedBins(ctx: any, hexagonPath: any) {
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(255,255,255,1)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.0)";
+    ctx.lineWidth = 4;
+    selected.forEach(bin => {
+      ctx.translate(bin.x, bin.y);
+      ctx.stroke(hexagonPath);
+      ctx.fill(hexagonPath);
+      ctx.translate(-bin.x, -bin.y);
+    });
+    ctx.closePath();
+  }
+
   function onHover(event) {
     const rect = event.target.getBoundingClientRect();
     const x = (event.clientX - rect.left) / width;
     const y = (event.clientY - rect.top) / height;
 
     hoveredPosition.set([ x, y ]);
+  }
+
+  function onClick(event) {
+    const rect = event.target.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / width;
+    const y = (event.clientY - rect.top) / height;
+
+    const clickedBin = hexbinning([[x,y]])[0];
+    const selectedBin = selected.find(bin => bin.x === clickedBin.x && bin.y === clickedBin.y);
+    const selectedIndex = selected.indexOf(selectedBin);
+
+    selectedBins.update(currentlySelectedBins => {
+      if (selectedIndex > 0) {
+        currentlySelectedBins.splice(selectedIndex, 1);
+        return currentlySelectedBins;
+      } else {
+        return currentlySelectedBins = currentlySelectedBins.concat([clickedBin]);
+      }
+    });
   }
 
   function render() {
@@ -82,8 +123,9 @@
 
     ctx.clearRect(0, 0, width, height);
 
-    renderDataBins(ctx, bins, hexagonPath);
+    renderDataBins(ctx, hexagonPath);
     renderHoveredBin(ctx, hexagonPath);
+    renderSelectedBins(ctx, hexagonPath);
   }
 
   afterUpdate(render);
@@ -97,4 +139,5 @@
   height={ height }
   bind:this={ canvasElement }
   on:mousemove={ onHover }
+  on:click={ onClick }
 />
