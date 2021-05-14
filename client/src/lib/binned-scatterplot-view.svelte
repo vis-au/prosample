@@ -15,6 +15,7 @@ import { selectedBins } from './state/selected-bin';
   export let bins: HexbinBin<[number, number]>[];
 
   let canvasElement;
+  let overlayCanvasElement;
   let hovered: [number, number] = [-1, -1];
   let selected: HexbinBin<[number, number]>[] = [];
 
@@ -23,12 +24,12 @@ import { selectedBins } from './state/selected-bin';
 
   hoveredPosition.subscribe(value => {
     hovered = value;
-    render();
+    renderOverlay();
   });
 
   selectedBins.subscribe(value => {
     selected = value;
-    render();
+    renderOverlay();
   });
 
 
@@ -105,6 +106,23 @@ import { selectedBins } from './state/selected-bin';
     });
   }
 
+  function renderOverlay() {
+    if (!overlayCanvasElement) {
+      return;
+    }
+
+    hexbinning
+      .x(d => scaleX(d[0]))
+      .y(d => scaleY(d[1]));
+
+    const ctx = overlayCanvasElement.getContext("2d");
+    const hexagonPath = new Path2D(hexagon);
+    ctx.clearRect(0, 0, width, height);
+
+    renderHoveredBin(ctx, hexagonPath);
+    renderSelectedBins(ctx, hexagonPath);
+  }
+
   function render() {
     if (!canvasElement) {
       return;
@@ -124,20 +142,37 @@ import { selectedBins } from './state/selected-bin';
     ctx.clearRect(0, 0, width, height);
 
     renderDataBins(ctx, hexagonPath);
-    renderHoveredBin(ctx, hexagonPath);
-    renderSelectedBins(ctx, hexagonPath);
+    renderOverlay();
   }
 
   afterUpdate(render);
 
 </script>
 
-<canvas
-  id="{id}-bins-canvas"
-  class="bins-canvas"
-  width={ width }
-  height={ height }
-  bind:this={ canvasElement }
-  on:mousemove={ onHover }
-  on:click={ onClick }
-/>
+<div id="{id}-binned-scatterplot-view" class="binned-scatterplot-view">
+  <canvas
+    id="{id}-bins-canvas"
+    class="bins-canvas"
+    width={ width }
+    height={ height }
+    bind:this={ canvasElement }
+  />
+  <canvas
+    id="{id}-interaction-canvas"
+    class="interaction-canvas"
+    width={ width }
+    height={ height }
+    on:mousemove={ onHover }
+    on:click={ onClick }
+    bind:this={ overlayCanvasElement }
+  />
+</div>
+
+<style>
+  div.binned-scatterplot-view {
+    position: relative;
+  }
+  div.binned-scatterplot-view canvas {
+    position: absolute;
+  }
+</style>
