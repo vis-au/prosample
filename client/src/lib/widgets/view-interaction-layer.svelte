@@ -104,7 +104,6 @@
 
     renderHoveredBin(ctx, hexagonPath);
     renderSelectedBins(ctx, hexagonPath);
-    console.log("ooph");
   }
 
   afterUpdate(render);

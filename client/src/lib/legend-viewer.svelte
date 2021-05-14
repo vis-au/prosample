@@ -22,7 +22,7 @@
     .domain([0, steps])
     .range([margin, width - margin]);
 
-  $:scaleY = scaleLinear()
+  $: scaleY = scaleLinear()
     .domain([0, steps])
     .range([margin, height - margin]);
 

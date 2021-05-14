@@ -46,7 +46,7 @@
     const hexagonPath = new Path2D(hexagon);
 
     const minCount = (min(bins, d => (d as Array<any>).length) || 0);
-    const maxCount = (max(bins, d => (d as Array<any>).length) || 0);
+    const maxCount = (max(bins, d => (d as Array<any>).length) || 1);
     color.domain([minCount, maxCount]);
 
     renderBins(ctx, hexagonPath);

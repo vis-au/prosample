@@ -84,7 +84,12 @@ import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 </script>
 
 <div id="{id}-scatterplot-gl-view" class="scatterplot-gl-view">
-  <canvas id="{id}-scatterplot-gl-view-canvas" class="scatterplot-gl-view" {width} {height} bind:this={ canvasElement }></canvas>
+  <canvas
+    id="{id}-scatterplot-gl-view-canvas"
+    class="scatterplot-gl-view"
+    {width}
+    {height}
+    bind:this={ canvasElement } />
 
   <ViewInteractionLayer { id } { width } { height } color="black" lineWidth={1} />
 </div>
