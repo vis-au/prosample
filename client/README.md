@@ -1,5 +1,5 @@
 # PVA Sampling Comparison Tool - Client
-This directory contains the code for the browser interface to the pva sampling pipeline.
+This directory contains the code for the browser-based user interface to the pva sampling pipeline.
 It serves as a visual demonstration tool to visualize the impace of adjusting different steps of the progressive sampling pipeline.
 The client allows to configure two sampling pipelines and visualize their output next to each other.
 Both sampling pipelines retrieve the next sample of data at the same time, yet under the particular configuration.

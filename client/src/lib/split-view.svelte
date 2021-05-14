@@ -1,5 +1,4 @@
 <script lang="typescript">
-  import { range } from 'd3-array';
   import { onMount } from 'svelte';
   import { samplingRate } from './state/sampling-rate';
   import { samplingAmount } from './state/sampling-amount';
@@ -69,18 +68,24 @@
     });
   });
 
-  $: randomDataA = rawA.slice(0);
-  $: randomDataB = rawB.slice(0);
+  $: sampleA = rawA.slice(0);
+  $: sampleB = rawB.slice(0);
 
-  $: generator.primaryData = randomDataA || [];
-  $: generator.secondaryData = randomDataB || [];
+  $: generator.primaryData = sampleA || [];
+  $: generator.secondaryData = sampleB || [];
 
-  $: samplingTotal.set(randomDataA.length);
+  $: samplingTotal.set(sampleA.length);
 
   function startSampling() {
-    return window.setInterval(() => {
-      rawA = rawA.concat(range(0, samplingAmountValue).map(() => [Math.random()**2, Math.random(), Math.random()]))
-      rawB = rawB.concat(range(0, samplingAmountValue).map(() => [Math.random(), Math.random()**2, Math.random()]))
+    return window.setInterval(async () => {
+      const responseA = await fetch(`http://127.0.0.1:5000/sample?size=${samplingAmountValue}&sample=a`);
+      const jsonA = await responseA.json();
+
+      const responseB = await fetch(`http://127.0.0.1:5000/sample?size=${samplingAmountValue}&sample=b`);
+      const jsonB = await responseB.json();
+
+      rawA = rawA.concat(jsonA.sample);
+      rawB = rawB.concat(jsonB.sample);
     }, samplingRateValue);
   }
 
@@ -125,7 +130,7 @@
       width={ plotWidth }
       height={ plotHeight }
       orientation={ "left" }
-      dataset={ randomDataA }
+      dataset={ sampleA }
       bind:renderer={ leftPipeline.viewType }
     />
     <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
@@ -135,7 +140,7 @@
           width={ plotWidth }
           height={ plotHeight }
           orientation={ "center" }
-          dataset={ randomDataA }
+          dataset={ sampleA }
           renderer={ "bins (delta)" }
         />
       { /if }
@@ -145,7 +150,7 @@
       width={ plotWidth }
       height={ plotHeight }
       orientation={ "right" }
-      dataset={ randomDataB }
+      dataset={ sampleB }
       bind:renderer={ rightPipeline.viewType }
     />
   </div>
