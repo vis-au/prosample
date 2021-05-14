@@ -1,5 +1,4 @@
 <script lang="typescript">
-  import { hoveredPosition } from "./state/hovered-position";
   import type { LinearizationType, SelectionType, SubdivisionType, ViewType } from "./util/types";
 
   export let id = "0";
@@ -13,13 +12,9 @@
   const subdivisionTypes: SubdivisionType[] = ["equal size", "equal cardinality", "equal density", "equal attribute"];
   const selectionTypes: SelectionType[] = ["first", "median", "min/max", "random"];
   const viewTypes: ViewType[] = ["scatterplot", "bins (absolute)", "bins (delta)"];
-
-  function hideTooltip() {
-    hoveredPosition.set([-1, -1]);
-  }
 </script>
 
-<div class="pipeline-config-view {orientation}" on:mouseenter={ hideTooltip }>
+<div class="pipeline-config-view {orientation}">
   <h1>Pipeline Configuration {id}</h1>
   <div class="configuration">
     <div class="pipeline">

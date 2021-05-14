@@ -11,6 +11,7 @@
   import { viewConfig } from './state/view-config';
   import Toggle from './widgets/toggle.svelte';
   import { generator } from './util/bin-generator';
+import { hoveredPosition } from './state/hovered-position';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -82,12 +83,16 @@
       rawB = rawB.concat(range(0, samplingAmountValue).map(() => [Math.random(), Math.random()**2, Math.random()]))
     }, samplingRateValue);
   }
+
+  function hideTooltip() {
+    hoveredPosition.set([-1, -1]);
+  }
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />
 
 <div class="split-view">
-  <div class="config">
+  <div class="config" on:mouseenter={ hideTooltip }>
     <ConfigWidget
       id="A"
       orientation="left"
