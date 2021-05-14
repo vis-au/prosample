@@ -3,15 +3,15 @@
   import { onMount } from 'svelte';
   import { samplingRate } from './state/sampling-rate';
   import { samplingAmount } from './state/sampling-amount';
-  import ViewConfig from './widgets/view-config.svelte';
-  import DataView from './data-view.svelte';
   import type { PipelineConfig } from './util/types';
   import { samplingTotal } from './state/sampling-total';
   import { progressionState } from './state/progression-state';
   import { viewConfig } from './state/view-config';
-  import Toggle from './widgets/toggle.svelte';
   import { generator } from './util/bin-generator';
   import { hoveredPosition } from './state/hovered-position';
+  import ViewConfig from './widgets/view-config.svelte';
+  import DataView from './data-view.svelte';
+  import Toggle from './widgets/toggle.svelte';
 
   let innerWidth = 500;
   let innerHeight = 350;

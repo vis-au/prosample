@@ -19,7 +19,9 @@
 
   function onMouseMove(event) {
     tooltip.x = Math.min(event.clientX + margin, innerWidth - tooltip.width - margin);
-    tooltip.y = Math.min(event.clientY, innerHeight - tooltip.height - margin);
+    tooltip.y = event.clientY + margin > innerHeight - tooltip.height - margin
+    ? event.clientY - margin - tooltip.height
+    : event.clientY + margin;
   }
 </script>
 

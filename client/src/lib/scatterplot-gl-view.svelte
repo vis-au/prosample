@@ -3,7 +3,7 @@
   import { Deck, OrthographicView } from '@deck.gl/core';
   import { ScatterplotLayer } from '@deck.gl/layers';
   import { selectAll } from 'd3-selection';
-import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
+  import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 
   export let id = "deck-gl-scatterplot";
   export let data: number[][] = [];
