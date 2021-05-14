@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import type { LinearizationType, SelectionType, SubdivisionType, ViewType } from "./util/types";
+  import type { LinearizationType, SelectionType, SubdivisionType, ViewType } from "../util/types";
 
   export let id = "0";
   export let orientation: "left" | "right" | "center" = "left";

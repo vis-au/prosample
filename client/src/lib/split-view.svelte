@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { samplingRate } from './state/sampling-rate';
   import { samplingAmount } from './state/sampling-amount';
-  import ConfigWidget from './config-widget.svelte';
+  import ViewConfig from './widgets/view-config.svelte';
   import DataView from './data-view.svelte';
   import type { PipelineConfig } from './util/types';
   import { samplingTotal } from './state/sampling-total';
@@ -11,7 +11,7 @@
   import { viewConfig } from './state/view-config';
   import Toggle from './widgets/toggle.svelte';
   import { generator } from './util/bin-generator';
-import { hoveredPosition } from './state/hovered-position';
+  import { hoveredPosition } from './state/hovered-position';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -93,7 +93,7 @@ import { hoveredPosition } from './state/hovered-position';
 
 <div class="split-view">
   <div class="config" on:mouseenter={ hideTooltip }>
-    <ConfigWidget
+    <ViewConfig
       id="A"
       orientation="left"
       bind:selectedViewType={ leftPipeline.viewType }
@@ -110,7 +110,7 @@ import { hoveredPosition } from './state/hovered-position';
         style="width:25px; height:25px; line-height:25px;"
       />
     </div>
-    <ConfigWidget
+    <ViewConfig
       id="B"
       orientation="right"
       bind:selectedViewType={ rightPipeline.viewType }
