@@ -8,6 +8,7 @@
 
   const margin = 30;
   const tooltip = {
+    active: false,
     width: 150,
     height: 80,
     x: 0,
@@ -19,6 +20,12 @@
   };
 
   hoveredPosition.subscribe(value => {
+    if (value[1] < 0) {
+      tooltip.active = false;
+      return;
+    }
+
+    tooltip.active = true;
     tooltip.data.primary = generator.getPrimaryBin(value[0], value[1]);
     tooltip.data.secondary = generator.getSecondaryBin(value[0], value[1]);
   });
@@ -38,7 +45,7 @@
 
 <main class="split-view" on:mousemove={ onMouseMove }>
   <SplitView></SplitView>
-  { #if tooltip.data }
+  { #if tooltip.active }
   <div class="tooltip" style="left:{tooltip.x}px;top:{tooltip.y}px;width:{tooltip.width}px;height:{tooltip.height}px;">
     <div class="left">
       <span>left:</span>

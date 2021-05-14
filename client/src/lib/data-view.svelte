@@ -26,7 +26,9 @@
   let bins: HexbinBin<[number, number]>[] = [];
 
   primaryBins.subscribe(value => {
-    if (renderer === "bins (delta)") {
+    if (renderer === "scatterplot") {
+      return;
+    } else if (renderer === "bins (delta)") {
       bins = generator.getDifferenceBins();
     } else {
       if (orientation === "left") {
@@ -35,7 +37,9 @@
     }
   });
   secondaryBins.subscribe(value => {
-    if (renderer === "bins (delta)") {
+    if (renderer === "scatterplot") {
+      return;
+    } else if (renderer === "bins (delta)") {
       bins = generator.getDifferenceBins();
     } else {
       if (orientation === "right") {

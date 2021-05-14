@@ -65,7 +65,7 @@
   }
 
   function render() {
-    if (canvasElement === undefined) {
+    if (!canvasElement) {
       return;
     }
 
