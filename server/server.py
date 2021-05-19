@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 
 RANDOM_DATASET_SIZE = 1000000
-RANDOM_DATASET_DIMENSIONS = 2
+RANDOM_DATASET_DIMENSIONS = 4
 RANDOM_SAMPLE = uniform(0, 1, RANDOM_DATASET_SIZE * RANDOM_DATASET_DIMENSIONS)
 RANDOM_DATASET = RANDOM_SAMPLE.reshape((RANDOM_DATASET_SIZE, RANDOM_DATASET_DIMENSIONS))
 
@@ -36,29 +36,39 @@ def produce_response_for_sample(sample_as_list):
   return response
 
 
+@app.route('/reset', methods=["GET"])
+def reset_samplings():
+  global sampling_a, sampling_b
+  sampling_a = np.zeros(RANDOM_DATASET_SIZE)
+  sampling_b = np.zeros(RANDOM_DATASET_SIZE)
+  return "ok"
+
+
 @app.route('/sample', methods=["GET"])
 def sample():
+  data = RANDOM_DATASET
+  indeces = np.array(range(0, len(data)))
+
   sample_size = int(request.args.get("size"))
   sampling = sampling_a if request.args.get("sample") == "a" else sampling_b
-  sampled = sampling.sum()
 
-  remaining_indeces = sampling == 0
-  remaining = remaining_indeces.sum()
+  remaining = data[sampling == 0]
+  remaining_indeces = indeces[sampling == 0]
 
-  if remaining == 0:
+  if remaining.size == 0:
     return produce_response_for_sample([])
 
-  sample_size = sample_size if sampled+sample_size < RANDOM_DATASET_SIZE else RANDOM_DATASET_SIZE-sampled
-  sample_size = int(sample_size)
+  already_sampled = sampling.sum()
+  sample_size = int(min(sample_size, len(data)-already_sampled))
 
-  sampled_indeces = random.sample(list(remaining_indeces), sample_size)
-  sampled_data = [RANDOM_DATASET[i].tolist() for i in sampled_indeces]
-  sampling[np.array(sampled_indeces)] = 1
+  sample_indeces = random.sample(remaining_indeces.tolist(), sample_size)
+  sample = data[sample_indeces]
+  sampling[sample_indeces] = 1
 
-  response = produce_response_for_sample(sampled_data)
+  response = produce_response_for_sample(sample.tolist())
 
   return response
 
 
 if __name__ == "__main__":
-  app.run()
+  app.run(debug=True)
