@@ -7,7 +7,7 @@ import random
 app = Flask(__name__)
 
 
-RANDOM_DATASET_SIZE = 1000000
+RANDOM_DATASET_SIZE = 12000
 RANDOM_DATASET_DIMENSIONS = 4
 RANDOM_SAMPLE = uniform(0, 1, RANDOM_DATASET_SIZE * RANDOM_DATASET_DIMENSIONS)
 RANDOM_DATASET = RANDOM_SAMPLE.reshape((RANDOM_DATASET_SIZE, RANDOM_DATASET_DIMENSIONS))
@@ -24,16 +24,19 @@ def hello_world():
   return 'Ok. Flask server successfully launched.'
 
 
+def create_response(payload):
+  response = jsonify(payload)
+  response.headers.add("Access-Control-Allow-Origin", "*")
+  return response
+
+
 def produce_response_for_sample(sample_as_list):
   payload = {
     "timestamp": str(datetime.now()),
     "sample": sample_as_list
   }
 
-  response = jsonify(payload)
-  response.headers.add("Access-Control-Allow-Origin", "*")
-
-  return response
+  return create_response(payload)
 
 
 @app.route('/reset', methods=["GET"])
@@ -41,7 +44,8 @@ def reset_samplings():
   global sampling_a, sampling_b
   sampling_a = np.zeros(RANDOM_DATASET_SIZE)
   sampling_b = np.zeros(RANDOM_DATASET_SIZE)
-  return "ok"
+
+  return create_response("ok")
 
 
 @app.route('/sample', methods=["GET"])
