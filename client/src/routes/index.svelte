@@ -1,5 +1,7 @@
 <script>
+  import { onMount } from 'svelte';
   import SplitView from '$lib/split-view.svelte';
+  import { reset } from '$lib/util/reset';
   import Tooltip from '$lib/widgets/tooltip.svelte';
 
   let innerWidth = 0;
@@ -23,6 +25,8 @@
     ? event.clientY - margin - tooltip.height
     : event.clientY + margin;
   }
+
+  onMount(reset);
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />
