@@ -1,11 +1,14 @@
 export type ViewType = "scatterplot" | "bins (absolute)" | "bins (delta)";
-export type LinearizationType = "knn" | "sort by attribute" | "z-order";
-export type SubdivisionType = "equal size" | "equal cardinality" | "equal density" | "equal attribute";
-export type SelectionType = "first" | "median" | "min/max" | "random";
+export type LinearizationType = "z-order" | "knn" | "strip" | "random";
+export type SubdivisionType = "standard" | "bucket_size";
+export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
 export type ProgressionState = "paused" | "running";
 
+export type PipelineId = "left" | "right";
+
 export type PipelineConfig = {
+  id: PipelineId,
   viewType: ViewType,
   linearization: LinearizationType,
   subdivision: SubdivisionType,

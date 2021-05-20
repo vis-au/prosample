@@ -11,6 +11,8 @@
   import ViewConfig from './widgets/view-config.svelte';
   import DataView from './data-view.svelte';
   import Toggle from './widgets/toggle.svelte';
+  import { sample, updatePipeline } from './util/requests';
+  import { selectedDataset } from './util/selected-dataset';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -22,31 +24,32 @@
   let samplingInterval = -1;
   let samplingRateValue = -1;
   let samplingAmountValue = -1;
+  let currentDataset = "mountain_peaks";
 
   samplingRate.subscribe(value => samplingRateValue = value);
   samplingAmount.subscribe(value => samplingAmountValue = value);
   viewConfig.subscribe(value => showCenter = value.showCenter);
+  selectedDataset.subscribe(value => currentDataset = value);
 
   $: plotWidth = innerWidth / (showCenter ? 3 : 2) - margin.horizontal;
   $: plotHeight = innerHeight - margin.vertical;
   $: viewConfig.set({ showCenter })
 
   const leftPipeline: PipelineConfig = {
+    id: "left",
     linearization: "knn",
     selection: "first",
-    subdivision: "equal attribute",
+    subdivision: "standard",
     viewType: "bins (absolute)"
   };
 
   const rightPipeline: PipelineConfig = {
+    id: "right",
     linearization: "knn",
     selection: "first",
-    subdivision: "equal attribute",
+    subdivision: "standard",
     viewType: "bins (absolute)"
   };
-
-  $: console.log(leftPipeline);
-  $: console.log(rightPipeline);
 
   // [random x, random y, random attribute]
   let rawA = [];
@@ -66,6 +69,9 @@
         window.clearInterval(samplingInterval);
       }
     });
+
+    updatePipeline(leftPipeline);
+    updatePipeline(rightPipeline);
   });
 
   $: sampleA = rawA.slice(0);
@@ -78,10 +84,10 @@
 
   function startSampling() {
     return window.setInterval(async () => {
-      const responseA = await fetch(`http://127.0.0.1:5000/sample?size=${samplingAmountValue}&sample=a`);
+      const responseA = await sample("left");
       const jsonA = await responseA.json();
 
-      const responseB = await fetch(`http://127.0.0.1:5000/sample?size=${samplingAmountValue}&sample=b`);
+      const responseB = await sample("right");
       const jsonB = await responseB.json();
 
       rawA = rawA.concat(jsonA.sample);

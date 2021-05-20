@@ -107,7 +107,7 @@ class BinGenerator {
   }
   public set primaryData(data: number[][]) {
     this._primaryData = data;
-    this._primaryBins = hexbinning(data.map(d => [d[0], d[1]]));
+    this._primaryBins = hexbinning(data.map(d => [d[1], d[2]]));
     primaryBins.set(this._primaryBins);
     this._primaryIndex = this.getIndexForBins(this._primaryBins);
   }
@@ -118,7 +118,7 @@ class BinGenerator {
 
   public set secondaryData(data: number[][]) {
     this._secondaryData = data;
-    this._secondaryBins = hexbinning(data.map(d => [d[0], d[1]]));
+    this._secondaryBins = hexbinning(data.map(d => [d[1], d[2]]));
     secondaryBins.set(this._secondaryBins);
     this._secondaryIndex = this.getIndexForBins(this._secondaryBins);
   }

@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import SplitView from '$lib/split-view.svelte';
-  import { reset } from '$lib/util/reset';
+  import { reset } from '$lib/util/requests';
   import Tooltip from '$lib/widgets/tooltip.svelte';
 
   let innerWidth = 0;
