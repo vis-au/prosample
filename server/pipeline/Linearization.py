@@ -14,7 +14,7 @@ class LinearizationZOrder(Linearization):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_to_read = str(current_folder) + '/linearization_files/' + data_set_name + 'LinearizationZOrder.csv'
+        file_to_read = current_folder / 'linearization_files' / (data_set_name + 'LinearizationZOrder.csv')
         linearization = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
         return linearization
 
@@ -23,7 +23,7 @@ class LinearizationNearestNeighbour(Linearization):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_to_read = str(current_folder) + 'linearization_files/' + data_set_name + 'LinearizationNN.csv'
+        file_to_read = current_folder / 'linearization_files' / (data_set_name + 'LinearizationNN.csv')
         linearization = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
         return linearization
 
@@ -32,7 +32,7 @@ class LinearizationStrip(Linearization):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_to_read = str(current_folder) + 'linearization_files/' + data_set_name + 'LinearizationStrip.csv'
+        file_to_read = current_folder / 'linearization_files' / (data_set_name + 'LinearizationStrip.csv')
         linearization = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
         return linearization
 
@@ -45,7 +45,7 @@ class LinearizationRandom(Linearization):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_to_read = str(current_folder) + 'linearization_files/' + data_set_name + 'LinearizationZOrder.csv'
+        file_to_read = current_folder / 'linearization_files' / (data_set_name + 'LinearizationZOrder.csv')
         linearization = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
         np.random.shuffle(linearization)
         return linearization
