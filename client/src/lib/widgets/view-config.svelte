@@ -4,13 +4,13 @@
   export let id = "0";
   export let orientation: "left" | "right" | "center" = "left";
   export let selectedViewType: ViewType = "scatterplot";
-  export let selectedSubdivisionType: SubdivisionType = "equal size";
+  export let selectedSubdivisionType: SubdivisionType = "standard";
   export let selectedSelectionType: SelectionType = "first";
   export let selectedLinearizationType: LinearizationType = "knn";
 
-  const linearizationTypes: LinearizationType[] = ["knn", "sort by attribute", "z-order"];
-  const subdivisionTypes: SubdivisionType[] = ["equal size", "equal cardinality", "equal density", "equal attribute"];
-  const selectionTypes: SelectionType[] = ["first", "median", "min/max", "random"];
+  const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
+  const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
+  const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
   const viewTypes: ViewType[] = ["scatterplot", "bins (absolute)", "bins (delta)"];
 </script>
 
