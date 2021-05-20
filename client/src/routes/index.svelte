@@ -10,7 +10,7 @@
   const margin = 30;
   const tooltip = {
     width: 150,
-    height: 80,
+    height: 60,
     x: 0,
     y: 0,
     data: {

@@ -1,4 +1,6 @@
 <script lang="typescript">
+  import { scaleDiverging } from "d3-scale";
+  import { interpolatePiYG } from "d3-scale-chromatic";
   import { hoveredPosition } from "$lib/state/hovered-position";
   import { generator } from "$lib/util/bin-generator";
 
@@ -12,10 +14,16 @@
     secondary: [number, number][]
   };
 
+  const color = scaleDiverging(interpolatePiYG).domain([-1, 0, 1]);
+
   $: left = data.primary?.length || 0;
-  $: right = data.secondary?.length || 0;
-  $: diff = Math.abs(left - right);
-  $: percentage = Math.floor((diff / Math.max(left, right)) * 100000) / 1000;
+  $: right = data.secondary?.length || 1;
+  $: diff = left - right;
+  $: percentage = diff / Math.max(left, right);
+
+  let labelMargin = 50;
+  let plotHeight = 25;
+  $: plotWidth = width - labelMargin;
 
   hoveredPosition.subscribe(value => {
     if (value[1] < 0) {
@@ -31,18 +39,20 @@
 
 { #if active }
 <div class="tooltip" style="left:{x}px;top:{y}px;width:{width}px;height:{height}px;">
-  <div class="left">
-    <span>left:</span>
-    <span>{ left }</span>
-  </div>
-  <div class="right">
-    <span>right:</span>
-    <span>{ right }</span>
-  </div>
-  <hr/>
-  <div class="diff">
-    <span>diff:</span>
-    <span>{ percentage }%</span>
+  <h1>Sampling Difference</h1>
+  <div class="top">
+    <span class="left {left>right?"greater":""}">{ left }</span>
+    <svg class="difference-bar-canvas" width={ plotWidth } height={ plotHeight }>
+      <rect
+      class="difference-bar"
+      width={ Math.abs(percentage * (plotWidth / 2)) }
+      height={ plotHeight }
+      x={ percentage > 0 ? plotWidth / 2 : ((1+percentage) * plotWidth/2) }
+      fill={ color(percentage) }
+      />
+      <text class="diff" x={ plotWidth / 2 } y={ plotHeight / 2+5 } style="text-anchor:middle">{ Math.abs(Math.round(percentage*100)) }%</text>
+    </svg>
+    <span class="right {right>left?"greater":""}">{ right }</span>
   </div>
 </div>
 { /if }
@@ -55,12 +65,27 @@
     border: 1px solid black;
     overflow: auto;
   }
-  div.tooltip div {
+  div.tooltip h1 {
+    font-size: 11pt;
+    margin: 5px 0;
+  }
+  div.tooltip div.top {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+    font-size: 12px;
   }
-  div.tooltip div.diff {
+  div.tooltip div.top .greater {
     font-weight: bold;
+  }
+  div.tooltip div.top .right {
+    text-anchor: end;
+  }
+  div.tooltip svg.difference-bar-canvas {
+    border: 1px solid black;
+  }
+  div.tooltip svg.difference-bar-canvas rect.difference-bar {
+    fill-opacity: 0.73;
   }
 </style>
