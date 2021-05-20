@@ -1,22 +1,12 @@
+from flask import Flask, abort, jsonify, request
 from datetime import datetime
-from flask import Flask, jsonify, request
-import numpy as np
-from numpy.random import uniform
-import random
+from pipeline import Pipeline
 
 app = Flask(__name__)
 
 
-RANDOM_DATASET_SIZE = 12000
-RANDOM_DATASET_DIMENSIONS = 4
-RANDOM_SAMPLE = uniform(0, 1, RANDOM_DATASET_SIZE * RANDOM_DATASET_DIMENSIONS)
-RANDOM_DATASET = RANDOM_SAMPLE.reshape((RANDOM_DATASET_SIZE, RANDOM_DATASET_DIMENSIONS))
-
-indexes = np.arange(0, RANDOM_DATASET_SIZE)
-
-# vectors indicating, which elements of the random dataset have already been sampled
-sampling_a = np.zeros(RANDOM_DATASET_SIZE)
-sampling_b = np.zeros(RANDOM_DATASET_SIZE)
+# stores Pipeline objects, as specified by the client using pipeline configurations
+PIPELINES = {}
 
 
 @app.route('/')
@@ -39,39 +29,59 @@ def produce_response_for_sample(sample_as_list):
   return create_response(payload)
 
 
+@app.route('/create_pipeline/<id>', methods=["PUT"])
+def create_pipeline(id):
+  configuration = request.args.get("configuration")
+  pipeline = Pipeline(configuration)
+
+  PIPELINES[str(id)] = pipeline
+  return "ok"
+
+
+@app.route('/update_pipeline/<id>', methods=["PUT"])
+def update_pipeline(id):
+  old_pipeline = PIPELINES.get(id)
+
+  if old_pipeline == None:
+      create_pipeline(id)
+
+  configuration = request.args.get("configuration")
+  pipeline = Pipeline(configuration)
+
+  PIPELINES[id] = pipeline
+  return "ok"
+
+
+@app.route('/set_selection/<id>', methods=["PUT"])
+def set_selection(id):
+  pipeline = PIPELINES.get(id)
+
+  if pipeline == None:
+    print("couldn't find pipeline with id", id)
+    abort(400)
+
+  selection = request.args.get("selection")
+  pipeline.update_selection(selection)
+  return "ok"
+
+
+@app.route('/sample/<id>', methods=["GET"])
+def sample(id):
+  pipeline = PIPELINES.get(id)
+
+  if pipeline == None:
+      print("couldn't find pipeline with id", id)
+      abort(400)
+
+  next_chunk = pipeline.get_next_chunk()
+  return produce_response_for_sample(next_chunk.tolist())
+
+
 @app.route('/reset', methods=["GET"])
-def reset_samplings():
-  global sampling_a, sampling_b
-  sampling_a = np.zeros(RANDOM_DATASET_SIZE)
-  sampling_b = np.zeros(RANDOM_DATASET_SIZE)
-
-  return create_response("ok")
-
-
-@app.route('/sample', methods=["GET"])
-def sample():
-  data = RANDOM_DATASET
-  indeces = np.array(range(0, len(data)))
-
-  sample_size = int(request.args.get("size"))
-  sampling = sampling_a if request.args.get("sample") == "a" else sampling_b
-
-  remaining = data[sampling == 0]
-  remaining_indeces = indeces[sampling == 0]
-
-  if remaining.size == 0:
-    return produce_response_for_sample([])
-
-  already_sampled = sampling.sum()
-  sample_size = int(min(sample_size, len(data)-already_sampled))
-
-  sample_indeces = random.sample(remaining_indeces.tolist(), sample_size)
-  sample = data[sample_indeces]
-  sampling[sample_indeces] = 1
-
-  response = produce_response_for_sample(sample.tolist())
-
-  return response
+def reset_pipelines():
+  global PIPELINES
+  PIPELINES = {}
+  return "ok"
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from server.pipeline import *
+from pipeline import *
 
 # Dataset, Linearization and Subdivision is chosen once
 data = MOUNTAIN_PEAKS
