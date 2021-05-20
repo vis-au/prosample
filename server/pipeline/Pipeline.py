@@ -26,7 +26,7 @@ class Pipeline:
       return None
 
     self.linearization = lin_class()
-    self.subdivision = sub_class(0.1)
+    self.subdivision = sub_class(0.01)
 
     return Sampler(data, self.linearization, self.subdivision)
 

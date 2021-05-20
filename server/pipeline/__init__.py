@@ -3,3 +3,4 @@ from .Linearization import *
 from .Subdivision import *
 from .Selection import *
 from .Sampler import *
+from .Pipeline import *
