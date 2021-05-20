@@ -9,6 +9,7 @@ class Sampler:
         self.pre_processing()
 
     def pre_processing(self):
+        print("preprocessing pipeline ...")
         linearization = self.linearization_frame.read_linearization(self.data_set_name)
         self.subdivision_frame.load_linearization(linearization)
         subdivision = self.subdivision_frame.subdivide()
