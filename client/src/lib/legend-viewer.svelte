@@ -1,12 +1,10 @@
 <script lang="typescript">
   import { range } from "d3-array";
-  import type { ScaleSequential } from "d3-scale";
-  import { scaleSequential, scaleLinear } from "d3-scale";
-  import { interpolateViridis } from "d3-scale-chromatic";
-  import { afterUpdate } from "svelte";
+  import type { ScaleDiverging, ScaleSequential } from "d3-scale";
+  import { scaleLinear } from "d3-scale";
 
   export let id: string = "id";
-  export let color: ScaleSequential<string, never> = scaleSequential(interpolateViridis);
+  export let color: ScaleSequential<string, never> | ScaleDiverging<string, never>;
   export let title: string;
   export let left: number = 0;
   export let top: number = 0;
@@ -26,14 +24,8 @@
     .domain([0, steps])
     .range([margin, height - margin]);
 
-  let domain = [0, 1];
-
-  $: values = range(domain[0], domain[1], Math.abs(domain[0] - domain[1]) / steps);
-
-  afterUpdate(() => {
-    domain = color.domain();
-  });
-
+  $: domain = color.domain();
+  $: values = range(domain[0], domain[domain.length - 1], Math.abs(domain[0] - domain[domain.length - 1]) / steps);
 </script>
 
 <svg

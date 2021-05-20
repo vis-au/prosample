@@ -1,6 +1,6 @@
 <script lang="typescript">
   import type { HexbinBin } from "d3-hexbin";
-  import { scaleSequential } from "d3-scale";
+  import { scaleDiverging, scaleSequential } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
 
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
@@ -19,9 +19,9 @@
   export let dataset: number[][];
   export let zoomable: boolean = false;
 
-  $: color = renderer !== "bins (delta)"
-    ? scaleSequential(interpolateViridis)
-    : scaleSequential(interpolatePiYG);
+  $: color = renderer === "bins (delta)"
+    ? scaleDiverging(interpolatePiYG)
+    : scaleSequential(interpolateViridis);
 
   let bins: HexbinBin<[number, number]>[] = [];
 
