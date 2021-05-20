@@ -47,7 +47,12 @@
 
     const minCount = (min(bins, d => (d as Array<any>).length) || 0);
     const maxCount = (max(bins, d => (d as Array<any>).length) || 1);
-    color.domain([minCount, maxCount]);
+
+    if (color.range().length === 3) {
+      color.domain([minCount, 0, maxCount]);
+    } else {
+      color.domain([minCount, maxCount]);
+    }
 
     renderBins(ctx, hexagonPath);
   }
