@@ -38,7 +38,7 @@
     layers = [
       new ScatterplotLayer({
         id: `${id}-layer`,
-        getPosition: d => [d[0] * width, d[1] * height],
+        getPosition: d => [d[1] * width, d[2] * height],
         getRadius: radius,
         getLineWidth: 0,
         opacity: 0.3,
