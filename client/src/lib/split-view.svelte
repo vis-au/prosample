@@ -1,18 +1,19 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
+  import DataView from './data-view.svelte';
   import { samplingRate } from './state/sampling-rate';
   import { samplingAmount } from './state/sampling-amount';
-  import type { PipelineConfig } from './util/types';
   import { samplingTotal } from './state/sampling-total';
   import { progressionState } from './state/progression-state';
+  import { leftPipeline, rightPipeline } from './state/pipelines';
   import { viewConfig } from './state/view-config';
-  import { generator } from './util/bin-generator';
   import { hoveredPosition } from './state/hovered-position';
-  import ViewConfig from './widgets/view-config.svelte';
-  import DataView from './data-view.svelte';
-  import Toggle from './widgets/toggle.svelte';
+  import { generator } from './util/bin-generator';
   import { sample, updatePipeline } from './util/requests';
   import { selectedDataset } from './util/selected-dataset';
+  import type { PipelineConfig } from './util/types';
+  import ViewConfig from './widgets/view-config.svelte';
+  import Toggle from './widgets/toggle.svelte';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -25,31 +26,19 @@
   let samplingRateValue = -1;
   let samplingAmountValue = -1;
   let currentDataset = "mountain_peaks";
+  let leftConfiguration: PipelineConfig = null;
+  let rightConfiguration: PipelineConfig = null;
 
   samplingRate.subscribe(value => samplingRateValue = value);
   samplingAmount.subscribe(value => samplingAmountValue = value);
   viewConfig.subscribe(value => showCenter = value.showCenter);
   selectedDataset.subscribe(value => currentDataset = value);
+  leftPipeline.subscribe(value => leftConfiguration = value);
+  rightPipeline.subscribe(value => rightConfiguration = value);
 
   $: plotWidth = innerWidth / (showCenter ? 3 : 2) - margin.horizontal;
   $: plotHeight = innerHeight - margin.vertical;
   $: viewConfig.set({ showCenter })
-
-  const leftPipeline: PipelineConfig = {
-    id: "left",
-    linearization: "knn",
-    selection: "first",
-    subdivision: "standard",
-    viewType: "bins (absolute)"
-  };
-
-  const rightPipeline: PipelineConfig = {
-    id: "right",
-    linearization: "knn",
-    selection: "first",
-    subdivision: "standard",
-    viewType: "bins (absolute)"
-  };
 
   // [random x, random y, random attribute]
   let rawA = [];
@@ -70,8 +59,18 @@
       }
     });
 
-    updatePipeline(leftPipeline);
-    updatePipeline(rightPipeline);
+    updatePipeline(leftConfiguration).then(() => {
+      leftPipeline.update(config => {
+        config.ready = true;
+        return config;
+      });
+    });
+    updatePipeline(rightConfiguration).then(() => {
+      rightPipeline.update(config => {
+        config.ready = true;
+        return config;
+      });
+    });
   });
 
   $: sampleA = rawA.slice(0);
@@ -104,14 +103,7 @@
 
 <div class="split-view">
   <div class="config" on:mouseenter={ hideTooltip }>
-    <ViewConfig
-      id="A"
-      orientation="left"
-      bind:selectedViewType={ leftPipeline.viewType }
-      bind:selectedSubdivisionType={ leftPipeline.subdivision }
-      bind:selectedLinearizationType={ leftPipeline.linearization }
-      bind:selectedSelectionType={ leftPipeline.selection }
-    />
+    <ViewConfig id="A" orientation="left" />
     <div class="center-config" style="min-width:{showCenter?plotWidth+margin.horizontal:50}px">
       <Toggle
         id="center-view-toggle"
@@ -121,14 +113,7 @@
         style="width:25px; height:25px; line-height:25px;"
       />
     </div>
-    <ViewConfig
-      id="B"
-      orientation="right"
-      bind:selectedViewType={ rightPipeline.viewType }
-      bind:selectedSubdivisionType={ rightPipeline.subdivision }
-      bind:selectedLinearizationType={ rightPipeline.linearization }
-      bind:selectedSelectionType={ rightPipeline.selection }
-    />
+    <ViewConfig id="B" orientation="right" />
   </div>
   <div class="data">
     <DataView
@@ -137,7 +122,7 @@
       height={ plotHeight }
       orientation={ "left" }
       dataset={ sampleA }
-      bind:renderer={ leftPipeline.viewType }
+      bind:renderer={ leftConfiguration.viewType }
     />
     <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
       { #if showCenter }
@@ -157,7 +142,7 @@
       height={ plotHeight }
       orientation={ "right" }
       dataset={ sampleB }
-      bind:renderer={ rightPipeline.viewType }
+      bind:renderer={ rightConfiguration.viewType }
     />
   </div>
 </div>

@@ -9,6 +9,7 @@ export type PipelineId = "left" | "right";
 
 export type PipelineConfig = {
   id: PipelineId,
+  ready: boolean,
   viewType: ViewType,
   linearization: LinearizationType,
   subdivision: SubdivisionType,
