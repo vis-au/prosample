@@ -19,8 +19,10 @@
   $: left = data.primary?.length || 0;
   $: right = data.secondary?.length || 0;
   $: diff = left - right;
-  $: percentage = left === 0 && right === 0 ? 0 : diff / Math.max(left, right);
+  $: percentage = left === 0 && right === 0 ? 0 : diff / -Math.max(left, right);
 
+  let diffLabel: SVGTextElement;
+  $: diffLabelWidth = diffLabel?.getBoundingClientRect().width;
   let labelMargin = 50;
   let plotHeight = 25;
   $: plotWidth = width - labelMargin;
@@ -51,7 +53,15 @@
       x={ percentage > 0 ? plotWidth / 2 : ((1+percentage) * plotWidth/2) }
       fill={ color(percentage) }
       />
-      <text class="diff" x={ plotWidth / 2 } y={ plotHeight / 2+5 } style="text-anchor:middle">{ Math.abs(Math.round(percentage*100)) }%</text>
+      <rect
+        class="background"
+        x={ plotWidth / 2 - diffLabelWidth * 0.625 }
+        width={ diffLabelWidth * 1.25 }
+        height={ plotHeight * 0.6}
+        y={ plotHeight * 0.2 }
+        fill="rgba(255,255,255,0.7)"
+      />
+      <text class="diff" x={ plotWidth / 2 } y={ plotHeight / 2+5 } style="text-anchor:middle" bind:this={ diffLabel }>{ Math.abs(Math.round(percentage*100)) }%</text>
     </svg>
     <span class="right {right>left?"greater":""}">{ right }</span>
   </div>

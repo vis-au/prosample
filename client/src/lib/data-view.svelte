@@ -26,8 +26,10 @@
     : orientation === "left" ? $primaryData : $secondaryData;
 
   $: bins = orientation === "center"
-    ? generator.getDifferenceBins()
+    ? generator.getDifferenceBins(true)
     : orientation === "left" ? $primaryBins : $secondaryBins;
+
+  $: console.log(generator.getDifferenceBins(true));
 
   $: renderer = $pipeline?.viewType;
   $: color = orientation === "center"

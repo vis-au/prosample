@@ -1,6 +1,7 @@
 <script lang="typescript">
   import { max, min } from 'd3-array';
   import type { HexbinBin } from 'd3-hexbin';
+  import type { ScaleDiverging, ScaleSequential } from 'd3-scale';
   import { scaleLinear } from 'd3-scale';
   import { afterUpdate } from 'svelte';
   import { hexagon, hexbinning } from './util/bin-generator';
@@ -9,16 +10,16 @@
   export let id: string;
   export let width = 100;
   export let height = 100;
-  export let color: any;
+  export let color: ScaleDiverging<string, never> | ScaleSequential<string, never>;
   export let bins: HexbinBin<[number, number]>[];
 
-  let canvasElement;
+  let canvasElement: HTMLCanvasElement;
 
   $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
   $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
 
 
-  function renderBins(ctx: any, hexagonPath: any) {
+  function renderBins(ctx: CanvasRenderingContext2D, hexagonPath: Path2D) {
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.strokeStyle="rgba(255,255,255,1)";
@@ -45,10 +46,11 @@
     const ctx = canvasElement.getContext("2d");
     const hexagonPath = new Path2D(hexagon);
 
-    const minCount = (min(bins, d => (d as Array<any>).length) || 0);
-    const maxCount = (max(bins, d => (d as Array<any>).length) || 1);
+    const minCount = (min(bins, d => d.length) || 0);
+    const maxCount = (max(bins, d => d.length) || 1);
 
     if (color.range().length === 3) {
+      console.log(minCount, maxCount)
       color.domain([minCount, 0, maxCount]);
     } else {
       color.domain([minCount, maxCount]);
