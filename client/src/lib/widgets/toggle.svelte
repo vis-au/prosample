@@ -1,4 +1,4 @@
-<script>
+<script lang="typescript">
   export let id = "my-toggle";
   export let active = true;
   export let disabled = false;
@@ -8,13 +8,14 @@
   export let activeText;
   export let passiveText;
   export let disabledText = "";
+  export let theme: "dark" | "light" = "light";
 
   $: checked = active && !disabled
 </script>
 
 <label
   id={id}
-  class="toggle {active ? "active" : ""} {disabled ? "disabled" : ""}"
+  class="toggle {active ? "active" : ""} {disabled ? "disabled" : ""} { theme }"
   for="{id}-toggle"
   title={ disabled ? title : disabledTitle }>
 
@@ -39,8 +40,6 @@
   label.toggle .toggle-text {
     border: 2px solid black;
     border-radius: 2px;
-    background: white;
-    color: black;
     font-weight: bold;
     text-align: center;
     padding: 0;
@@ -49,13 +48,25 @@
     cursor: pointer;
     transition: background-color 0.1s ease-in-out;
   }
-  label.toggle.disabled .toggle-text {
-    color: grey;
+  label.toggle.light .toggle-text {
+    background: white;
+    color: black;
+    border-color: black;
   }
-  label.toggle .toggle-text:hover {
+  label.toggle.dark .toggle-text {
+    background: #00c700;
+    color: white;
+  }
+  label.toggle.disabled .toggle-text {
+    opacity: 0.4;
+  }
+  label.toggle.light .toggle-text:hover {
     background: #eee;
   }
-  label.toggle.disabled .toggle-text:hover {
+  label.toggle.dark .toggle-text:hover {
+    background: #00da00;
+  }
+  label.toggle.light.disabled .toggle-text:hover {
     background: white;
   }
   label.toggle input {
