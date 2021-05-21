@@ -122,7 +122,6 @@
       height={ plotHeight }
       orientation={ "left" }
       dataset={ sampleA }
-      bind:renderer={ leftConfiguration.viewType }
     />
     <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
       { #if showCenter }
@@ -132,7 +131,6 @@
           height={ plotHeight }
           orientation={ "center" }
           dataset={ sampleA }
-          renderer={ "bins (delta)" }
         />
       { /if }
     </div>
@@ -142,7 +140,6 @@
       height={ plotHeight }
       orientation={ "right" }
       dataset={ sampleB }
-      bind:renderer={ rightConfiguration.viewType }
     />
   </div>
 </div>

@@ -1,32 +1,26 @@
 <script lang="typescript">
   import { leftPipeline, rightPipeline } from "$lib/state/pipelines";
-  import type { LinearizationType, PipelineConfig, SelectionType, SubdivisionType, ViewType } from "../util/types";
+  import type { LinearizationType, SelectionType, SubdivisionType } from "../util/types";
 
   export let id = "0";
-  export let orientation: "left" | "right" | "center" = "left";
+  export let orientation: "left" | "right";
 
-  let configuration: PipelineConfig = null;
-
-  $: pipeline = orientation === "left" ? leftPipeline : rightPipeline;
-  $: pipeline.set(configuration);
-  $: pipeline.subscribe(value => configuration = value);
-
+  $: pipeline = orientation === "left" ? $leftPipeline : $rightPipeline;
   const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
   const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
   const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
-  const viewTypes: ViewType[] = ["scatterplot", "bins (absolute)", "bins (delta)"];
 </script>
 
 <div class="pipeline-config-view {orientation}">
   <div class="title">
     <h1>Pipeline Configuration {id}</h1>
-    <div class="status { configuration.ready ? "ready" : "" }" title="{ !configuration.ready ? "not " : "" }ready"></div>
+    <div class="status { pipeline.ready ? "ready" : "" }" title="{ !pipeline.ready ? "not " : "" }ready"></div>
   </div>
   <div class="configuration">
     <div class="pipeline">
       <label for="{id}-linearization">
         <span title="linearization">Lin.</span>
-        <select id="{id}-linearization" name="{id}-linearization" bind:value={ configuration.linearization }>
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ pipeline.linearization }>
           { #each linearizationTypes as type }
           <option>{ type } </option>
           { /each }
@@ -34,7 +28,7 @@
       </label>
       <label for="{id}-subdivision">
         <span title="subdivision">Sub.</span>
-        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ configuration.subdivision }>
+        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ pipeline.subdivision }>
           { #each subdivisionTypes as type }
             <option>{ type } </option>
           { /each }
@@ -42,19 +36,9 @@
       </label>
       <label for="{id}-selection">
         <span title="selection">Sel.</span>
-        <select id="{id}-selection" name="{id}-selection" bind:value={ configuration.selection }>
+        <select id="{id}-selection" name="{id}-selection" bind:value={ pipeline.selection }>
           { #each selectionTypes as type }
             <option>{ type } </option>
-          { /each }
-        </select>
-      </label>
-    </div>
-    <div class="view">
-      <label for="{id}-view">
-        <span>View</span>
-        <select id="{id}-view" name="{id}-view" bind:value={ configuration.viewType }>
-          { #each viewTypes as type }
-            <option>{ type }</option>
           { /each }
         </select>
       </label>

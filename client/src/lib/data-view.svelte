@@ -6,19 +6,24 @@
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
+  import { leftPipeline, rightPipeline } from "./state/pipelines";
   import { generator, primaryBins, secondaryBins } from "./util/bin-generator";
-  import type { ViewType } from "./util/types";
+  import Alternatives from "./widgets/alternatives.svelte";
   import ZoomOverlay from "./zoom-overlay.svelte";
 
 
-  export let renderer: ViewType = "scatterplot";
   export let id = "left";
-  export let orientation: "left" | "right" | "center" = "left";
+  export let orientation: "left" | "right" | "center";
   export let width = 250;
   export let height = 100;
   export let dataset: number[][];
   export let zoomable: boolean = false;
 
+  const pipeline = orientation === "left"
+    ? leftPipeline
+    : orientation === "right" ? rightPipeline : null;
+
+  $: renderer = $pipeline?.viewType;
   $: color = renderer === "bins (delta)"
     ? scaleDiverging(interpolatePiYG)
     : scaleSequential(interpolateViridis);
@@ -91,10 +96,38 @@
       width={ 200 }
     />
   { /if }
+  { #if pipeline !== null }
+    <Alternatives
+      name="{orientation}-renderer"
+      alternatives={ ["bins (absolute)", "scatterplot"] }
+      bind:activeAlternative={ $pipeline.viewType }
+    />
+  { /if }
 </div>
 
 <style>
   div.data-view {
     position: relative;
+  }
+  :global(div.data-view .alternatives) {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  :global(div.data-view .alternatives .alternative) {
+    width: 10px;
+    height: 10px;
+    background: white;
+    overflow: hidden;
+    margin: 0 5px;
+    border: 2px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  :global(div.data-view .alternatives .alternative.active) {
+    background: black;
+  }
+  :global(div.data-view .alternatives .alternative > *) {
+    display: none;
   }
 </style>
