@@ -77,12 +77,12 @@
     width: 10px;
     height: 10px;
     background: firebrick;
-    border: 1px solid white;
+    border: none;
     border-radius: 10px;
-    margin-left: 5px;
+    margin-left: 10px;
   }
   div.pipeline-config-view .title .status.ready {
-    background: teal;
+    background: limegreen;
   }
   div.pipeline-config-view .configuration {
     display: flex;
