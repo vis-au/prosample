@@ -7,7 +7,7 @@
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-gl-view.svelte";
   import { leftPipeline, rightPipeline } from "./state/pipelines";
-  import { generator, primaryBins, secondaryBins } from "./util/bin-generator";
+  import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
   import ZoomOverlay from "./zoom-overlay.svelte";
 
@@ -16,42 +16,24 @@
   export let orientation: "left" | "right" | "center";
   export let width = 250;
   export let height = 100;
-  export let dataset: number[][];
   export let zoomable: boolean = false;
 
   const pipeline = orientation === "left"
     ? leftPipeline
     : orientation === "right" ? rightPipeline : null;
 
+  $: dataset = orientation === "center"
+    ? null
+    : orientation === "left" ? $primaryData : $secondaryData;
+
+  $: bins = orientation === "center"
+    ? generator.getDifferenceBins()
+    : orientation === "left" ? $primaryBins : $secondaryBins;
+
   $: renderer = $pipeline?.viewType;
-  $: color = renderer === "bins (delta)"
+  $: color = orientation === "center"
     ? scaleDiverging(interpolatePiYG)
     : scaleSequential(interpolateViridis);
-
-  let bins: HexbinBin<[number, number]>[] = [];
-
-  primaryBins.subscribe(value => {
-    if (renderer === "scatterplot") {
-      return;
-    } else if (renderer === "bins (delta)") {
-      bins = generator.getDifferenceBins();
-    } else {
-      if (orientation === "left") {
-        bins = value;
-      }
-    }
-  });
-  secondaryBins.subscribe(value => {
-    if (renderer === "scatterplot") {
-      return;
-    } else if (renderer === "bins (delta)") {
-      bins = generator.getDifferenceBins();
-    } else {
-      if (orientation === "right") {
-        bins = value;
-      }
-    }
-  });
 </script>
 
 <div class="data-view" style="width: {width}px; height: {height}px">

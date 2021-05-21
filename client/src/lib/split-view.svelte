@@ -1,98 +1,19 @@
 <script lang="typescript">
-  import { onMount } from 'svelte';
   import DataView from './data-view.svelte';
-  import { samplingRate } from './state/sampling-rate';
-  import { samplingAmount } from './state/sampling-amount';
-  import { samplingTotal } from './state/sampling-total';
-  import { progressionState } from './state/progression-state';
-  import { leftPipeline, rightPipeline } from './state/pipelines';
   import { viewConfig } from './state/view-config';
   import { hoveredPosition } from './state/hovered-position';
-  import { generator } from './util/bin-generator';
-  import { sample, updatePipeline } from './util/requests';
-  import { selectedDataset } from './util/selected-dataset';
-  import type { PipelineConfig } from './util/types';
   import ViewConfig from './widgets/view-config.svelte';
   import Toggle from './widgets/toggle.svelte';
 
   let innerWidth = 500;
   let innerHeight = 350;
-  let showCenter = true;
   let margin = {
-    horizontal: showCenter ? 2 : 0,
+    horizontal: 2,
     vertical: 125
   };
-  let samplingInterval = -1;
-  let samplingRateValue = -1;
-  let samplingAmountValue = -1;
-  let currentDataset = "mountain_peaks";
-  let leftConfiguration: PipelineConfig = null;
-  let rightConfiguration: PipelineConfig = null;
 
-  samplingRate.subscribe(value => samplingRateValue = value);
-  samplingAmount.subscribe(value => samplingAmountValue = value);
-  viewConfig.subscribe(value => showCenter = value.showCenter);
-  selectedDataset.subscribe(value => currentDataset = value);
-  leftPipeline.subscribe(value => leftConfiguration = value);
-  rightPipeline.subscribe(value => rightConfiguration = value);
-
-  $: plotWidth = innerWidth / (showCenter ? 3 : 2) - margin.horizontal;
+  $: plotWidth = innerWidth / ($viewConfig.showCenter ? 3 : 2) - margin.horizontal;
   $: plotHeight = innerHeight - margin.vertical;
-  $: viewConfig.set({ showCenter })
-
-  // [random x, random y, random attribute]
-  let rawA = [];
-  let rawB = [];
-
-  onMount(() => {
-    samplingRate.subscribe(value => {
-      samplingRateValue = value;
-      window.clearInterval(samplingInterval);
-      samplingInterval = startSampling();
-    });
-
-    progressionState.subscribe(value => {
-      if (value === "running") {
-        samplingInterval = startSampling();
-      } else {
-        window.clearInterval(samplingInterval);
-      }
-    });
-
-    updatePipeline(leftConfiguration).then(() => {
-      leftPipeline.update(config => {
-        config.ready = true;
-        return config;
-      });
-    });
-    updatePipeline(rightConfiguration).then(() => {
-      rightPipeline.update(config => {
-        config.ready = true;
-        return config;
-      });
-    });
-  });
-
-  $: sampleA = rawA.slice(0);
-  $: sampleB = rawB.slice(0);
-
-  $: generator.primaryData = sampleA || [];
-  $: generator.secondaryData = sampleB || [];
-
-  $: samplingTotal.set(sampleA.length);
-
-  function startSampling() {
-    return window.setInterval(async () => {
-      const responseA = await sample("left");
-      const jsonA = await responseA.json();
-
-      const responseB = await sample("right");
-      const jsonB = await responseB.json();
-
-      rawA = rawA.concat(jsonA.sample);
-      rawB = rawB.concat(jsonB.sample);
-    }, samplingRateValue);
-  }
 
   function hideTooltip() {
     hoveredPosition.set([-1, -1]);
@@ -104,10 +25,10 @@
 <div class="split-view">
   <div class="config" on:mouseenter={ hideTooltip }>
     <ViewConfig id="A" orientation="left" />
-    <div class="center-config" style="min-width:{showCenter?plotWidth+margin.horizontal:50}px">
+    <div class="center-config" style="min-width:{$viewConfig.showCenter?plotWidth+margin.horizontal:50}px">
       <Toggle
         id="center-view-toggle"
-        bind:active={ showCenter }
+        bind:active={ $viewConfig.showCenter }
         activeText="-"
         passiveText="+"
         style="width:25px; height:25px; line-height:25px;"
@@ -121,16 +42,14 @@
       width={ plotWidth }
       height={ plotHeight }
       orientation={ "left" }
-      dataset={ sampleA }
     />
     <div class="vertical-line" style="min-height:{plotHeight}px;border-left:1px solid black;border-right:1px solid black">
-      { #if showCenter }
+      { #if $viewConfig.showCenter }
         <DataView
           id={ "center" }
           width={ plotWidth }
           height={ plotHeight }
           orientation={ "center" }
-          dataset={ sampleA }
         />
       { /if }
     </div>
@@ -139,7 +58,6 @@
       width={ plotWidth }
       height={ plotHeight }
       orientation={ "right" }
-      dataset={ sampleB }
     />
   </div>
 </div>

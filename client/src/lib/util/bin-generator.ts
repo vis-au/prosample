@@ -9,6 +9,9 @@ export const hexagon = hexbinning.hexagon();
 export const primaryBins = writable([] as HexbinBin<[number, number]>[]);
 export const secondaryBins = writable([] as HexbinBin<[number, number]>[]);
 
+export const primaryData = writable([] as number[][]);
+export const secondaryData = writable([] as number[][]);
+
 
 class BinGenerator {
   private _primaryData: number[][] = [];
@@ -107,6 +110,7 @@ class BinGenerator {
   }
   public set primaryData(data: number[][]) {
     this._primaryData = data;
+    primaryData.set(data);
     this._primaryBins = hexbinning(data.map(d => [d[1], d[2]]));
     primaryBins.set(this._primaryBins);
     this._primaryIndex = this.getIndexForBins(this._primaryBins);
@@ -118,6 +122,7 @@ class BinGenerator {
 
   public set secondaryData(data: number[][]) {
     this._secondaryData = data;
+    secondaryData.set(data);
     this._secondaryBins = hexbinning(data.map(d => [d[1], d[2]]));
     secondaryBins.set(this._secondaryBins);
     this._secondaryIndex = this.getIndexForBins(this._secondaryBins);

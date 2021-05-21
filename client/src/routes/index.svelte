@@ -1,8 +1,12 @@
 <script>
   import { onMount } from 'svelte';
   import SplitView from '$lib/split-view.svelte';
-  import { reset } from '$lib/util/requests';
+  import { reset, sample, updatePipeline } from '$lib/util/requests';
   import Tooltip from '$lib/widgets/tooltip.svelte';
+  import { leftPipeline, rightPipeline } from '$lib/state/pipelines';
+  import { samplingRate } from '$lib/state/sampling-rate';
+  import { progressionState } from '$lib/state/progression-state';
+  import { generator } from '$lib/util/bin-generator';
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -19,14 +23,67 @@
     }
   };
 
+  let samplingInterval = -1;
+
+  // [random x, random y, random attribute]
+  let rawA = [];
+  let rawB = [];
+
+  $: sampleA = rawA.slice(0);
+  $: sampleB = rawB.slice(0);
+
+  $: generator.primaryData = sampleA || [];
+  $: generator.secondaryData = sampleB || [];
+
+  onMount(async () => {
+    await reset();
+
+    updatePipeline($leftPipeline).then(() => {
+      leftPipeline.update(config => {
+        config.ready = true;
+        return config;
+      });
+    });
+    updatePipeline($rightPipeline).then(() => {
+      rightPipeline.update(config => {
+        config.ready = true;
+        return config;
+      });
+    });
+
+    samplingRate.subscribe(() => {
+      window.clearInterval(samplingInterval);
+      samplingInterval = startSampling();
+    });
+
+    progressionState.subscribe(value => {
+      if (value === "running") {
+        samplingInterval = startSampling();
+      } else {
+        window.clearInterval(samplingInterval);
+      }
+    });
+  });
+
+  function startSampling() {
+    return window.setInterval(async () => {
+      const responseA = await sample("left");
+      const jsonA = await responseA.json();
+
+      const responseB = await sample("right");
+      const jsonB = await responseB.json();
+
+      rawA = rawA.concat(jsonA.sample);
+      rawB = rawB.concat(jsonB.sample);
+    }, $samplingRate);
+  }
+
   function onMouseMove(event) {
     tooltip.x = Math.min(event.clientX + margin, innerWidth - tooltip.width - margin);
     tooltip.y = event.clientY + margin > innerHeight - tooltip.height - margin
     ? event.clientY - margin - tooltip.height
     : event.clientY + margin;
   }
-
-  onMount(reset);
 </script>
 
 <svelte:window bind:innerWidth={ innerWidth } bind:innerHeight={ innerHeight } />

@@ -22,7 +22,7 @@ export async function createPipeline(configuration: PipelineConfig) {
   const dat = `data=${currentDataset}`;
   const config = pipelineConfigToURLParams(configuration);
 
-  return await fetch(`${BASE_URL}/create_pipeline/${id}?${config}&${dat}`);
+  return fetch(`${BASE_URL}/create_pipeline/${id}?${config}&${dat}`);
 }
 
 export async function updatePipeline(configuration: PipelineConfig) {
@@ -33,17 +33,17 @@ export async function updatePipeline(configuration: PipelineConfig) {
   const dat = `data=${currentDataset}`;
   const config = pipelineConfigToURLParams(configuration);
 
-  return await fetch(`${BASE_URL}/update_pipeline/${id}?${config}&${dat}`);
+  return fetch(`${BASE_URL}/update_pipeline/${id}?${config}&${dat}`);
 }
 
 export async function setSelection(id: PipelineId, selection: SelectionType) {
-  return await fetch(`${BASE_URL}/set_selection/${id}?selection=${selection}`);
+  return fetch(`${BASE_URL}/set_selection/${id}?selection=${selection}`);
 }
 
 export async function sample(id: PipelineId) {
-  return await fetch(`${BASE_URL}/sample/${id}`);
+  return fetch(`${BASE_URL}/sample/${id}`);
 }
 
 export function reset() {
-  fetch(`${BASE_URL}/reset`).then(() => console.log("pipelines were reset."));
+  return fetch(`${BASE_URL}/reset`).then(() => console.log("pipelines were reset."));
 }
