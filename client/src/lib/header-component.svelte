@@ -6,6 +6,7 @@
 	import { leftPipeline, rightPipeline } from './state/pipelines';
 	import Toggle from './widgets/toggle.svelte';
 	import NumberInput from './widgets/number-input.svelte';
+	import { selectedDataset } from './state/selected-dataset';
 
 	let isProgressionRunning = false;
 
@@ -18,8 +19,8 @@
 		<h2>Pick Dataset</h2>
 		<Alternatives
 			name="datasets"
-			alternatives={ ["Random", "Burger places", "Dataset ABC", "Mountain peaks"] }
-			activeAlternative={ "Random" }
+			alternatives={ ["mountain_peaks", "random", "fastfood_places"] }
+			bind:activeAlternative={ $selectedDataset }
 		/>
 	</div>
 
