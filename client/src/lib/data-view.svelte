@@ -1,4 +1,5 @@
 <script lang="typescript">
+  import { range } from "d3-array";
   import { scaleDiverging, scaleSequential } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
 
@@ -6,9 +7,12 @@
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { leftPipeline, rightPipeline } from "./state/pipelines";
+  import { selectedBins } from "./state/selected-bin";
+import { selectedDataset } from "./state/selected-dataset";
   import { viewConfig } from "./state/view-config";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
+  import Histogram from "./widgets/histogram.svelte";
   import ZoomOverlay from "./zoom-overlay.svelte";
 
 
@@ -33,12 +37,30 @@
     ? generator.getDifferenceBins($viewConfig.useRelativeDifferenceScale)
     : orientation === "left" ? $primaryBins : $secondaryBins;
 
-  $: console.log(generator.getDifferenceBins(true));
-
   $: renderer = $pipeline?.viewType;
   $: color = orientation === "center"
     ? scaleDiverging(interpolatePiYG)
     : scaleSequential(interpolateViridis);
+
+  const selectedDimensions = ["1", "2", "3"];
+
+  $: selectedIds = orientation === "left"
+    ? $selectedBins.map(bin => generator.getPrimaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat()
+    : orientation === "right"
+      ? $selectedBins.map(bin => generator.getSecondaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat()
+      : [];
+
+  $: selectedData = orientation === "left"
+    ? generator.getPrimaryDataList(selectedIds).filter(d => !!d)
+    : orientation === "right"
+      ? generator.getSecondaryDataList(selectedIds).filter(d => !!d)
+      : [];
+
+  $: tabularSelectedData = selectedData.map(d => {
+    let datum = {};
+    selectedDimensions.forEach(dim => datum[dim] = d[+dim]);
+    return datum;
+  });
 </script>
 
 <div class="data-view" style="width: {width}px; height: {height}px">
@@ -89,6 +111,18 @@
       alternatives={ ["bins (absolute)", "scatterplot"] }
       bind:activeAlternative={ $pipeline.viewType }
     />
+  { #if selectedDimensions.length > 0 && tabularSelectedData.length > 0 }
+    { #each selectedDimensions as dim }
+      <Histogram
+        id={ `${orientation}-${dim}-histogram` }
+        data={ tabularSelectedData }
+        dimension={ dim }
+        height={30}
+        width={100}
+        showTitle={ false }
+      />
+    { /each }
+  { /if }
   { :else }
     <Alternatives
       name="relative-bins"

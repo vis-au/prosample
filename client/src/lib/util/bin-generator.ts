@@ -2,30 +2,34 @@ import type { HexbinBin } from 'd3-hexbin';
 import { hexbin } from "d3-hexbin";
 import { writable } from 'svelte/store';
 
-export const hexbinning = hexbin<[number, number]>()
+export const hexbinning = hexbin<BinType>()
   .radius(10);
 export const hexagon = hexbinning.hexagon();
 
-export const primaryBins = writable([] as HexbinBin<[number, number]>[]);
-export const secondaryBins = writable([] as HexbinBin<[number, number]>[]);
+export const primaryBins = writable([] as HexbinBin<BinType>[]);
+export const secondaryBins = writable([] as HexbinBin<BinType>[]);
 
 export const primaryData = writable([] as number[][]);
 export const secondaryData = writable([] as number[][]);
 
+type BinType = [number, number, number]; // x, y, id
 
 class BinGenerator {
   private _primaryData: number[][] = [];
   private _secondaryData: number[][] = [];
 
-  private _primaryBins: HexbinBin<[number, number]>[];
-  private _secondaryBins: HexbinBin<[number, number]>[];
+  private _primaryDataMap: Map<number, number[]> = new Map();
+  private _secondaryDataMap: Map<number, number[]> = new Map();
+
+  private _primaryBins: HexbinBin<BinType>[];
+  private _secondaryBins: HexbinBin<BinType>[];
   private _differenceBins;
 
   private _primaryIndex = {};
   private _secondaryIndex = {};
   private _differenceIndex = {};
 
-  private getIndexForBins(bins: HexbinBin<[number, number]>[]) {
+  private getIndexForBins(bins: HexbinBin<BinType>[]) {
     const index = {};
     bins.forEach(bin => {
       if (index[bin.x] === undefined) {
@@ -127,13 +131,21 @@ class BinGenerator {
     return this._differenceBins;
   }
 
+  private insertDataIntoMap(data: number[][], map: Map<number, number[]>) {
+    data.forEach(datum => {
+      map.set(datum[0], datum);
+    });
+  }
+
   public get primaryData() {
     return this._primaryData;
   }
+
   public set primaryData(data: number[][]) {
     this._primaryData = data;
+    this.insertDataIntoMap(data, this._primaryDataMap);
     primaryData.set(data);
-    this._primaryBins = hexbinning(data.map(d => [d[1], d[2]]));
+    this._primaryBins = hexbinning(data.map(d => [d[1], d[2], d[0]]));
     primaryBins.set(this._primaryBins);
     this._primaryIndex = this.getIndexForBins(this._primaryBins);
   }
@@ -144,39 +156,70 @@ class BinGenerator {
 
   public set secondaryData(data: number[][]) {
     this._secondaryData = data;
+    this.insertDataIntoMap(data, this._secondaryDataMap);
     secondaryData.set(data);
-    this._secondaryBins = hexbinning(data.map(d => [d[1], d[2]]));
+    this._secondaryBins = hexbinning(data.map(d => [d[1], d[2], d[0]]));
     secondaryBins.set(this._secondaryBins);
     this._secondaryIndex = this.getIndexForBins(this._secondaryBins);
   }
 
   // x and y are plot coordinates!
-  public getPrimaryBin(x: number, y: number) {
-    const bin = hexbinning([[x, y]])[0];
-
-    if (this._primaryIndex[bin.x] === undefined) {
+  public getPrimaryBin(bin: BinType) {
+    if (this._primaryIndex[bin[0]] === undefined) {
       return null;
     }
 
-    return this._primaryIndex[bin.x][bin.y];
+    return this._primaryIndex[bin[0]][bin[1]];
   }
 
-  public getSecondaryBin(x: number, y: number) {
-    const bin = hexbinning([[x, y]])[0];
+  public getPrimaryBinForScreenPosition(x: number, y: number) {
+    const bin = hexbinning([[x, y, -1]])[0];
+    return this.getPrimaryBin([bin.x, bin.y, -1]);
+  }
 
-    if (this._secondaryIndex[bin.x] === undefined) {
+  public getSecondaryBin(bin: BinType) {
+    if (this._secondaryIndex[bin[0]] === undefined) {
       return null;
     }
 
-    return this._secondaryIndex[bin.x][bin.y]
+    return this._secondaryIndex[bin[0]][bin[1]];
   }
 
-  public getDifferenceBin(x: number, y: number) {
-    const bin = hexbinning([[x, y]])[0];
+  public getSecondaryBinForScreenPosition(x: number, y: number) {
+    const bin = hexbinning([[x, y, -1]])[0];
+    return this.getSecondaryBin([bin.x, bin.y, -1]);
+  }
 
-    return this._differenceBins[bin.x][bin.y];
+  public getDifferenceBin(bin: BinType) {
+    if (this._differenceBins[bin[0]] === undefined) {
+      return null;
+    }
+
+    return this._differenceBins[bin[0]][bin[1]];
+  }
+
+  public getDifferenceBinForScreenPosition(x: number, y: number) {
+    const bin = hexbinning([[x, y, -1]])[0];
+    return this.getDifferenceBin([bin.x, bin.y, -1]);
+  }
+
+  public getPrimaryDatum(id: number) {
+    return this._primaryDataMap.get(id);
+  }
+
+  public getPrimaryDataList(ids: number[]) {
+    return ids.map(id => this.getPrimaryDatum(id));
+  }
+
+  public getSecondaryDatum(id: number) {
+    return this._secondaryDataMap.get(id);
+  }
+
+  public getSecondaryDataList(ids: number[]) {
+    return ids.map(id => this.getSecondaryDatum(id));
   }
 }
 
 export type { BinGenerator };
+export type { BinType };
 export const generator = new BinGenerator();
