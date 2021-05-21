@@ -1,20 +1,19 @@
 <script lang="typescript">
   export let name: string;
-  export let alternatives: string[] = ["option a", "option b", "option c"];
-  export let activeAlternative: string = "option a";
+  export let alternatives: string[];
+  export let activeAlternative: string;
 </script>
 
-<div id={ name } class="alternatives">
+<div id="{ name }-alternatives" class="alternatives">
   { #each alternatives as alternative }
-    <label for={alternative.split(" ").join("_")} class="alternative">
+    <label for="{alternative.split(" ").join("_")}-{name}-alternative" class="alternative {alternative === activeAlternative ? "active" : ""}">
       <div class="alternative-text {alternative === activeAlternative ? "active" : ""}">{ alternative }</div>
       <input
-        id={alternative.split(" ").join("_")}
+        id="{alternative.split(" ").join("_")}-{name}-alternative"
         type="radio"
         name={name}
         value={alternative}
-        checked={ alternative === activeAlternative }
-        on:click={ () => { activeAlternative=alternative }} />
+        bind:group={activeAlternative} />
     </label>
   { /each }
 </div>

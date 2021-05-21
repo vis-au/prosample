@@ -23,6 +23,7 @@ import { progressionState } from './state/progression-state';
 	<div class="pick-dataset config-component">
 		<h2>Pick Dataset</h2>
 		<Alternatives
+			name="datasets"
 			alternatives={ ["Random", "Burger places", "Dataset ABC", "Mountain peaks"] }
 			activeAlternative={ "Random" }
 		/>
