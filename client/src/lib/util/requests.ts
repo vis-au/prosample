@@ -1,4 +1,4 @@
-import { selectedDataset } from "./selected-dataset";
+import { selectedDataset } from "../state/selected-dataset";
 import type { PipelineConfig, PipelineId, SelectionType } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
