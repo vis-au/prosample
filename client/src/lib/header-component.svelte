@@ -5,6 +5,7 @@ import { progressionState } from './state/progression-state';
 	import { samplingRate } from './state/sampling-rate';
 	import { samplingTotal } from './state/sampling-total';
 	import Toggle from './widgets/toggle.svelte';
+import { leftPipeline, rightPipeline } from './state/pipelines';
 
 	let isProgressionRunning = false;
 	let samplingRateValue = 1000;
@@ -39,6 +40,9 @@ import { progressionState } from './state/progression-state';
 		<Toggle
 			id="progression-running-indicator"
 			bind:active={ isProgressionRunning }
+			disabled={ !($leftPipeline.ready && $rightPipeline.ready) }
+			disabledTitle="pipelines not ready"
+			disabledText="wait ..."
 			activeText="Pause."
 			passiveText="Go!"
 			style="width:75px;margin-left:20px"

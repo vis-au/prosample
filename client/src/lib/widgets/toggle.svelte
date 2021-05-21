@@ -1,15 +1,34 @@
 <script>
   export let id = "my-toggle";
   export let active = true;
+  export let disabled = false;
   export let title = "toggle feature";
+  export let disabledTitle = "feature disabled";
   export let style = "";
-  export let activeText = "active";
-  export let passiveText = "passive";
+  export let activeText;
+  export let passiveText;
+  export let disabledText = "";
+
+  $: checked = active && !disabled
 </script>
 
-<label id={id} class="toggle {active ? "active" : ""}" for="{id}-toggle" title={ title }>
-  <div class="toggle-text" style={ style }>{active ? activeText : passiveText}</div>
-  <input id="{id}-toggle" type="checkbox" bind:checked={ active } />
+<label
+  id={id}
+  class="toggle {active ? "active" : ""} {disabled ? "disabled" : ""}"
+  for="{id}-toggle"
+  title={ disabled ? title : disabledTitle }>
+
+  <div class="toggle-text" style={ style }>
+    {disabled ? disabledText : active ? activeText : passiveText}
+  </div>
+
+  <input
+    id="{id}-toggle"
+    type="checkbox"
+    checked={ checked }
+    disabled={ disabled }
+    on:click={ () => active = !active}
+  />
 </label>
 
 <style>
@@ -30,8 +49,14 @@
     cursor: pointer;
     transition: background-color 0.1s ease-in-out;
   }
+  label.toggle.disabled .toggle-text {
+    color: grey;
+  }
   label.toggle .toggle-text:hover {
     background: #eee;
+  }
+  label.toggle.disabled .toggle-text:hover {
+    background: white;
   }
   label.toggle input {
     display: none;

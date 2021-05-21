@@ -71,12 +71,13 @@
   div.pipeline-config-view .title .status {
     width: 10px;
     height: 10px;
-    background: white;
-    border: 2px solid black;
+    background: firebrick;
+    border: 1px solid white;
+    border-radius: 10px;
     margin-left: 5px;
   }
   div.pipeline-config-view .title .status.ready {
-    background: black;
+    background: teal;
   }
   div.pipeline-config-view .configuration {
     display: flex;
