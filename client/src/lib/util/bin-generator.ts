@@ -24,6 +24,7 @@ class BinGenerator {
   private _primaryIndex = {};
   private _secondaryIndex = {};
   private _differenceIndex = {};
+  private _relativeDifferenceIndex = {};
 
   private getIndexForBins(bins: HexbinBin<[number, number]>[]) {
     const index: any = {};
@@ -37,37 +38,59 @@ class BinGenerator {
     return index;
   }
 
-  private getDifferenceWhereExistInPrimary(primaryIndex, secondaryIndex) {
+  private getDifferenceWhereExistInPrimary(primaryIndex, secondaryIndex, relativeDifference=false) {
     Object.keys(primaryIndex).forEach(level1Key => {
       this._differenceIndex[level1Key] = {};
 
       if (secondaryIndex[level1Key] === undefined) {
-        Object.keys(primaryIndex[level1Key]).forEach(level2key => {
-          this._differenceIndex[level1Key][level2key] = primaryIndex[level1Key][level2key].length;
+        Object.keys(primaryIndex[level1Key]).forEach(level2Key => {
+          if (relativeDifference) {
+            this._differenceIndex[level1Key][level2Key] = 1;
+          } else {
+            this._differenceIndex[level1Key][level2Key] = primaryIndex[level1Key][level2Key].length;
+          }
         });
       } else {
-        Object.keys(primaryIndex[level1Key]).forEach(level2key => {
-          if (secondaryIndex[level1Key][level2key] === undefined) {
-            this._differenceIndex[level1Key][level2key] = primaryIndex[level1Key][level2key].length;
+        Object.keys(primaryIndex[level1Key]).forEach(level2Key => {
+          if (secondaryIndex[level1Key][level2Key] === undefined) {
+            if (relativeDifference) {
+              this._differenceIndex[level1Key][level2Key] = 1;
+            } else {
+              this._differenceIndex[level1Key][level2Key] = primaryIndex[level1Key][level2Key].length;
+            }
           } else {
-            this._differenceIndex[level1Key][level2key] = primaryIndex[level1Key][level2key].length - secondaryIndex[level1Key][level2key].length;
+            if (relativeDifference) {
+              const primary = primaryIndex[level1Key][level2Key].length;
+              const secondary = secondaryIndex[level1Key][level2Key].length;
+              this._differenceIndex[level1Key][level2Key] = (primary - secondary) / -Math.max(primary, secondary);
+            } else {
+              this._differenceIndex[level1Key][level2Key] = primaryIndex[level1Key][level2Key].length - secondaryIndex[level1Key][level2Key].length;
+            }
           }
         });
       }
     });
   }
 
-  private getDifferenceWhereExistInSecondaryOnly(secondaryIndex) {
+  private getDifferenceWhereExistInSecondaryOnly(secondaryIndex, relativeDifference=false) {
     Object.keys(secondaryIndex).forEach(level1Key => {
       if (this._differenceIndex[level1Key] === undefined) {
         this._differenceIndex[level1Key] = {};
         Object.keys(secondaryIndex[level1Key]).forEach(level2Key => {
-          this._differenceIndex[level1Key][level2Key] = -secondaryIndex[level1Key][level2Key].length;
+          if (relativeDifference) {
+            this._differenceIndex[level1Key][level2Key] = -1;
+          } else {
+            this._differenceIndex[level1Key][level2Key] = -secondaryIndex[level1Key][level2Key].length;
+          }
         });
       } else {
         Object.keys(secondaryIndex[level1Key]).forEach(level2Key => {
           if (this._differenceIndex[level1Key][level2Key] === undefined) {
-            this._differenceIndex[level1Key][level2Key] = -secondaryIndex[level1Key][level2Key].length;
+            if (relativeDifference) {
+              this._differenceIndex[level1Key][level2Key] = -1;
+            } else {
+              this._differenceIndex[level1Key][level2Key] = -secondaryIndex[level1Key][level2Key].length;
+            }
           }
         });
       }
@@ -90,14 +113,14 @@ class BinGenerator {
     return differenceBins;
   }
 
-  public getDifferenceBins() {
+  public getDifferenceBins(relativeDifference=false) {
     this._differenceIndex = {};
 
     // first, compute the difference between the two indeces for all bins that exist in primary
-    this.getDifferenceWhereExistInPrimary(this._primaryIndex, this._secondaryIndex);
+    this.getDifferenceWhereExistInPrimary(this._primaryIndex, this._secondaryIndex, relativeDifference);
 
     // then, for all bins that only exist in secondary, store these as well
-    this.getDifferenceWhereExistInSecondaryOnly(this._secondaryIndex);
+    this.getDifferenceWhereExistInSecondaryOnly(this._secondaryIndex, relativeDifference);
 
     // unravel the differenceIndex into HexbinBins again.
     this._differenceBins = this.unravelIndexIntoBins();
