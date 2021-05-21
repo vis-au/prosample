@@ -1,6 +1,6 @@
 <script lang="typescript">
   import { leftPipeline, rightPipeline } from "$lib/state/pipelines";
-  import type { LinearizationType, SelectionType, SubdivisionType } from "../util/types";
+  import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";
 
   export let id = "0";
   export let orientation: "left" | "right";
@@ -45,6 +45,7 @@
     </div>
     <div class="metadata">
       sampled:
+      <!-- src: https://stackoverflow.com/a/2901298 -->
       <span class="total">{pipeline.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
     </div>
   </div>
