@@ -1,22 +1,14 @@
 <script lang="typescript">
 	import Alternatives from './widgets/alternatives.svelte';
-import { progressionState } from './state/progression-state';
+	import { progressionState } from './state/progression-state';
 	import { samplingAmount } from './state/sampling-amount';
 	import { samplingRate } from './state/sampling-rate';
-	import { samplingTotal } from './state/sampling-total';
 	import Toggle from './widgets/toggle.svelte';
-import { leftPipeline, rightPipeline } from './state/pipelines';
+	import { leftPipeline, rightPipeline } from './state/pipelines';
 
 	let isProgressionRunning = false;
-	let samplingRateValue = 1000;
-	let samplingAmountValue = 1000;
-	let samplingTotalValue = 0;
-
-	samplingTotal.subscribe(value => samplingTotalValue = value);
 
 	$: progressionState.set(isProgressionRunning ? "running" : "paused");
-	$: samplingRate.set(samplingRateValue);
-	$: samplingAmount.set(samplingAmountValue);
 </script>
 
 <header>
@@ -32,11 +24,11 @@ import { leftPipeline, rightPipeline } from './state/pipelines';
 
 	<div class="sampling-rate config-component">
 		<h2>Sample</h2>
-		<input type="number" bind:value={ samplingAmountValue } />
+		<input type="number" bind:value={ $samplingAmount } />
 		<h2>points every</h2>
-		<input type="number" bind:value={ samplingRateValue } />
+		<input type="number" bind:value={ $samplingRate } />
 		<!-- src: https://stackoverflow.com/a/2901298 -->
-		<h2>milliseconds ({samplingTotalValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} so far).</h2>
+		<h2>milliseconds</h2>
 		<Toggle
 			id="progression-running-indicator"
 			bind:active={ isProgressionRunning }

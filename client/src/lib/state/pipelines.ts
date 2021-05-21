@@ -8,7 +8,8 @@ export const leftPipeline = writable<PipelineConfig>({
   linearization: "knn",
   selection: "first",
   subdivision: "standard",
-  viewType: "bins (absolute)"
+  viewType: "bins (absolute)",
+  pointsRetrieved: 0
 });
 
 export const rightPipeline = writable<PipelineConfig>({
@@ -17,5 +18,6 @@ export const rightPipeline = writable<PipelineConfig>({
   linearization: "knn",
   selection: "first",
   subdivision: "standard",
-  viewType: "bins (absolute)"
+  viewType: "bins (absolute)",
+  pointsRetrieved: 0
 });

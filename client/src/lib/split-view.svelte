@@ -2,7 +2,7 @@
   import DataView from './data-view.svelte';
   import { viewConfig } from './state/view-config';
   import { hoveredPosition } from './state/hovered-position';
-  import ViewConfig from './widgets/view-config.svelte';
+  import ViewConfig from './widgets/pipeline-config.svelte';
   import Toggle from './widgets/toggle.svelte';
 
   let innerWidth = 500;

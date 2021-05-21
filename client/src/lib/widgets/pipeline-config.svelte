@@ -43,6 +43,10 @@
         </select>
       </label>
     </div>
+    <div class="metadata">
+      sampled:
+      <span class="total">{pipeline.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+    </div>
   </div>
 </div>
 
@@ -83,5 +87,8 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+  div.pipeline-config-view .configuration .metadata span.total {
+    font-weight: bold;
   }
 </style>

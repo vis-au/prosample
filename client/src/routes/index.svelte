@@ -75,6 +75,9 @@
 
       rawA = rawA.concat(jsonA.sample);
       rawB = rawB.concat(jsonB.sample);
+
+      $leftPipeline.pointsRetrieved = rawA.length;
+      $rightPipeline.pointsRetrieved = rawB.length;
     }, $samplingRate);
   }
 

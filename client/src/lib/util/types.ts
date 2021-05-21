@@ -13,5 +13,6 @@ export type PipelineConfig = {
   viewType: ViewType,
   linearization: LinearizationType,
   subdivision: SubdivisionType,
-  selection: SelectionType
+  selection: SelectionType,
+  pointsRetrieved: number
 };
