@@ -17,9 +17,9 @@
   const color = scaleDiverging(interpolatePiYG).domain([-1, 0, 1]);
 
   $: left = data.primary?.length || 0;
-  $: right = data.secondary?.length || 1;
+  $: right = data.secondary?.length || 0;
   $: diff = left - right;
-  $: percentage = diff / Math.max(left, right);
+  $: percentage = left === 0 && right === 0 ? 0 : diff / Math.max(left, right);
 
   let labelMargin = 50;
   let plotHeight = 25;
