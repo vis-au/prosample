@@ -1,5 +1,4 @@
 <script lang="typescript">
-  import type { HexbinBin } from "d3-hexbin";
   import { scaleLinear } from "d3-scale";
   import { hoveredPosition } from "$lib/state/hovered-position";
   import { selectedBins } from "$lib/state/selected-bin";
@@ -17,19 +16,6 @@
   $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
   $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
 
-  let hovered: [number, number] = [-1, -1];
-  let selected: HexbinBin<[number, number]>[] = [];
-
-  hoveredPosition.subscribe(value => {
-    hovered = value;
-    render();
-  });
-
-  selectedBins.subscribe(value => {
-    selected = value;
-    render();
-  });
-
   function onHover(event) {
     const rect = event.target.getBoundingClientRect();
     const x = (event.clientX - rect.left) / width;
@@ -43,11 +29,9 @@
     const x = (event.clientX - rect.left) / width;
     const y = (event.clientY - rect.top) / height;
 
-    const clickedBin = hexbinning([[x,y]])[0];
-    const selectedBin = selected.find(bin => bin.x === clickedBin.x && bin.y === clickedBin.y);
-    const selectedIndex = selected.indexOf(selectedBin);
-
-    console.log(clickedBin);
+    const clickedBin = hexbinning([[x,y,-1]])[0];
+    const selectedBin = $selectedBins.find(bin => bin.x === clickedBin.x && bin.y === clickedBin.y);
+    const selectedIndex = $selectedBins.indexOf(selectedBin);
 
     selectedBins.update(currentlySelectedBins => {
       if (selectedIndex > 0) {
@@ -60,7 +44,7 @@
   }
 
   function renderHoveredBin(ctx: any, hexagonPath: any) {
-    const hoveredBin = hexbinning([ hovered ])[0];
+    const hoveredBin = hexbinning([[ ...$hoveredPosition, -1]])[0];
 
     if (!hoveredBin) {
       return;
@@ -82,7 +66,7 @@
     ctx.strokeStyle = color;
     ctx.fillStyle = "rgba(0, 0, 0, 0.0)";
     ctx.lineWidth = lineWidth;
-    selected.forEach(bin => {
+    $selectedBins.forEach(bin => {
       ctx.translate(bin.x, bin.y);
       ctx.stroke(hexagonPath);
       ctx.fill(hexagonPath);

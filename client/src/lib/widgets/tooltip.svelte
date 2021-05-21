@@ -34,8 +34,8 @@
     }
 
     active = true;
-    data.primary = generator.getPrimaryBin(value[0], value[1]);
-    data.secondary = generator.getSecondaryBin(value[0], value[1]);
+    data.primary = generator.getPrimaryBinForScreenPosition(value[0], value[1]);
+    data.secondary = generator.getSecondaryBinForScreenPosition(value[0], value[1]);
   });
 </script>
 
