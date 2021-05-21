@@ -24,10 +24,9 @@ class BinGenerator {
   private _primaryIndex = {};
   private _secondaryIndex = {};
   private _differenceIndex = {};
-  private _relativeDifferenceIndex = {};
 
   private getIndexForBins(bins: HexbinBin<[number, number]>[]) {
-    const index: any = {};
+    const index = {};
     bins.forEach(bin => {
       if (index[bin.x] === undefined) {
         index[bin.x] = {};
@@ -62,7 +61,7 @@ class BinGenerator {
             if (relativeDifference) {
               const primary = primaryIndex[level1Key][level2Key].length;
               const secondary = secondaryIndex[level1Key][level2Key].length;
-              this._differenceIndex[level1Key][level2Key] = (primary - secondary) / -Math.max(primary, secondary);
+              this._differenceIndex[level1Key][level2Key] = (secondary - primary) / -Math.max(primary, secondary);
             } else {
               this._differenceIndex[level1Key][level2Key] = primaryIndex[level1Key][level2Key].length - secondaryIndex[level1Key][level2Key].length;
             }

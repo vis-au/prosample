@@ -47,6 +47,8 @@
     const selectedBin = selected.find(bin => bin.x === clickedBin.x && bin.y === clickedBin.y);
     const selectedIndex = selected.indexOf(selectedBin);
 
+    console.log(clickedBin);
+
     selectedBins.update(currentlySelectedBins => {
       if (selectedIndex > 0) {
         currentlySelectedBins.splice(selectedIndex, 1);

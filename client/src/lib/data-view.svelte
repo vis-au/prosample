@@ -6,6 +6,7 @@
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { leftPipeline, rightPipeline } from "./state/pipelines";
+  import { viewConfig } from "./state/view-config";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
   import ZoomOverlay from "./zoom-overlay.svelte";
@@ -17,6 +18,9 @@
   export let height = 100;
   export let zoomable = false;
 
+  let useRelativeBins = "yes";
+  $: $viewConfig.useRelativeDifferenceScale = useRelativeBins === "yes";
+
   const pipeline = orientation === "left"
     ? leftPipeline
     : orientation === "right" ? rightPipeline : null;
@@ -26,7 +30,7 @@
     : orientation === "left" ? $primaryData : $secondaryData;
 
   $: bins = orientation === "center"
-    ? generator.getDifferenceBins(true)
+    ? generator.getDifferenceBins($viewConfig.useRelativeDifferenceScale)
     : orientation === "left" ? $primaryBins : $secondaryBins;
 
   $: console.log(generator.getDifferenceBins(true));
@@ -84,6 +88,12 @@
       name="{orientation}-renderer"
       alternatives={ ["bins (absolute)", "scatterplot"] }
       bind:activeAlternative={ $pipeline.viewType }
+    />
+  { :else }
+    <Alternatives
+      name="relative-bins"
+      alternatives={ [ "yes", "no" ] }
+      bind:activeAlternative={ useRelativeBins }
     />
   { /if }
 </div>

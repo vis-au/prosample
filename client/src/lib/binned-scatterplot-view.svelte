@@ -50,8 +50,7 @@
     const maxCount = (max(bins, d => d.length) || 1);
 
     if (color.range().length === 3) {
-      console.log(minCount, maxCount)
-      color.domain([minCount, 0, maxCount]);
+      color.domain([maxCount, 0, minCount]);
     } else {
       color.domain([minCount, maxCount]);
     }
