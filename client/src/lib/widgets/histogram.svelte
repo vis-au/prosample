@@ -1,13 +1,15 @@
 <script lang="typescript">
   import VegaLitePlot from "./vega-lite-plot.svelte";
 
+  export let id: string;
   export let width = 100;
   export let height = 100;
   export let data: Array<any>;
   export let dimension: string;
+  export let showTitle = false;
 
   $: histogram = {
-    $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+    $schema: "https://vega.github.io/schema/vega-lite/v5.1.0.json",
     data: {
       values: data
     },
@@ -21,10 +23,13 @@
         field: dimension
       },
       y: {
-        aggregate: "count"
+        aggregate: "count",
+        title: null
       }
     }
   }
+
+  $: showTitle ? "" : histogram.encoding.x["title"] = false;
 </script>
 
-<VegaLitePlot id="dimension-histogram" spec={ histogram } />
+<VegaLitePlot {id} spec={ histogram } />
