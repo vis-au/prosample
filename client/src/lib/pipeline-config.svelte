@@ -6,35 +6,36 @@
   export let orientation: "left" | "right";
 
   $: pipeline = orientation === "left" ? $leftPipeline : $rightPipeline;
+  $: isSamplingRunning = pipeline?.pointsRetrieved > 0;
   const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
   const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
   const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
 </script>
 
-<div class="pipeline-config-view {orientation}">
+<div class="pipeline-config-view {orientation} {isSamplingRunning ? "disabled" : ""}">
   <div class="title">
     <h1>Pipeline Configuration {id}</h1>
     <div class="status { pipeline.ready ? "ready" : "" }" title="{ !pipeline.ready ? "not " : "" }ready"></div>
   </div>
   <div class="configuration">
     <div class="pipeline">
-      <label for="{id}-linearization">
+      <label for="{id}-linearization" class="linearization">
         <span title="linearization">Lin.</span>
-        <select id="{id}-linearization" name="{id}-linearization" bind:value={ pipeline.linearization }>
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ pipeline.linearization } disabled={ isSamplingRunning }>
           { #each linearizationTypes as type }
           <option>{ type } </option>
           { /each }
         </select>
       </label>
-      <label for="{id}-subdivision">
+      <label for="{id}-subdivision" class="subdivision">
         <span title="subdivision">Sub.</span>
-        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ pipeline.subdivision }>
+        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ pipeline.subdivision } disabled={ isSamplingRunning }>
           { #each subdivisionTypes as type }
             <option>{ type } </option>
           { /each }
         </select>
       </label>
-      <label for="{id}-selection">
+      <label for="{id}-selection" class="selection">
         <span title="selection">Sel.</span>
         <select id="{id}-selection" name="{id}-selection" bind:value={ pipeline.selection }>
           { #each selectionTypes as type }
@@ -69,6 +70,10 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+  }
+  div.pipeline-config-view.disabled .linearization,
+  div.pipeline-config-view.disabled .subdivision {
+    color: #aaa;
   }
   div.pipeline-config-view .title h1 {
     font-size: 15px;
