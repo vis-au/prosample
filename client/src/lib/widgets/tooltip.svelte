@@ -43,6 +43,7 @@
   <div class="top">
     <span class="left {left>right?"greater":""}">{ left }</span>
     <svg class="difference-bar-canvas" width={ plotWidth } height={ plotHeight }>
+      <line x1={ plotWidth/2 } x2={plotWidth/2} y1={ 0 } y2={ plotHeight } stroke="black" stroke-dasharray="2px" />
       <rect
       class="difference-bar"
       width={ Math.abs(percentage * (plotWidth / 2)) }

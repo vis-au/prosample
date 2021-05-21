@@ -1,11 +1,10 @@
 <script lang="typescript">
-  import type { HexbinBin } from "d3-hexbin";
   import { scaleDiverging, scaleSequential } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
 
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
-  import ScatterplotGlView from "./scatterplot-gl-view.svelte";
+  import ScatterplotGlView from "./scatterplot-view.svelte";
   import { leftPipeline, rightPipeline } from "./state/pipelines";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
