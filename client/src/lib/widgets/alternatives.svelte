@@ -27,18 +27,16 @@
 
 	div.alternatives div.alternative-text {
 		font-family: sans-serif;
-		background: black;
+		background: #333;
 		color: white;
 		font-weight: bold;
-		text-decoration: underline;
 		padding: 2px 15px 1.5px;
 		border: 2px solid black;
 		border-radius: 20px;
 		cursor: pointer;
 	}
 	div.alternatives div.alternative-text:hover {
-		border-color: white;
-		text-decoration: none;
+    background: #555;
 	}
 	div.alternatives div.alternative-text.active {
 		background: white;
