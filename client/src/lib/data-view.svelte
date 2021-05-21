@@ -15,7 +15,7 @@
   export let orientation: "left" | "right" | "center";
   export let width = 250;
   export let height = 100;
-  export let zoomable: boolean = false;
+  export let zoomable = false;
 
   const pipeline = orientation === "left"
     ? leftPipeline

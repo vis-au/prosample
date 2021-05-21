@@ -9,8 +9,8 @@
   export let id: string;
   export let width: number;
   export let height: number;
-  export let color: string = "rgba(255,255,255,1)";
-  export let lineWidth: number = 4;
+  export let color = "rgba(255,255,255,1)";
+  export let lineWidth = 4;
 
   let canvasElement;
 

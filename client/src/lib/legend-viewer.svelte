@@ -3,17 +3,17 @@
   import type { ScaleDiverging, ScaleSequential } from "d3-scale";
   import { scaleLinear } from "d3-scale";
 
-  export let id: string = "id";
+  export let id = "id";
   export let color: ScaleSequential<string, never> | ScaleDiverging<string, never>;
   export let title: string;
-  export let left: number = 0;
-  export let top: number = 0;
-  export let width: number = 200;
-  export let height: number = 25;
-  export let margin: number = 3;
+  export let left = 0;
+  export let top = 0;
+  export let width = 200;
+  export let height = 25;
+  export let margin = 3;
   export let blockSize: number;
-  export let steps: number = 10;
-  export let isVertical: boolean = false;
+  export let steps = 10;
+  export let isVertical = false;
 
   const segmentWidth = width / (steps + 1);
   $: scaleX = scaleLinear()

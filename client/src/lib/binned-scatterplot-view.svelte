@@ -7,8 +7,8 @@
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 
   export let id: string;
-  export let width: number = 100;
-  export let height: number = 100;
+  export let width = 100;
+  export let height = 100;
   export let color: any;
   export let bins: HexbinBin<[number, number]>[];
 

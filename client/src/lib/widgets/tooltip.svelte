@@ -4,7 +4,7 @@
   import { hoveredPosition } from "$lib/state/hovered-position";
   import { generator } from "$lib/util/bin-generator";
 
-  export let active: boolean = false;
+  export let active = false;
   export let x: number;
   export let y: number;
   export let width: number;
