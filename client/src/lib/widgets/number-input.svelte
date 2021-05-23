@@ -37,4 +37,7 @@
 		background: white;
 		color: black;
 	}
+	input.number-input:focus:hover {
+		background: white;
+	}
 </style>
