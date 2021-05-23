@@ -6,7 +6,9 @@
 
 <div id="{ name }-alternatives" class="alternatives">
   { #each alternatives as alternative }
-    <label for="{alternative.split(" ").join("_")}-{name}-alternative" class="alternative {alternative === activeAlternative ? "active" : ""}">
+    <label for="{alternative.split(" ").join("_")}-{name}-alternative"
+      class="alternative {alternative === activeAlternative ? "active" : ""}"
+      title={ alternative }>
       <div class="alternative-text {alternative === activeAlternative ? "active" : ""}">{ alternative }</div>
       <input
         id="{alternative.split(" ").join("_")}-{name}-alternative"

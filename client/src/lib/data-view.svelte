@@ -22,8 +22,8 @@ import { selectedDataset } from "./state/selected-dataset";
   export let height = 100;
   export let zoomable = false;
 
-  let useRelativeBins = "yes";
-  $: $viewConfig.useRelativeDifferenceScale = useRelativeBins === "yes";
+  let useRelativeBins = "relative";
+  $: $viewConfig.useRelativeDifferenceScale = useRelativeBins === "relative";
 
   const pipeline = orientation === "left"
     ? leftPipeline
@@ -126,7 +126,7 @@ import { selectedDataset } from "./state/selected-dataset";
   { :else }
     <Alternatives
       name="relative-bins"
-      alternatives={ [ "yes", "no" ] }
+      alternatives={ [ "relative", "absolute" ] }
       bind:activeAlternative={ useRelativeBins }
     />
   { /if }
