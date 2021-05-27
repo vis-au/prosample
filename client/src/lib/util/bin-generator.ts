@@ -116,7 +116,7 @@ class BinGenerator {
     return differenceBins;
   }
 
-  public getDifferenceBins(relativeDifference=false) {
+  public getDifferenceBins(relativeDifference=false): HexbinBin<BinType>[] {
     this._differenceIndex = {};
 
     // first, compute the difference between the two indeces for all bins that exist in primary
@@ -137,7 +137,7 @@ class BinGenerator {
     });
   }
 
-  public get primaryData() {
+  public get primaryData(): number[][] {
     return this._primaryData;
   }
 
@@ -150,7 +150,7 @@ class BinGenerator {
     this._primaryIndex = this.getIndexForBins(this._primaryBins);
   }
 
-  public get secondaryData() {
+  public get secondaryData(): number[][] {
     return this._secondaryData;
   }
 
@@ -164,7 +164,7 @@ class BinGenerator {
   }
 
   // x and y are plot coordinates!
-  public getPrimaryBin(bin: BinType) {
+  public getPrimaryBin(bin: BinType): HexbinBin<BinType> {
     if (this._primaryIndex[bin[0]] === undefined) {
       return null;
     }
@@ -172,12 +172,12 @@ class BinGenerator {
     return this._primaryIndex[bin[0]][bin[1]];
   }
 
-  public getPrimaryBinForScreenPosition(x: number, y: number) {
+  public getPrimaryBinForScreenPosition(x: number, y: number): HexbinBin<BinType> {
     const bin = hexbinning([[x, y, -1]])[0];
     return this.getPrimaryBin([bin.x, bin.y, -1]);
   }
 
-  public getSecondaryBin(bin: BinType) {
+  public getSecondaryBin(bin: BinType): HexbinBin<BinType> {
     if (this._secondaryIndex[bin[0]] === undefined) {
       return null;
     }
@@ -185,12 +185,12 @@ class BinGenerator {
     return this._secondaryIndex[bin[0]][bin[1]];
   }
 
-  public getSecondaryBinForScreenPosition(x: number, y: number) {
+  public getSecondaryBinForScreenPosition(x: number, y: number): HexbinBin<BinType> {
     const bin = hexbinning([[x, y, -1]])[0];
     return this.getSecondaryBin([bin.x, bin.y, -1]);
   }
 
-  public getDifferenceBin(bin: BinType) {
+  public getDifferenceBin(bin: BinType): HexbinBin<BinType> {
     if (this._differenceBins[bin[0]] === undefined) {
       return null;
     }
@@ -198,24 +198,24 @@ class BinGenerator {
     return this._differenceBins[bin[0]][bin[1]];
   }
 
-  public getDifferenceBinForScreenPosition(x: number, y: number) {
+  public getDifferenceBinForScreenPosition(x: number, y: number): HexbinBin<BinType> {
     const bin = hexbinning([[x, y, -1]])[0];
     return this.getDifferenceBin([bin.x, bin.y, -1]);
   }
 
-  public getPrimaryDatum(id: number) {
+  public getPrimaryDatum(id: number): number[] {
     return this._primaryDataMap.get(id);
   }
 
-  public getPrimaryDataList(ids: number[]) {
+  public getPrimaryDataList(ids: number[]): number[][] {
     return ids.map(id => this.getPrimaryDatum(id));
   }
 
-  public getSecondaryDatum(id: number) {
+  public getSecondaryDatum(id: number): number[] {
     return this._secondaryDataMap.get(id);
   }
 
-  public getSecondaryDataList(ids: number[]) {
+  public getSecondaryDataList(ids: number[]): number[][] {
     return ids.map(id => this.getSecondaryDatum(id));
   }
 }

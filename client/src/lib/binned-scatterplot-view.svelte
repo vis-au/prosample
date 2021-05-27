@@ -4,6 +4,7 @@
   import type { ScaleDiverging, ScaleSequential } from 'd3-scale';
   import { scaleLinear } from 'd3-scale';
   import { afterUpdate } from 'svelte';
+  import type { BinType } from './util/bin-generator';
   import { hexagon, hexbinning } from './util/bin-generator';
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 
@@ -11,7 +12,7 @@
   export let width = 100;
   export let height = 100;
   export let color: ScaleDiverging<string, never> | ScaleSequential<string, never>;
-  export let bins: HexbinBin<[number, number]>[];
+  export let bins: HexbinBin<BinType>[];
 
   let canvasElement: HTMLCanvasElement;
 

@@ -4,7 +4,7 @@
   export let id: string;
   export let width = 100;
   export let height = 100;
-  export let data: Array<any>;
+  export let data: Record<string, unknown>[];
   export let dimension: string;
   export let showTitle = false;
 

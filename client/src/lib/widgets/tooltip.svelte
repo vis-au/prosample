@@ -2,6 +2,7 @@
   import { scaleDiverging } from "d3-scale";
   import { interpolatePiYG } from "d3-scale-chromatic";
   import { hoveredPosition } from "$lib/state/hovered-position";
+  import type { BinType } from '$lib/util/bin-generator';
   import { generator } from "$lib/util/bin-generator";
 
   export let active = false;
@@ -10,8 +11,8 @@
   export let width: number;
   export let height: number;
   export let data: {
-    primary: [number, number][],
-    secondary: [number, number][]
+    primary: BinType[],
+    secondary: BinType[]
   };
 
   const color = scaleDiverging(interpolatePiYG).domain([-1, 0, 1]);

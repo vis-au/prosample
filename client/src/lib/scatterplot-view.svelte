@@ -64,9 +64,9 @@
   }
 
   function generateDeckComponent() {
-    const style: any = orientation === "left"
-      ? { left: "0", border: "none" }
-      : { right: "0", border: "none" };
+    const style = orientation === "left"
+      ? { left: "0", border: "none", position: "" }
+      : { right: "0", border: "none", position: "" };
 
     style.position = "relative";
 

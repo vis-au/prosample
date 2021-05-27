@@ -1,6 +1,4 @@
 <script lang="typescript">
-import { precisionPrefix } from "d3-format";
-
   import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
 

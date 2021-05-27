@@ -11,7 +11,7 @@
   export let color = "rgba(255,255,255,1)";
   export let lineWidth = 4;
 
-  let canvasElement;
+  let canvasElement: HTMLCanvasElement;
 
   $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
   $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
@@ -43,7 +43,7 @@
     });
   }
 
-  function renderHoveredBin(ctx: any, hexagonPath: any) {
+  function renderHoveredBin(ctx: CanvasRenderingContext2D, hexagonPath: Path2D) {
     const hoveredBin = hexbinning([[ ...$hoveredPosition, -1]])[0];
 
     if (!hoveredBin) {
@@ -61,7 +61,7 @@
     ctx.closePath();
   }
 
-  function renderSelectedBins(ctx: any, hexagonPath: any) {
+  function renderSelectedBins(ctx: CanvasRenderingContext2D, hexagonPath: Path2D) {
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.fillStyle = "rgba(0, 0, 0, 0.0)";
