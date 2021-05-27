@@ -33,7 +33,7 @@ class Selection(ABC):
 
 class SelectionRandom(Selection):
 
-    def __init__(self, seed=None):
+    def __init__(self, seed=1):
         if seed is not None:
             random.seed(seed)
 
