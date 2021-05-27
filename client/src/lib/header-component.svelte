@@ -33,7 +33,7 @@
 		<Toggle
 			id="progression-running-indicator"
 			bind:active={ isProgressionRunning }
-			disabled={ !($leftPipeline.ready && $rightPipeline.ready) }
+			disabled={ !($leftPipeline.initialized && $rightPipeline.initialized) }
 			disabledTitle="pipelines not ready"
 			disabledText="wait ..."
 			activeText="Pause."

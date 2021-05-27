@@ -38,18 +38,10 @@
   onMount(async () => {
     await reset();
 
-    updatePipeline($leftPipeline).then(() => {
-      leftPipeline.update(config => {
-        config.ready = true;
-        return config;
-      });
-    });
-    updatePipeline($rightPipeline).then(() => {
-      rightPipeline.update(config => {
-        config.ready = true;
-        return config;
-      });
-    });
+    updatePipeline($leftPipeline.id, $leftPipeline.config)
+      .then(() => $leftPipeline.initialized = true);
+    updatePipeline($rightPipeline.id, $rightPipeline.config)
+      .then(() => $rightPipeline.initialized = true);
 
     samplingRate.subscribe(() => {
       window.clearInterval(samplingInterval);

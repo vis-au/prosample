@@ -8,11 +8,14 @@ export type ProgressionState = "paused" | "running";
 export type PipelineId = "left" | "right";
 
 export type PipelineConfig = {
-  id: PipelineId,
-  ready: boolean,
-  viewType: ViewType,
   linearization: LinearizationType,
   subdivision: SubdivisionType,
-  selection: SelectionType,
+  selection: SelectionType
+};
+export type Pipeline = {
+  id: PipelineId,
+  initialized: boolean,
+  viewType: ViewType,
+  config: PipelineConfig,
   pointsRetrieved: number
 };

@@ -1,5 +1,5 @@
 import { selectedDataset } from "../state/selected-dataset";
-import type { PipelineConfig, PipelineId, SelectionType } from "./types";
+import type { Pipeline, PipelineConfig, PipelineId, SelectionType } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
 
@@ -14,22 +14,21 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
   return `${lin}&${sub}&${sel}`;
 }
 
-export async function createPipeline(configuration: PipelineConfig): Promise<Response> {
+export async function createPipeline(pipeline: Pipeline): Promise<Response> {
   if (currentDataset === null) {
     return;
   }
-  const id = configuration.id;
+  const id = pipeline.id;
   const dat = `data=${currentDataset}`;
-  const config = pipelineConfigToURLParams(configuration);
+  const config = pipelineConfigToURLParams(pipeline.config);
 
   return fetch(`${BASE_URL}/create_pipeline/${id}?${config}&${dat}`);
 }
 
-export async function updatePipeline(configuration: PipelineConfig): Promise<Response> {
+export async function updatePipeline(id: PipelineId, configuration: PipelineConfig): Promise<Response> {
   if (currentDataset === null) {
     return;
   }
-  const id = configuration.id;
   const dat = `data=${currentDataset}`;
   const config = pipelineConfigToURLParams(configuration);
 
