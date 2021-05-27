@@ -57,7 +57,20 @@ def update_pipeline(id):
     PIPELINES[str(id)] = Pipeline(config)
     return cors_response("ok")
 
-  old_pipeline.update_selection(config["selection"])
+  old_config = old_pipeline.get_config()
+  has_selection_changed = old_config["selection"] != config["selection"]
+  has_dimension_changed = old_config["dimension"] != config["dimension"]
+  has_linearization_changed = old_config["linearization"] != config["linearization"]
+  has_subdivision_changed = old_config["subdivision"] != config["subdivision"]
+
+  if has_selection_changed:
+    old_pipeline.update_selection(config["selection"])
+  if has_dimension_changed:
+    old_pipeline.update_dimension(config["dimension"])
+  if has_linearization_changed or has_subdivision_changed:
+    print(old_config, config)
+    PIPELINES[str(id)] = Pipeline(config)
+
   return cors_response("ok")
 
 
@@ -91,6 +104,7 @@ def normalize_chunk_positions(chunk):
   chunk[:, 2] = 1 - normalized_y
 
   return chunk
+
 
 @app.route('/sample/<id>', methods=["GET"])
 def sample(id):
