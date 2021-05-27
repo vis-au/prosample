@@ -7,7 +7,7 @@ class Pipeline:
       "linearization": config["linearization"],
       "subdivision": config["subdivision"],
       "selection": config["selection"],
-      "attribute": int(config["dimension"])
+      "dimension": int(config["dimension"])
     }
 
     # retrieves next chunk given the current_selection
@@ -22,7 +22,7 @@ class Pipeline:
     sub_class = _resolve_subdivision(self.config["subdivision"])
 
     if None in [data, lin_class, sub_class]:
-      print("cannot get sampler, configuration flawed")
+      print("cannot get sampler, because configuration contains unknown values.")
       return None
 
     self.linearization = lin_class()
@@ -38,11 +38,11 @@ class Pipeline:
       print("cannot resolve selection.")
       return None
 
-    return sel_class(self.config["attribute"]) if sel_class not in [SelectionFirst, SelectionRandom] else sel_class()
+    return sel_class(self.config["dimension"]) if sel_class not in [SelectionFirst, SelectionRandom] else sel_class()
 
 
-  def update_attribute(self, attribute):
-    self.config["attribute"] = attribute
+  def update_dimension(self, dimension):
+    self.config["dimension"] = int(dimension)
 
 
   def update_selection(self, new_selection):
@@ -52,6 +52,9 @@ class Pipeline:
   def get_next_chunk(self):
     return self.sampler.sample(self.selection)
 
+
+  def get_config(self):
+    return self.config
 
 
 def _resolve_data(data):

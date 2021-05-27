@@ -1,10 +1,13 @@
+import { writable } from "svelte/store";
 import { selectedDataset } from "../state/selected-dataset";
-import type { PipelineConfig, Orientation, SelectionType } from "./types";
+import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
 
 let currentDataset = null;
 selectedDataset.subscribe(value => currentDataset = value);
+
+export const isRemoteBusy = writable(false);
 
 function pipelineConfigToURLParams(configuration: PipelineConfig) {
   const lin = `linearization=${configuration.linearization}`;
@@ -15,28 +18,40 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
   return `${lin}&${sub}&${sel}&${dim}`;
 }
 
-export async function createPipeline(pipeline: PipelineConfig): Promise<Response> {
+export async function createPipeline(pipeline: PipelineConfig): Promise<void> {
   if (currentDataset === null) {
     return;
   }
   const dat = `data=${currentDataset}`;
   const config = pipelineConfigToURLParams(pipeline);
 
-  return fetch(`${BASE_URL}/create_pipeline/${pipeline.id}?${config}&${dat}`);
+  isRemoteBusy.set(true);
+  return fetch(`${BASE_URL}/create_pipeline/${pipeline.id}?${config}&${dat}`)
+    .then(() => isRemoteBusy.set(false));
 }
 
-export async function updatePipeline(pipeline: PipelineConfig): Promise<Response> {
-  if (currentDataset === null) {
-    return;
-  }
-  const dat = `data=${currentDataset}`;
-  const config = pipelineConfigToURLParams(pipeline);
-
-  return fetch(`${BASE_URL}/update_pipeline/${pipeline.id}?${config}&${dat}`);
+export function updateLinearization(id: Orientation, linearization: LinearizationType): Promise<void> {
+  isRemoteBusy.set(true);
+  return fetch(`${BASE_URL}/update_linearization/${id}?linearization=${linearization}`)
+    .then(() => isRemoteBusy.set(false));
 }
 
-export async function setSelection(id: Orientation, selection: SelectionType): Promise<Response> {
-  return fetch(`${BASE_URL}/set_selection/${id}?selection=${selection}`);
+export function updateSubdivision(id: Orientation, subdivision: SubdivisionType): Promise<void> {
+  isRemoteBusy.set(true);
+  return fetch(`${BASE_URL}/update_subdivision/${id}?subdivision=${subdivision}`)
+  .then(() => isRemoteBusy.set(false));
+}
+
+export function updateSelection(id: Orientation, selection: SelectionType): Promise<void> {
+  isRemoteBusy.set(true);
+  return fetch(`${BASE_URL}/update_selection/${id}?selection=${selection}`)
+  .then(() => isRemoteBusy.set(false));
+}
+
+export function updateDimension(id: Orientation, dimension: string): Promise<void> {
+  isRemoteBusy.set(true);
+  return fetch(`${BASE_URL}/update_dimension/${id}?dimension=${dimension}`)
+   .then(() => isRemoteBusy.set(false))
 }
 
 export async function sample(id: Orientation): Promise<Response> {

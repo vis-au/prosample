@@ -1,7 +1,7 @@
-<script>
+<script lang="typescript">
   import { onMount } from 'svelte';
   import SplitView from '$lib/split-view.svelte';
-  import { reset, sample, updatePipeline } from '$lib/util/requests';
+  import { reset, sample, createPipeline } from '$lib/util/requests';
   import Tooltip from '$lib/widgets/tooltip.svelte';
   import { samplingRate } from '$lib/state/sampling-rate';
   import { progressionState } from '$lib/state/progression-state';
@@ -39,9 +39,9 @@
   onMount(async () => {
     await reset();
 
-    updatePipeline($leftPipelineConfig)
+    createPipeline($leftPipelineConfig)
       .then(() => $leftView.initialized = true);
-    updatePipeline($rightPipelineConfig)
+    createPipeline($rightPipelineConfig)
       .then(() => $rightView.initialized = true);
 
     samplingRate.subscribe(() => {

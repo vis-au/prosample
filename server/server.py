@@ -48,34 +48,38 @@ def create_pipeline(id):
   return cors_response("ok")
 
 
-@app.route('/update_pipeline/<id>', methods=["GET"])
-def update_pipeline(id):
-  old_pipeline = PIPELINES.get(id)
-  config = get_pipeline_config(request)
+@app.route('/update_linearization/<id>', methods=["GET"])
+def update_linearization(id):
+  pipeline = PIPELINES.get(id)
 
-  if old_pipeline == None:
-    PIPELINES[str(id)] = Pipeline(config)
-    return cors_response("ok")
+  if pipeline == None:
+    print("couldn't find pipeline with id", id)
+    abort(400)
 
-  old_config = old_pipeline.get_config()
-  has_selection_changed = old_config["selection"] != config["selection"]
-  has_dimension_changed = old_config["dimension"] != config["dimension"]
-  has_linearization_changed = old_config["linearization"] != config["linearization"]
-  has_subdivision_changed = old_config["subdivision"] != config["subdivision"]
-
-  if has_selection_changed:
-    old_pipeline.update_selection(config["selection"])
-  if has_dimension_changed:
-    old_pipeline.update_dimension(config["dimension"])
-  if has_linearization_changed or has_subdivision_changed:
-    print(old_config, config)
-    PIPELINES[str(id)] = Pipeline(config)
-
+  linearization = request.args.get("linearization")
+  config = pipeline.get_config()
+  config["linearization"] = linearization
+  PIPELINES[str(id)] = Pipeline(config)
   return cors_response("ok")
 
 
-@app.route('/set_selection/<id>', methods=["GET"])
-def set_selection(id):
+@app.route('/update_subdivision/<id>', methods=["GET"])
+def update_subdivision(id):
+  pipeline = PIPELINES.get(id)
+
+  if pipeline == None:
+    print("couldn't find pipeline with id", id)
+    abort(400)
+
+  subdivision = request.args.get("subdivision")
+  config = pipeline.get_config()
+  config["subdivision"] = subdivision
+  PIPELINES[str(id)] = Pipeline(config)
+  return cors_response("ok")
+
+
+@app.route('/update_selection/<id>', methods=["GET"])
+def update_selection(id):
   pipeline = PIPELINES.get(id)
 
   if pipeline == None:
@@ -84,6 +88,19 @@ def set_selection(id):
 
   selection = request.args.get("selection")
   pipeline.update_selection(selection)
+  return cors_response("ok")
+
+
+@app.route('/update_dimension/<id>', methods=["GET"])
+def update_dimension(id):
+  pipeline = PIPELINES.get(id)
+
+  if pipeline == None:
+    print("couldn't find pipeline with id", id)
+    abort(400)
+
+  selection = request.args.get("selection")
+  pipeline.update_dimension(selection)
   return cors_response("ok")
 
 
