@@ -43,7 +43,8 @@ import { precisionPrefix } from "d3-format";
     : $pipeline.colorScaleType === "log"
       ? scaleSequentialLog(interpolateViridis)
       : scaleSequential(interpolateViridis);
-  $: colorScaleType = pipeline !== null ? $pipeline.colorScaleType : null;
+  let colorScaleType = pipeline !== null ? $pipeline.colorScaleType : null;
+  $: pipeline !== null ? $pipeline.colorScaleType = colorScaleType : null;
 
   const selectedDimensions = ["1", "2", "3"];
 
