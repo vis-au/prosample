@@ -7,7 +7,7 @@ class Pipeline:
       "linearization": config["linearization"],
       "subdivision": config["subdivision"],
       "selection": config["selection"],
-      "attribute": 3
+      "attribute": int(config["dimension"])
     }
 
     # retrieves next chunk given the current_selection

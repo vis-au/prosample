@@ -36,6 +36,7 @@ def get_pipeline_config(req):
     "subdivision": req.args.get("subdivision"),
     "selection": req.args.get("selection"),
     "data": req.args.get("data"),
+    "dimension": req.args.get("dimension")
   }
 
   return configuration
