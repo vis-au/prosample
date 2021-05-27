@@ -33,12 +33,12 @@ class Selection(ABC):
 
 class SelectionRandom(Selection):
 
-    def __init__(self, seed=1):
-        if seed is not None:
-            random.seed(seed)
+    def __init__(self, seed=0):
+        self.seed = seed
 
     def select_element(self, chunk, chunk_index, bucket_number):
         subdivision_size = len(self.subdivision[bucket_number])
+        random.seed(self.seed + chunk_index)
         next_index = random.randint(0, subdivision_size - 1)
         chunk[chunk_index] = self.subdivision[bucket_number][next_index]
         return next_index
