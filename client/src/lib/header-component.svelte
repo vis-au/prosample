@@ -25,9 +25,9 @@
 	</div>
 
 	<div class="sampling-rate config-component">
-		<h2>Sample</h2>
-		<NumberInput id="sampling-amount" bind:disabled={ isProgressionRunning } bind:value={ $samplingAmount } />
-		<h2>points every</h2>
+		<h2>Sample every</h2>
+		<!-- <NumberInput id="sampling-amount" bind:disabled={ isProgressionRunning } bind:value={ $samplingAmount } />
+		<h2>points every</h2> -->
 		<NumberInput id="sampling-rate" bind:disabled={ isProgressionRunning } bind:value={ $samplingRate } />
 		<h2>milliseconds</h2>
 		<Toggle
