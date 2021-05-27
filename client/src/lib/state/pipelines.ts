@@ -1,31 +1,18 @@
-import type { Pipeline } from "$lib/util/types";
+import type { PipelineConfig } from "$lib/util/types";
 import { writable } from "svelte/store";
 
-
-export const leftPipeline = writable<Pipeline>({
+export const leftPipelineConfig = writable<PipelineConfig>({
   id: "left",
-  initialized: false,
-  config: {
-    linearization: "knn",
-    subdivision: "standard",
-    selection: "minimum",
-    selectionDimension: "3"
-  },
-  viewType: "bins (absolute)",
-  colorScaleType: "log",
-  pointsRetrieved: 0
+  linearization: "knn",
+  subdivision: "standard",
+  selection: "minimum",
+  selectionDimension: "3"
 });
 
-export const rightPipeline = writable<Pipeline>({
+export const rightPipelineConfig = writable<PipelineConfig>({
   id: "right",
-  initialized: false,
-  config: {
-    linearization: "knn",
-    subdivision: "standard",
-    selection: "random",
-    selectionDimension: "3"
-  },
-  viewType: "bins (absolute)",
-  colorScaleType: "log",
-  pointsRetrieved: 0
+  linearization: "knn",
+  subdivision: "standard",
+  selection: "random",
+  selectionDimension: "3"
 });

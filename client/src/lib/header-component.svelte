@@ -1,12 +1,11 @@
 <script lang="typescript">
 	import Alternatives from './widgets/alternatives.svelte';
 	import { progressionState } from './state/progression-state';
-	import { samplingAmount } from './state/sampling-amount';
 	import { samplingRate } from './state/sampling-rate';
-	import { leftPipeline, rightPipeline } from './state/pipelines';
 	import Toggle from './widgets/toggle.svelte';
 	import NumberInput from './widgets/number-input.svelte';
 	import { selectedDataset } from './state/selected-dataset';
+	import { leftView, rightView } from './state/view-config';
 
 	let isProgressionRunning = false;
 
@@ -33,7 +32,7 @@
 		<Toggle
 			id="progression-running-indicator"
 			bind:active={ isProgressionRunning }
-			disabled={ !($leftPipeline.initialized && $rightPipeline.initialized) }
+			disabled={ !($leftView.initialized && $rightView.initialized) }
 			disabledTitle="pipelines not ready"
 			disabledText="wait ..."
 			activeText="Pause."

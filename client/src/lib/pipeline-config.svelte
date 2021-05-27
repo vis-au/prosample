@@ -1,16 +1,17 @@
 <script lang="typescript">
-  import { leftPipeline, rightPipeline } from "$lib/state/pipelines";
-import { dimensionsInData } from "./state/dimensions-in-data";
+  import { dimensionsInData } from "./state/dimensions-in-data";
+  import { leftPipelineConfig, rightPipelineConfig } from "./state/pipelines";
+  import { leftView, rightView } from "./state/view-config";
   import { updatePipeline } from "./util/requests";
   import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";
 
   export let id = "0";
   export let orientation: "left" | "right";
 
-  $: pipeline = orientation === "left" ? $leftPipeline : $rightPipeline;
-  $: isSamplingRunning = pipeline?.pointsRetrieved > 0;
-
-  $: pipeline?.initialized ? updatePipeline(pipeline?.id, pipeline?.config) : null;
+  $: view = orientation === "left" ? $leftView : $rightView;
+  $: pipeline = orientation === "left" ? $leftPipelineConfig : $rightPipelineConfig;
+  $: isSamplingRunning = view?.pointsRetrieved > 0;
+  $: updatePipeline(pipeline);
 
   const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
   const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
@@ -20,13 +21,13 @@ import { dimensionsInData } from "./state/dimensions-in-data";
 <div class="pipeline-config-view {orientation} {isSamplingRunning ? "disabled" : ""}">
   <div class="title">
     <h1>Pipeline Configuration {id}</h1>
-    <div class="status { pipeline.initialized ? "ready" : "" }" title="{ !pipeline.initialized ? "not " : "" }ready"></div>
+    <div class="status { view.initialized ? "ready" : "" }" title="{ !view.initialized ? "not " : "" }ready"></div>
   </div>
   <div class="configuration">
     <div class="pipeline">
       <label for="{id}-linearization" class="linearization">
         <span title="linearization">Lin.</span>
-        <select id="{id}-linearization" name="{id}-linearization" bind:value={ pipeline.config.linearization } disabled={ isSamplingRunning }>
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ pipeline.linearization } disabled={ isSamplingRunning }>
           { #each linearizationTypes as type }
           <option value={ type }>{ type } </option>
           { /each }
@@ -34,7 +35,7 @@ import { dimensionsInData } from "./state/dimensions-in-data";
       </label>
       <label for="{id}-subdivision" class="subdivision">
         <span title="subdivision">Sub.</span>
-        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ pipeline.config.subdivision } disabled={ isSamplingRunning }>
+        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ pipeline.subdivision } disabled={ isSamplingRunning }>
           { #each subdivisionTypes as type }
             <option value={ type }>{ type } </option>
           { /each }
@@ -42,16 +43,16 @@ import { dimensionsInData } from "./state/dimensions-in-data";
       </label>
       <label for="{id}-selection" class="selection">
         <span title="selection">Sel.</span>
-        <select id="{id}-selection" name="{id}-selection" bind:value={ pipeline.config.selection }>
+        <select id="{id}-selection" name="{id}-selection" bind:value={ pipeline.selection }>
           { #each selectionTypes as type }
             <option value={ type }>{ type } </option>
           { /each }
         </select>
       </label>
-      { #if ["minimum", "median", "maximum"].indexOf(pipeline.config.selection) > -1}
+      { #if ["minimum", "median", "maximum"].indexOf(pipeline.selection) > -1}
         <label for="{id}-selection-dimension" class="selection">
           <span title="selection-dimension">in</span>
-          <select id="{id}-selection-dimension" name="{id}-selection-dimension" bind:value={ pipeline.config.selectionDimension }>
+          <select id="{id}-selection-dimension" name="{id}-selection-dimension" bind:value={ pipeline.selectionDimension }>
             { #each $dimensionsInData as dim }
               <option value={ dim }>{ dim } </option>
             { /each }
@@ -62,7 +63,7 @@ import { dimensionsInData } from "./state/dimensions-in-data";
     <div class="metadata">
       sampled:
       <!-- src: https://stackoverflow.com/a/2901298 -->
-      <span class="total">{pipeline.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+      <span class="total">{view.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
     </div>
   </div>
 </div>

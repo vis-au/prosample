@@ -1,5 +1,5 @@
 import { selectedDataset } from "../state/selected-dataset";
-import type { Pipeline, PipelineConfig, PipelineId, SelectionType } from "./types";
+import type { PipelineConfig, Orientation, SelectionType } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
 
@@ -15,32 +15,31 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
   return `${lin}&${sub}&${sel}&${dim}`;
 }
 
-export async function createPipeline(pipeline: Pipeline): Promise<Response> {
-  if (currentDataset === null) {
-    return;
-  }
-  const id = pipeline.id;
-  const dat = `data=${currentDataset}`;
-  const config = pipelineConfigToURLParams(pipeline.config);
-
-  return fetch(`${BASE_URL}/create_pipeline/${id}?${config}&${dat}`);
-}
-
-export async function updatePipeline(id: PipelineId, configuration: PipelineConfig): Promise<Response> {
+export async function createPipeline(pipeline: PipelineConfig): Promise<Response> {
   if (currentDataset === null) {
     return;
   }
   const dat = `data=${currentDataset}`;
-  const config = pipelineConfigToURLParams(configuration);
+  const config = pipelineConfigToURLParams(pipeline);
 
-  return fetch(`${BASE_URL}/update_pipeline/${id}?${config}&${dat}`);
+  return fetch(`${BASE_URL}/create_pipeline/${pipeline.id}?${config}&${dat}`);
 }
 
-export async function setSelection(id: PipelineId, selection: SelectionType): Promise<Response> {
+export async function updatePipeline(pipeline: PipelineConfig): Promise<Response> {
+  if (currentDataset === null) {
+    return;
+  }
+  const dat = `data=${currentDataset}`;
+  const config = pipelineConfigToURLParams(pipeline);
+
+  return fetch(`${BASE_URL}/update_pipeline/${pipeline.id}?${config}&${dat}`);
+}
+
+export async function setSelection(id: Orientation, selection: SelectionType): Promise<Response> {
   return fetch(`${BASE_URL}/set_selection/${id}?selection=${selection}`);
 }
 
-export async function sample(id: PipelineId): Promise<Response> {
+export async function sample(id: Orientation): Promise<Response> {
   return fetch(`${BASE_URL}/sample/${id}`);
 }
 

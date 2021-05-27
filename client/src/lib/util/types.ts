@@ -5,20 +5,20 @@ export type SubdivisionType = "standard" | "bucket_size";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
 export type ProgressionState = "paused" | "running";
-
-export type PipelineId = "left" | "right";
+export type Orientation = "left" | "right";
 
 export type PipelineConfig = {
+  id: Orientation,
   linearization: LinearizationType,
   subdivision: SubdivisionType,
   selection: SelectionType,
   selectionDimension: string,
 };
-export type Pipeline = {
-  id: PipelineId,
+
+export type ViewConfig = {
+  id: Orientation,
   initialized: boolean,
   viewType: ViewType,
   colorScaleType: BinColorScaleType,
-  config: PipelineConfig,
   pointsRetrieved: number
 };

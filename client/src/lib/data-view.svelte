@@ -5,9 +5,8 @@
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
-  import { leftPipeline, rightPipeline } from "./state/pipelines";
   import { selectedBins } from "./state/selected-bin";
-  import { viewConfig } from "./state/view-config";
+  import { leftView, rightView, viewConfig } from "./state/view-config";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
@@ -23,9 +22,9 @@
   let useRelativeBins = "relative";
   $: $viewConfig.useRelativeDifferenceScale = useRelativeBins === "relative";
 
-  const pipeline = orientation === "left"
-    ? leftPipeline
-    : orientation === "right" ? rightPipeline : null;
+  const view = orientation === "left"
+    ? leftView
+    : orientation === "right" ? rightView : null;
 
   $: dataset = orientation === "center"
     ? null
@@ -35,14 +34,14 @@
     ? generator.getDifferenceBins($viewConfig.useRelativeDifferenceScale)
     : orientation === "left" ? $primaryBins : $secondaryBins;
 
-  $: renderer = $pipeline?.viewType;
+  $: renderer = $view?.viewType;
   $: color = orientation === "center"
     ? scaleDiverging(interpolatePiYG)
-    : $pipeline.colorScaleType === "log"
+    : $view.colorScaleType === "log"
       ? scaleSequentialLog(interpolateViridis)
       : scaleSequential(interpolateViridis);
-  let colorScaleType = pipeline !== null ? $pipeline.colorScaleType : null;
-  $: pipeline !== null ? $pipeline.colorScaleType = colorScaleType : null;
+  let colorScaleType = view !== null ? $view.colorScaleType : null;
+  $: view !== null ? $view.colorScaleType = colorScaleType : null;
 
   const selectedDimensions = ["1", "2", "3"];
 
@@ -108,11 +107,11 @@
       bind:colorScaleType={ colorScaleType }
     />
   { /if }
-  { #if pipeline !== null }
+  { #if view !== null }
     <Alternatives
       name="{orientation}-renderer"
       alternatives={ ["bins (absolute)", "scatterplot"] }
-      bind:activeAlternative={ $pipeline.viewType }
+      bind:activeAlternative={ $view.viewType }
     />
   { #if selectedDimensions.length > 0 && tabularSelectedData.length > 0 }
     { #each selectedDimensions as dim }

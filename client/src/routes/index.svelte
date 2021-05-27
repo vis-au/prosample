@@ -3,10 +3,11 @@
   import SplitView from '$lib/split-view.svelte';
   import { reset, sample, updatePipeline } from '$lib/util/requests';
   import Tooltip from '$lib/widgets/tooltip.svelte';
-  import { leftPipeline, rightPipeline } from '$lib/state/pipelines';
   import { samplingRate } from '$lib/state/sampling-rate';
   import { progressionState } from '$lib/state/progression-state';
   import { generator } from '$lib/util/bin-generator';
+  import { leftView, rightView } from '$lib/state/view-config';
+  import { leftPipelineConfig, rightPipelineConfig } from '$lib/state/pipelines';
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -38,10 +39,10 @@
   onMount(async () => {
     await reset();
 
-    updatePipeline($leftPipeline.id, $leftPipeline.config)
-      .then(() => $leftPipeline.initialized = true);
-    updatePipeline($rightPipeline.id, $rightPipeline.config)
-      .then(() => $rightPipeline.initialized = true);
+    updatePipeline($leftPipelineConfig)
+      .then(() => $leftView.initialized = true);
+    updatePipeline($rightPipelineConfig)
+      .then(() => $rightView.initialized = true);
 
     samplingRate.subscribe(() => {
       window.clearInterval(samplingInterval);
@@ -68,8 +69,8 @@
       rawA = rawA.concat(jsonA.sample);
       rawB = rawB.concat(jsonB.sample);
 
-      $leftPipeline.pointsRetrieved = rawA.length;
-      $rightPipeline.pointsRetrieved = rawB.length;
+      $leftView.pointsRetrieved = rawA.length;
+      $rightView.pointsRetrieved = rawB.length;
     }, $samplingRate);
   }
 
