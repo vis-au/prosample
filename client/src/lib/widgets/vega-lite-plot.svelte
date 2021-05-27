@@ -11,7 +11,7 @@
     if (vegaEmbed === undefined) {
       return;
     }
-    vegaEmbed.embed(`#${id}-vega-container`, spec);
+    vegaEmbed.embed(`#${id}-vega-container`, spec, { actions: false });
   });
 
 </script>
