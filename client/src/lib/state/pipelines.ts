@@ -8,7 +8,8 @@ export const leftPipeline = writable<Pipeline>({
   config: {
     linearization: "knn",
     subdivision: "standard",
-    selection: "first",
+    selection: "minimum",
+    selectionDimension: "3"
   },
   viewType: "bins (absolute)",
   colorScaleType: "log",
@@ -22,6 +23,7 @@ export const rightPipeline = writable<Pipeline>({
     linearization: "knn",
     subdivision: "standard",
     selection: "random",
+    selectionDimension: "3"
   },
   viewType: "bins (absolute)",
   colorScaleType: "log",

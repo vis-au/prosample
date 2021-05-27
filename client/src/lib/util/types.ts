@@ -11,7 +11,8 @@ export type PipelineId = "left" | "right";
 export type PipelineConfig = {
   linearization: LinearizationType,
   subdivision: SubdivisionType,
-  selection: SelectionType
+  selection: SelectionType,
+  selectionDimension: string,
 };
 export type Pipeline = {
   id: PipelineId,

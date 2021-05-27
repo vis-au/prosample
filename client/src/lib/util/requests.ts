@@ -10,8 +10,9 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
   const lin = `linearization=${configuration.linearization}`;
   const sub = `subdivision=${configuration.subdivision}`;
   const sel = `selection=${configuration.selection}`;
+  const dim = `dimension=${configuration.selection}`;
 
-  return `${lin}&${sub}&${sel}`;
+  return `${lin}&${sub}&${sel}${dim}`;
 }
 
 export async function createPipeline(pipeline: Pipeline): Promise<Response> {

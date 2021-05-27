@@ -1,5 +1,6 @@
 <script lang="typescript">
   import { leftPipeline, rightPipeline } from "$lib/state/pipelines";
+import { dimensionsInData } from "./state/dimensions-in-data";
   import { updatePipeline } from "./util/requests";
   import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";
 
@@ -47,6 +48,16 @@
           { /each }
         </select>
       </label>
+      { #if ["minimum", "median", "maximum"].indexOf(pipeline.config.selection) > -1}
+        <label for="{id}-selection-dimension" class="selection">
+          <span title="selection-dimension">in</span>
+          <select id="{id}-selection-dimension" name="{id}-selection-dimension" bind:value={ pipeline.config.selectionDimension }>
+            { #each $dimensionsInData as dim }
+              <option value={ dim }>{ dim } </option>
+            { /each }
+          </select>
+        </label>
+      { /if }
     </div>
     <div class="metadata">
       sampled:
