@@ -14,7 +14,7 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
   return `${lin}&${sub}&${sel}`;
 }
 
-export async function createPipeline(configuration: PipelineConfig) {
+export async function createPipeline(configuration: PipelineConfig): Promise<Response> {
   if (currentDataset === null) {
     return;
   }
@@ -25,7 +25,7 @@ export async function createPipeline(configuration: PipelineConfig) {
   return fetch(`${BASE_URL}/create_pipeline/${id}?${config}&${dat}`);
 }
 
-export async function updatePipeline(configuration: PipelineConfig) {
+export async function updatePipeline(configuration: PipelineConfig): Promise<Response> {
   if (currentDataset === null) {
     return;
   }
@@ -36,14 +36,14 @@ export async function updatePipeline(configuration: PipelineConfig) {
   return fetch(`${BASE_URL}/update_pipeline/${id}?${config}&${dat}`);
 }
 
-export async function setSelection(id: PipelineId, selection: SelectionType) {
+export async function setSelection(id: PipelineId, selection: SelectionType): Promise<Response> {
   return fetch(`${BASE_URL}/set_selection/${id}?selection=${selection}`);
 }
 
-export async function sample(id: PipelineId) {
+export async function sample(id: PipelineId): Promise<Response> {
   return fetch(`${BASE_URL}/sample/${id}`);
 }
 
-export function reset() {
+export function reset(): Promise<void> {
   return fetch(`${BASE_URL}/reset`).then(() => console.log("pipelines were reset."));
 }
