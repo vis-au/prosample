@@ -10,6 +10,7 @@ import { isRemoteBusy } from "./util/requests";
 
   $: view = orientation === "left" ? leftView : rightView;
   $: pipelineConfig = orientation === "left" ? leftPipelineConfig : rightPipelineConfig;
+  $: otherPipelineConfig = orientation === "left" ? rightPipelineConfig : leftPipelineConfig;
   $: isSamplingRunning = $view?.pointsRetrieved > 0;
 
   const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
@@ -24,7 +25,7 @@ import { isRemoteBusy } from "./util/requests";
   </div>
   <div class="configuration">
     <div class="pipeline" title="{$isRemoteBusy ? "wait a bit, server is busy" : ""}">
-      <label for="{id}-linearization" class="linearization">
+      <label for="{id}-linearization" class="linearization {$pipelineConfig.linearization !== $otherPipelineConfig.linearization ? "diff" : ""}">
         <span title="linearization">Lin.</span>
         <select id="{id}-linearization" name="{id}-linearization" bind:value={ $pipelineConfig.linearization } disabled={ isSamplingRunning || $isRemoteBusy }>
           { #each linearizationTypes as type }
@@ -32,7 +33,7 @@ import { isRemoteBusy } from "./util/requests";
           { /each }
         </select>
       </label>
-      <label for="{id}-subdivision" class="subdivision">
+      <label for="{id}-subdivision" class="subdivision {$pipelineConfig.subdivision !== $otherPipelineConfig.subdivision ? "diff" : ""}">
         <span title="subdivision">Sub.</span>
         <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ $pipelineConfig.subdivision } disabled={ isSamplingRunning || $isRemoteBusy }>
           { #each subdivisionTypes as type }
@@ -40,7 +41,7 @@ import { isRemoteBusy } from "./util/requests";
           { /each }
         </select>
       </label>
-      <label for="{id}-selection" class="selection">
+      <label for="{id}-selection" class="selection {$pipelineConfig.selection !== $otherPipelineConfig.selection ? "diff" : ""}">
         <span title="selection">Sel.</span>
         <select id="{id}-selection" name="{id}-selection" bind:value={ $pipelineConfig.selection } disabled={  $isRemoteBusy }>
           { #each selectionTypes as type }
@@ -49,7 +50,7 @@ import { isRemoteBusy } from "./util/requests";
         </select>
       </label>
       { #if ["minimum", "median", "maximum"].indexOf($pipelineConfig.selection) > -1}
-        <label for="{id}-selection-dimension" class="selection">
+        <label for="{id}-selection-dimension" class="selection {$pipelineConfig.selectionDimension !== $otherPipelineConfig.selectionDimension ? "diff" : ""}">
           <span title="selection-dimension">in</span>
           <select id="{id}-selection-dimension" name="{id}-selection-dimension" bind:value={ $pipelineConfig.selectionDimension } disabled={  $isRemoteBusy }>
             { #each $dimensionsInData as dim }
@@ -108,6 +109,9 @@ import { isRemoteBusy } from "./util/requests";
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+  div.pipeline-config-view .configuration .pipeline label.diff span {
+    font-weight: bold;
   }
   div.pipeline-config-view .configuration .metadata span.total {
     font-weight: bold;
