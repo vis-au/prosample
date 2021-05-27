@@ -1,14 +1,13 @@
-<script>
+<script lang="typescript">
   import { afterUpdate } from "svelte";
 
-  export let id;
-  export let spec;
+  export let id: string;
+  export let spec: Record<string, unknown>;
 
-  let window;
   let vegaEmbed;
 
   afterUpdate(() => {
-    vegaEmbed = window.vegaEmbed;
+    vegaEmbed = (window as any).vegaEmbed;
     if (vegaEmbed === undefined) {
       return;
     }
