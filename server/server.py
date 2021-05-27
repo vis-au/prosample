@@ -78,16 +78,17 @@ def normalize_chunk_positions(chunk):
   x = chunk[:, 1]
   y = chunk[:, 2]
 
-  min_x = x[x[0] != None].min()
-  min_y = y[y[0] != None].min()
-  max_x = x[x[0] != None].max()
-  max_y = y[y[0] != None].max()
+  # TODO: hardcoded transformation from geo to screen coordinates
+  min_x = -179.8806635
+  min_y = -85.3475888
+  max_x = 179.9872917
+  max_y = 83.5714722
 
   normalized_x = (x - min_x) / (max_x - min_x)
   normalized_y = (y - min_y) / (max_y - min_y)
 
   chunk[:, 1] = normalized_x
-  chunk[:, 2] = normalized_y
+  chunk[:, 2] = 1 - normalized_y
 
   return chunk
 
