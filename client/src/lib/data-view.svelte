@@ -1,6 +1,7 @@
 <script lang="typescript">
-  import { range } from "d3-array";
-  import { scaleDiverging, scaleSequential } from "d3-scale";
+import { precisionPrefix } from "d3-format";
+
+  import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
   import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
 
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
@@ -8,7 +9,6 @@
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { leftPipeline, rightPipeline } from "./state/pipelines";
   import { selectedBins } from "./state/selected-bin";
-import { selectedDataset } from "./state/selected-dataset";
   import { viewConfig } from "./state/view-config";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
@@ -40,7 +40,10 @@ import { selectedDataset } from "./state/selected-dataset";
   $: renderer = $pipeline?.viewType;
   $: color = orientation === "center"
     ? scaleDiverging(interpolatePiYG)
-    : scaleSequential(interpolateViridis);
+    : $pipeline.colorScaleType === "log"
+      ? scaleSequentialLog(interpolateViridis)
+      : scaleSequential(interpolateViridis);
+  $: colorScaleType = pipeline !== null ? $pipeline.colorScaleType : null;
 
   const selectedDimensions = ["1", "2", "3"];
 
@@ -103,6 +106,7 @@ import { selectedDataset } from "./state/selected-dataset";
       blockSize={ 10 }
       steps={ 11 }
       width={ 200 }
+      bind:colorScaleType={ colorScaleType }
     />
   { /if }
   { #if pipeline !== null }

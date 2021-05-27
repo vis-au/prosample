@@ -11,6 +11,7 @@ export const leftPipeline = writable<Pipeline>({
     selection: "first",
   },
   viewType: "bins (absolute)",
+  colorScaleType: "log",
   pointsRetrieved: 0
 });
 
@@ -23,5 +24,6 @@ export const rightPipeline = writable<Pipeline>({
     selection: "random",
   },
   viewType: "bins (absolute)",
+  colorScaleType: "log",
   pointsRetrieved: 0
 });
