@@ -2,6 +2,7 @@
   import { dimensionsInData } from "./state/dimensions-in-data";
   import { leftPipelineConfig, rightPipelineConfig } from "./state/pipelines";
   import { leftView, rightView } from "./state/view-config";
+import { isRemoteBusy } from "./util/requests";
   import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";
 
   export let id = "0";
@@ -22,10 +23,10 @@
     <div class="status { $view.initialized ? "ready" : "" }" title="{ !$view.initialized ? "not " : "" }ready"></div>
   </div>
   <div class="configuration">
-    <div class="pipeline">
+    <div class="pipeline" title="{$isRemoteBusy ? "wait a bit, server is busy" : ""}">
       <label for="{id}-linearization" class="linearization">
         <span title="linearization">Lin.</span>
-        <select id="{id}-linearization" name="{id}-linearization" bind:value={ $pipelineConfig.linearization } disabled={ isSamplingRunning }>
+        <select id="{id}-linearization" name="{id}-linearization" bind:value={ $pipelineConfig.linearization } disabled={ isSamplingRunning || $isRemoteBusy }>
           { #each linearizationTypes as type }
           <option value={ type }>{ type } </option>
           { /each }
@@ -33,7 +34,7 @@
       </label>
       <label for="{id}-subdivision" class="subdivision">
         <span title="subdivision">Sub.</span>
-        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ $pipelineConfig.subdivision } disabled={ isSamplingRunning }>
+        <select id="{id}-subdivision" name="{id}-subdivision" bind:value={ $pipelineConfig.subdivision } disabled={ isSamplingRunning || $isRemoteBusy }>
           { #each subdivisionTypes as type }
             <option value={ type }>{ type } </option>
           { /each }
@@ -41,7 +42,7 @@
       </label>
       <label for="{id}-selection" class="selection">
         <span title="selection">Sel.</span>
-        <select id="{id}-selection" name="{id}-selection" bind:value={ $pipelineConfig.selection }>
+        <select id="{id}-selection" name="{id}-selection" bind:value={ $pipelineConfig.selection } disabled={  $isRemoteBusy }>
           { #each selectionTypes as type }
             <option value={ type }>{ type } </option>
           { /each }
@@ -50,7 +51,7 @@
       { #if ["minimum", "median", "maximum"].indexOf($pipelineConfig.selection) > -1}
         <label for="{id}-selection-dimension" class="selection">
           <span title="selection-dimension">in</span>
-          <select id="{id}-selection-dimension" name="{id}-selection-dimension" bind:value={ $pipelineConfig.selectionDimension }>
+          <select id="{id}-selection-dimension" name="{id}-selection-dimension" bind:value={ $pipelineConfig.selectionDimension } disabled={  $isRemoteBusy }>
             { #each $dimensionsInData as dim }
               <option value={ dim }>{ dim } </option>
             { /each }
