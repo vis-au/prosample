@@ -26,7 +26,11 @@ class Pipeline:
       return None
 
     self.linearization = lin_class()
-    self.subdivision = sub_class(0.01)
+
+    if sub_class == SubdivisionBucketSize:
+      self.subdivision = sub_class(self.config["dimension"], 1000)
+    else:
+      self.subdivision = sub_class(0.01)
 
     return Sampler(data, self.linearization, self.subdivision)
 
