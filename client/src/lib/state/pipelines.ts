@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
-import { updateDimension as updateSelectionDimension, updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
+import { createPipeline, updateDimension as updateSelectionDimension, updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
 import type { PipelineConfig } from "$lib/util/types";
+import { leftView, rightView } from "./view-config";
 
 
 let leftPipeline: PipelineConfig = null;
@@ -59,3 +60,17 @@ rightPipelineConfig.subscribe(value => {
   updateRemotePipeline(rightPipeline, value);
   return value;
 });
+
+export async function createPipelines(): Promise<void> {
+  await createPipeline(leftPipeline)
+    .then(() => leftView.update(v => {
+      v.initialized = true;
+      return v;
+    }));
+
+  return createPipeline(rightPipeline)
+    .then(() => rightView.update(v => {
+      v.initialized = true;
+      return v;
+    }));
+}

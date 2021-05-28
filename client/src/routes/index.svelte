@@ -1,12 +1,11 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
   import SplitView from '$lib/split-view.svelte';
-  import { reset, sample, createPipeline } from '$lib/util/requests';
+  import { reset, sample } from '$lib/util/requests';
   import Tooltip from '$lib/widgets/tooltip.svelte';
   import { samplingRate } from '$lib/state/sampling-rate';
   import { progressionState } from '$lib/state/progression-state';
-  import { leftView, rightView } from '$lib/state/view-config';
-  import { leftPipelineConfig, rightPipelineConfig } from '$lib/state/pipelines';
+  import { createPipelines } from '$lib/state/pipelines';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
 
   let innerWidth = 0;
@@ -28,11 +27,7 @@
 
   onMount(async () => {
     await reset();
-
-    createPipeline($leftPipelineConfig)
-      .then(() => $leftView.initialized = true);
-    createPipeline($rightPipelineConfig)
-      .then(() => $rightView.initialized = true);
+    createPipelines();
 
     samplingRate.subscribe(() => {
       window.clearInterval(samplingInterval);
