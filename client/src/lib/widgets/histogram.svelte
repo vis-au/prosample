@@ -2,6 +2,7 @@
   import VegaLitePlot from "./vega-lite-plot.svelte";
 
   export let id: string;
+  export let color: string;
   export let width = 100;
   export let height = 100;
   export let data: Record<string, unknown>[];
@@ -25,6 +26,9 @@
       y: {
         aggregate: "count",
         title: null
+      },
+      color: {
+        value: !color ? "#555" : color
       }
     }
   }

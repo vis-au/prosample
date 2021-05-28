@@ -1,10 +1,9 @@
 <script lang="typescript">
   import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
-  import { interpolatePiYG, interpolateViridis } from "d3-scale-chromatic";
-
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
+  import { divergingScheme, sequentialScheme } from "./state/color-schemes";
   import { selectedBins } from "./state/selected-bin";
   import { leftView, rightView, globalViewConfig } from "./state/view-config";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
@@ -36,10 +35,10 @@
 
   $: renderer = $view?.viewType;
   $: color = orientation === "center"
-    ? scaleDiverging(interpolatePiYG)
+    ? scaleDiverging($divergingScheme)
     : $view.colorScaleType === "log"
-      ? scaleSequentialLog(interpolateViridis)
-      : scaleSequential(interpolateViridis);
+      ? scaleSequentialLog($sequentialScheme)
+      : scaleSequential($sequentialScheme);
   let colorScaleType = view !== null ? $view.colorScaleType : null;
   $: view !== null ? $view.colorScaleType = colorScaleType : null;
 
@@ -113,18 +112,18 @@
       alternatives={ ["bins (absolute)", "scatterplot"] }
       bind:activeAlternative={ $view.viewType }
     />
-  { #if selectedDimensions.length > 0 && tabularSelectedData.length > 0 }
-    { #each selectedDimensions as dim }
-      <Histogram
-        id={ `${orientation}-${dim}-histogram` }
-        data={ tabularSelectedData }
-        dimension={ dim }
-        height={30}
-        width={100}
-        showTitle={ false }
-      />
-    { /each }
-  { /if }
+    { #if selectedDimensions.length > 0 && tabularSelectedData.length > 0 }
+      { #each selectedDimensions as dim }
+        <Histogram
+          id={ `${orientation}-${dim}-histogram` }
+          data={ tabularSelectedData }
+          dimension={ dim }
+          height={30}
+          width={100}
+          showTitle={ false }
+        />
+      { /each }
+    { /if }
   { :else }
     <Alternatives
       name="relative-bins"
