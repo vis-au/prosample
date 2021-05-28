@@ -1,7 +1,10 @@
 import { primarySample, secondarySample } from '$lib/state/sampled-data';
+import { selectedBins } from '$lib/state/selected-bin';
 import type { HexbinBin } from 'd3-hexbin';
 import { hexbin } from "d3-hexbin";
 import { writable } from 'svelte/store';
+
+type BinType = [number, number, number]; // x, y, id
 
 export const hexbinning = hexbin<BinType>()
   .radius(10);
@@ -13,7 +16,8 @@ export const secondaryBins = writable([] as HexbinBin<BinType>[]);
 export const primaryData = writable([] as number[][]);
 export const secondaryData = writable([] as number[][]);
 
-type BinType = [number, number, number]; // x, y, id
+export const selectedPrimaryIds = writable([]);
+export const selectedSecondaryIds = writable([]);
 
 class BinGenerator {
   private _primaryData: number[][] = [];
@@ -36,6 +40,14 @@ class BinGenerator {
     });
     secondarySample.subscribe(value => {
       this.secondaryData = value.slice(0);
+    });
+
+    selectedBins.subscribe(value => {
+      selectedPrimaryIds.set(value
+        .map(bin => this.getPrimaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat());
+
+      selectedSecondaryIds.set(value
+        .map(bin => this.getSecondaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat());
     });
   }
 

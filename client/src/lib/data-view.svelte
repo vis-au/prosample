@@ -4,9 +4,8 @@
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { divergingScheme, sequentialScheme } from "./state/color-schemes";
-  import { selectedBins } from "./state/selected-bin";
   import { leftView, rightView, globalViewConfig } from "./state/view-config";
-  import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
+  import { generator, primaryBins, primaryData, secondaryBins, secondaryData, selectedPrimaryIds, selectedSecondaryIds } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
   import ZoomOverlay from "./zoom-overlay.svelte";
@@ -42,23 +41,21 @@
   let colorScaleType = view !== null ? $view.colorScaleType : null;
   $: view !== null ? $view.colorScaleType = colorScaleType : null;
 
-  const selectedDimensions = ["1", "2", "3"];
-
-  $: selectedIds = orientation === "left"
-    ? $selectedBins.map(bin => generator.getPrimaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat()
-    : orientation === "right"
-      ? $selectedBins.map(bin => generator.getSecondaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat()
-      : [];
+  const selectedDimensions = ["3"];
 
   $: selectedData = orientation === "left"
-    ? generator.getPrimaryDataList(selectedIds).filter(d => !!d)
+    ? generator.getPrimaryDataList($selectedPrimaryIds).filter(d => !!d)
     : orientation === "right"
-      ? generator.getSecondaryDataList(selectedIds).filter(d => !!d)
-      : [];
+      ? generator.getSecondaryDataList($selectedSecondaryIds).filter(d => !!d)
+        : generator.getPrimaryDataList($selectedPrimaryIds).filter(d => !!d)
+            .concat(generator.getSecondaryDataList($selectedSecondaryIds).filter(d => !!d));
 
-  $: tabularSelectedData = selectedData.map(d => {
+  $: tabularSelectedData = selectedData.map((d, i) => {
     let datum = {};
     selectedDimensions.forEach(dim => datum[dim] = d[+dim]);
+    if (orientation === "center") {
+      datum["orientation"] = i < $selectedPrimaryIds.length ? "left" : "right";
+    }
     return datum;
   });
 </script>
@@ -112,24 +109,26 @@
       alternatives={ ["bins (absolute)", "scatterplot"] }
       bind:activeAlternative={ $view.viewType }
     />
-    { #if selectedDimensions.length > 0 && tabularSelectedData.length > 0 }
-      { #each selectedDimensions as dim }
-        <Histogram
-          id={ `${orientation}-${dim}-histogram` }
-          data={ tabularSelectedData }
-          dimension={ dim }
-          height={30}
-          width={100}
-          showTitle={ false }
-        />
-      { /each }
-    { /if }
   { :else }
     <Alternatives
       name="relative-bins"
       alternatives={ [ "relative", "absolute" ] }
       bind:activeAlternative={ useRelativeBins }
     />
+  { /if }
+  { #if selectedDimensions.length > 0 && tabularSelectedData.length > 0 }
+    { #each selectedDimensions as dim }
+      <Histogram
+        id={ `${orientation}-${dim}-histogram` }
+        data={ tabularSelectedData }
+        dimension={ dim }
+        groupDimension={ orientation === "center" ? "orientation" : null}
+        colors={ orientation === "center" ? [$divergingScheme(0.1), $divergingScheme(0.9)]: []}
+        height={30}
+        width={100}
+        showTitle={ false }
+      />
+    { /each }
   { /if }
 </div>
 
