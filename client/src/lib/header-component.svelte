@@ -16,6 +16,8 @@
 
 	function resetProgression() {
 		isProgressionRunning = false;
+		$leftView.initialized = false;
+		$rightView.initialized = false;
 		$primarySample = [];
 		$secondarySample = [];
 		reset();

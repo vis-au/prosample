@@ -16,7 +16,7 @@
     width: 100%;
     background: black;
     color: white;
-    height: 25px;
+    height: 23px;
   }
   .view-config.center {
     border-left: 1px solid white;
