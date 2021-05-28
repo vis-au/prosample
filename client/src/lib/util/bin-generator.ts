@@ -1,3 +1,4 @@
+import { primarySample, secondarySample } from '$lib/state/sampled-data';
 import type { HexbinBin } from 'd3-hexbin';
 import { hexbin } from "d3-hexbin";
 import { writable } from 'svelte/store';
@@ -28,6 +29,15 @@ class BinGenerator {
   private _primaryIndex = {};
   private _secondaryIndex = {};
   private _differenceIndex = {};
+
+  constructor() {
+    primarySample.subscribe(value => {
+      this.primaryData = value.slice(0);
+    });
+    secondarySample.subscribe(value => {
+      this.secondaryData = value.slice(0);
+    });
+  }
 
   private getIndexForBins(bins: HexbinBin<BinType>[]) {
     const index = {};

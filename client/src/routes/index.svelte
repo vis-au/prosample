@@ -5,9 +5,9 @@
   import Tooltip from '$lib/widgets/tooltip.svelte';
   import { samplingRate } from '$lib/state/sampling-rate';
   import { progressionState } from '$lib/state/progression-state';
-  import { generator } from '$lib/util/bin-generator';
   import { leftView, rightView } from '$lib/state/view-config';
   import { leftPipelineConfig, rightPipelineConfig } from '$lib/state/pipelines';
+  import { primarySample, secondarySample } from '$lib/state/sampled-data';
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -25,16 +25,6 @@
   };
 
   let samplingInterval = -1;
-
-  // [random x, random y, random attribute]
-  let rawA = [];
-  let rawB = [];
-
-  $: sampleA = rawA.slice(0);
-  $: sampleB = rawB.slice(0);
-
-  $: generator.primaryData = sampleA || [];
-  $: generator.secondaryData = sampleB || [];
 
   onMount(async () => {
     await reset();
@@ -66,11 +56,8 @@
       const responseB = await sample("right");
       const jsonB = await responseB.json();
 
-      rawA = rawA.concat(jsonA.sample);
-      rawB = rawB.concat(jsonB.sample);
-
-      $leftView.pointsRetrieved = rawA.length;
-      $rightView.pointsRetrieved = rawB.length;
+      $primarySample = $primarySample.concat(jsonA.sample);
+      $secondarySample = $secondarySample.concat(jsonB.sample);
     }, $samplingRate);
   }
 
