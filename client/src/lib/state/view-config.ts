@@ -2,7 +2,7 @@ import type { ViewConfig } from "$lib/util/types";
 import { writable } from "svelte/store";
 import { primarySample, secondarySample } from "./sampled-data";
 
-export const viewConfig = writable({
+export const globalViewConfig = writable({
   showCenter: false,
   useRelativeDifferenceScale: false
 });

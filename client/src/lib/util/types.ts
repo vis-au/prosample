@@ -5,7 +5,7 @@ export type SubdivisionType = "standard" | "bucket_size";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
 export type ProgressionState = "paused" | "running";
-export type Orientation = "left" | "right";
+export type Orientation = "left" | "center" | "right";
 
 export type PipelineConfig = {
   id: Orientation,

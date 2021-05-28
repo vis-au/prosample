@@ -6,7 +6,7 @@
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { selectedBins } from "./state/selected-bin";
-  import { leftView, rightView, viewConfig } from "./state/view-config";
+  import { leftView, rightView, globalViewConfig } from "./state/view-config";
   import { generator, primaryBins, primaryData, secondaryBins, secondaryData } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
@@ -20,7 +20,7 @@
   export let zoomable = false;
 
   let useRelativeBins = "relative";
-  $: $viewConfig.useRelativeDifferenceScale = useRelativeBins === "relative";
+  $: $globalViewConfig.useRelativeDifferenceScale = useRelativeBins === "relative";
 
   const view = orientation === "left"
     ? leftView
@@ -31,7 +31,7 @@
     : orientation === "left" ? $primaryData : $secondaryData;
 
   $: bins = orientation === "center"
-    ? generator.getDifferenceBins($viewConfig.useRelativeDifferenceScale)
+    ? generator.getDifferenceBins($globalViewConfig.useRelativeDifferenceScale)
     : orientation === "left" ? $primaryBins : $secondaryBins;
 
   $: renderer = $view?.viewType;
