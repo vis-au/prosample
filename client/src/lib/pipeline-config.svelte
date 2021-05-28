@@ -1,9 +1,11 @@
 <script lang="typescript">
   import { dimensionsInData } from "./state/dimensions-in-data";
   import { leftPipelineConfig, rightPipelineConfig } from "./state/pipelines";
+  import { selectedDataset } from "./state/selected-dataset";
   import { globalViewConfig, leftView, rightView } from "./state/view-config";
   import { isRemoteBusy } from "./util/requests";
   import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";
+import ProgressBar from "./widgets/progress-bar.svelte";
   import Selection from "./widgets/selection.svelte";
 
   export let id = "0";
@@ -65,9 +67,12 @@
       { /if }
     </div>
     <div class="metadata">
-      sampled:
-      <!-- src: https://stackoverflow.com/a/2901298 -->
-      <span class="total">{$view.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+      <div class="sampled">
+        sampled:
+        <!-- src: https://stackoverflow.com/a/2901298 -->
+        <span class="total">{$view.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+      </div>
+      <ProgressBar width={ 130 } height={ 2 } progress={ $view.pointsRetrieved/$selectedDataset.size } />
     </div>
   </div>
 </div>
@@ -110,6 +115,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+  div.pipeline-config-view .configuration .metadata {
+    font-size: 13px;
   }
   div.pipeline-config-view .configuration .metadata span.total {
     font-weight: bold;

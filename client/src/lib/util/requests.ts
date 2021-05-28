@@ -5,7 +5,7 @@ import type { PipelineConfig, Orientation, SelectionType, LinearizationType, Sub
 const BASE_URL = "http://127.0.0.1:5000";
 
 let currentDataset = null;
-selectedDataset.subscribe(value => currentDataset = value);
+selectedDataset.subscribe(value => currentDataset = value.name);
 
 export const isRemoteBusy = writable(false);
 
@@ -56,6 +56,17 @@ export function updateDimension(id: Orientation, dimension: string): Promise<voi
 
 export async function sample(id: Orientation): Promise<Response> {
   return fetch(`${BASE_URL}/sample/${id}`);
+}
+
+export function getDatasetSize(id: Orientation): Promise<void> {
+  return fetch(`${BASE_URL}/data_size/${id}`)
+    .then((res) => res.json())
+    .then(size => {
+      selectedDataset.set({
+        name: currentDataset,
+        size
+      })
+    });
 }
 
 export function reset(): Promise<void> {

@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
-import { createPipeline, updateDimension as updateSelectionDimension, updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
+import { createPipeline, getDatasetSize, updateDimension as updateSelectionDimension,
+  updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
 import type { PipelineConfig } from "$lib/util/types";
 import { leftView, rightView } from "./view-config";
 
@@ -68,9 +69,11 @@ export async function createPipelines(): Promise<void> {
       return v;
     }));
 
-  return createPipeline(rightPipeline)
+  await createPipeline(rightPipeline)
     .then(() => rightView.update(v => {
       v.initialized = true;
       return v;
     }));
+
+  await getDatasetSize(leftPipeline.id);
 }

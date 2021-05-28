@@ -22,3 +22,8 @@ export type ViewConfig = {
   colorScaleType: BinColorScaleType,
   pointsRetrieved: number
 };
+
+export type Dataset = {
+  name: string,
+  size: number
+};
