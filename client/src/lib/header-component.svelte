@@ -6,10 +6,21 @@
 	import NumberInput from './widgets/number-input.svelte';
 	import { selectedDataset } from './state/selected-dataset';
 	import { leftView, rightView } from './state/view-config';
+	import { primarySample, secondarySample } from './state/sampled-data';
+	import { reset } from './util/requests';
+	import { createPipelines } from './state/pipelines';
 
 	let isProgressionRunning = false;
 
 	$: progressionState.set(isProgressionRunning ? "running" : "paused");
+
+	function resetProgression() {
+		isProgressionRunning = false;
+		$primarySample = [];
+		$secondarySample = [];
+		reset();
+		createPipelines();
+	}
 </script>
 
 <header>
@@ -40,6 +51,14 @@
 			style="width:75px;margin-left:20px"
 			theme="dark"
 		/>
+		<button
+			id="reset-progression"
+			class={$leftView.initialized && $rightView.initialized ? "" : "disabled"}
+			disabled={ !($leftView.initialized && $rightView.initialized) }
+			on:click={ resetProgression }>
+
+			Reset
+		</button>
 	</div>
 </header>
 
@@ -78,5 +97,25 @@
 
 	header .pick-dataset h2 {
 		min-width: 120px;
+	}
+
+	header button#reset-progression {
+		width: 75px;
+		line-height: 25px;
+		font-size: 14px;
+		font-weight: bold;
+		margin: 0;
+		padding: 0;
+		color: white;
+		background: rgb(180, 34, 34);
+		border: 2px solid black;
+		cursor: pointer;
+		margin-left: 15px;
+	}
+	header button#reset-progression:hover {
+		background: rgb(222, 84, 84);
+	}
+	header button#reset-progression.disabled {
+		opacity: 0.4;
 	}
 </style>
