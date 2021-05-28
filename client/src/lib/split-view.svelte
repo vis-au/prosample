@@ -2,7 +2,7 @@
   import DataView from './data-view.svelte';
   import { viewConfig } from './state/view-config';
   import { hoveredPosition } from './state/hovered-position';
-  import ViewConfig from './pipeline-config.svelte';
+  import PipelineConfig from './pipeline-config.svelte';
   import Toggle from './widgets/toggle.svelte';
 
   let innerWidth = 500;
@@ -24,7 +24,7 @@
 
 <div class="split-view">
   <div class="config" on:mouseenter={ hideTooltip }>
-    <ViewConfig id="A" orientation="left" />
+    <PipelineConfig id="A" orientation="left" />
     <div class="center-config" style="min-width:{$viewConfig.showCenter?plotWidth+margin.horizontal:50}px">
       <Toggle
         id="center-view-toggle"
@@ -34,7 +34,7 @@
         style="width:25px; height:25px; line-height:25px;"
       />
     </div>
-    <ViewConfig id="B" orientation="right" />
+    <PipelineConfig id="B" orientation="right" />
   </div>
   <div class="data">
     <DataView
