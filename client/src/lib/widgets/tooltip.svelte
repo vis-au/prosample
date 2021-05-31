@@ -1,9 +1,9 @@
 <script lang="typescript">
   import { scaleDiverging } from "d3-scale";
-  import { interpolatePiYG } from "d3-scale-chromatic";
   import { hoveredPosition } from "$lib/state/hovered-position";
   import type { BinType } from '$lib/util/bin-generator';
   import { generator } from "$lib/util/bin-generator";
+  import { divergingScheme } from "$lib/state/color-schemes";
 
   export let active = false;
   export let x: number;
@@ -15,7 +15,7 @@
     secondary: BinType[]
   };
 
-  const color = scaleDiverging(interpolatePiYG).domain([-1, 0, 1]);
+  $: color = scaleDiverging($divergingScheme).domain([-1, 0, 1]);
 
   $: left = data.primary?.length || 0;
   $: right = data.secondary?.length || 0;

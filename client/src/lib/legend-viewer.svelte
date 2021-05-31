@@ -2,9 +2,10 @@
   import { range } from "d3-array";
   import type { ScaleDiverging, ScaleSequential } from "d3-scale";
   import { scaleLinear } from "d3-scale";
-  import type { BinColorScaleType } from "./util/types";
+  import { divergingScheme, divergingSchemes, sequentialScheme, sequentialSchemes } from "./state/color-schemes";
+  import type { BinColorScaleType, Orientation } from "./util/types";
 
-  export let id = "id";
+  export let id: Orientation;
   export let color: ScaleSequential<string, never> | ScaleDiverging<string, never>;
   export let title: string;
   export let left = 0;
@@ -53,11 +54,17 @@
         />
       { /each }
     </g>
-    <text class="low" x={ margin } y={ height - 17 - margin }>low</text>
-    <text class="high" x={ width-margin } y={ height - 17 - margin }>high</text>
+    <g class="label left" transform="translate({margin},{blockSize + margin + 5})">
+      <rect width=30 height=14 />
+      <text class="low">low</text>
+    </g>
+    <g class="label right" transform="translate({width-margin},{blockSize + margin + 5})">
+      <rect x={ -30 } width=30 height=14 />
+      <text class="high">high</text>
+    </g>
   </g>
   { #if colorScaleType !== null }
-    <g class="scale-type" transform="translate({ width - colorScaleTypes.length * 15 + margin }, 15)">
+    <g class="scale-type" transform="translate({ width - colorScaleTypes.length * 15 + margin },{ height - 5 - margin})">
       { #each colorScaleTypes as type, index }
         <circle
           class="scale-type-toggle"
@@ -72,6 +79,33 @@
       { /each }
     </g>
   { /if }
+  <g class="color-scheme" transform="translate({margin},{ height - 12 - margin})">
+    { #if id === "center" }
+      { #each divergingSchemes as scheme, index }
+        <rect
+          x={ index * 12 }
+          y={0}
+          width={8}
+          height={8}
+          fill={ $divergingScheme === scheme ? "black" : "white"}
+          stroke="black"
+          on:click={ () => $divergingScheme = scheme }
+        />
+      { /each }
+    { :else }
+      { #each sequentialSchemes as scheme, index }
+        <rect
+          x={ index * 12 }
+          y={0}
+          width={8}
+          height={8}
+          fill={ $sequentialScheme === scheme ? "black" : "white"}
+          stroke="black"
+          on:click={ () => $sequentialScheme = scheme }
+        />
+      { /each }
+    { /if }
+  </g>
 </svg>
 
 <style>
@@ -84,6 +118,10 @@
   svg.legend rect.value {
     stroke: white;
     stroke-width: 0.25px;
+  }
+
+  svg.legend g.color g.label rect {
+    fill: rgba(255,255,255,0.7);
   }
 
   svg.legend text {
@@ -99,6 +137,10 @@
   }
 
   svg.legend .scale-type circle.scale-type-toggle {
+    cursor: pointer;
+  }
+
+  svg.legend g.color-scheme rect {
     cursor: pointer;
   }
 </style>

@@ -91,12 +91,12 @@
 
   { #if renderer !== "scatterplot" }
     <LegendViewer
-      { id }
+      id={ orientation }
       { color }
       title={ "Density" }
       left={ width - 210 }
-      top={ height - 60 }
-      height={ 50 }
+      top={ height - 65 }
+      height={ 55 }
       blockSize={ 10 }
       steps={ 11 }
       width={ 200 }
