@@ -1,12 +1,14 @@
 <script lang="typescript">
   import { onMount } from 'svelte';
   import SplitView from '$lib/split-view.svelte';
-  import { reset, sample } from '$lib/util/requests';
   import Tooltip from '$lib/widgets/tooltip.svelte';
+  import BigMessageOverlay from '$lib/widgets/big-message-overlay.svelte'
+  import { reset, sample } from '$lib/util/requests';
   import { samplingRate } from '$lib/state/sampling-rate';
   import { progressionState } from '$lib/state/progression-state';
   import { createPipelines } from '$lib/state/pipelines';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
+import { leftView, rightView } from '$lib/state/view-config';
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -68,6 +70,11 @@
 
 <main class="split-view" on:mousemove={ onMouseMove }>
   <SplitView></SplitView>
+  { #if !($leftView.initialized && $rightView.initialized) }
+    <BigMessageOverlay
+      message="Please wait, while we initialize the two pipelines."
+    />
+  { /if }
   <Tooltip
     x={ tooltip.x }
     y={ tooltip.y }
@@ -82,6 +89,6 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 </style>

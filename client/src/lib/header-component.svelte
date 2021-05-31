@@ -32,7 +32,7 @@
 		<Alternatives
 			name="datasets"
 			alternatives={ ["mountain_peaks", "random", "fastfood_places"] }
-			bind:activeAlternative={ $selectedDataset }
+			bind:activeAlternative={ $selectedDataset.name }
 		/>
 	</div>
 
