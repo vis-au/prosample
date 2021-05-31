@@ -143,5 +143,17 @@ def reset_pipelines():
   return cors_response("ok")
 
 
+@app.route('/data_size/<id>', methods=["GET"])
+def data_size(id):
+  pipeline = PIPELINES.get(id)
+
+  if pipeline == None:
+    print("couldn't find pipeline with id", id)
+    abort(400)
+
+  dataset_size = pipeline.get_dataset_size()
+  return cors_response(dataset_size)
+
+
 if __name__ == "__main__":
   app.run(debug=True)

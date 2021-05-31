@@ -60,6 +60,9 @@ class Pipeline:
   def get_config(self):
     return self.config
 
+  def get_dataset_size(self):
+    return self.sampler.get_dataset_size()
+
 
 def _resolve_data(data):
   if data == "mountain_peaks":
