@@ -26,7 +26,7 @@
 </script>
 
 <header>
-	<h1 class="title">Sampling Pipeline</h1>
+	<img class="logo" src="static/logo.svg" alt="ProSampling logo" height="30">
 	<div class="pick-dataset config-component">
 		<h2>Pick Dataset</h2>
 		<Alternatives
@@ -80,10 +80,9 @@
 	header {
 		height: 30px;
 	}
-	header h1.title {
-		min-width: 200px;
-		font-size: 20px;
-		margin-right: 75px;
+
+	header img.logo {
+		margin-right: 50px;
 	}
 
 	header .config-component {
