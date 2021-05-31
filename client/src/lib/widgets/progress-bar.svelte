@@ -5,7 +5,7 @@
   export let height: number;
 </script>
 
-<div id="{id}-progress-bar" class="progress-bar" style="width:{width}px" title="{progress*100}%;min-height:{height}px">
+<div id="{id}-progress-bar" class="progress-bar" style="width:{width}px;min-height:{height}px" title="{Math.floor(progress*10000)/100}%">
   <div class="progress" style="width:{progress*width}px;height:{height}px"></div>
 </div>
 
