@@ -1,13 +1,11 @@
 <script lang="typescript">
   export let id: string;
   export let progress: number;
-  export let width: number;
+  export let width: number = null;
   export let height: number;
-
-  let actualWidth: number;
 </script>
 
-<div id="{id}-progress-bar" class="progress-bar" style="width:{width}px;min-height:{height}px" title="{Math.floor(progress*10000)/100}%" bind:clientWidth={ actualWidth }>
+<div id="{id}-progress-bar" class="progress-bar" style="width:{width}px;min-height:{height}px" title="{Math.floor(progress*10000)/100}%">
   <div class="progress" style="width:{progress*100}%;height:{height}px"></div>
 </div>
 

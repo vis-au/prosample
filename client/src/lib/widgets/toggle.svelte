@@ -19,8 +19,11 @@
   for="{id}-toggle"
   title={ disabled ? title : disabledTitle }>
 
-  <div class="toggle-text" style={ style }>
-    {disabled ? disabledText : active ? activeText : passiveText}
+  <div class="toggle-text" style={ style } on:click={ null }>
+    { #if $$slots.icon }
+      <slot class="icon" name="icon"></slot>
+    { /if }
+    <span>{ disabled ? disabledText : active ? activeText : passiveText }</span>
   </div>
 
   <input
@@ -47,14 +50,25 @@
     line-height: 25px;
     cursor: pointer;
     transition: background-color 0.1s ease-in-out;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.92;
+  }
+  label.toggle .toggle-text:hover {
+    opacity: 1;
   }
   label.toggle.light .toggle-text {
+    font-size: 16px;
+    font-family: sans-serif;
+    margin: 0;
     background: white;
     color: black;
     border-color: black;
   }
   label.toggle.dark .toggle-text {
-    background: #00c700;
+    background: #333;
     color: white;
   }
   label.toggle.disabled .toggle-text {
@@ -64,10 +78,17 @@
     background: #eee;
   }
   label.toggle.dark .toggle-text:hover {
-    background: #00da00;
+    background: #555;
   }
   label.toggle.light.disabled .toggle-text:hover {
     background: white;
+  }
+  :global(label.toggle .toggle-text > i) {
+		margin: 0 2px;
+		font-size: 18px;
+  }
+  label.toggle .toggle-text > span {
+    margin: 0 2px;
   }
   label.toggle input {
     display: none;

@@ -23,7 +23,7 @@
 
 <div class="pipeline-config-view {orientation} {isSamplingRunning ? "disabled" : ""}">
   <div class="title">
-    <h1>Pipeline Configuration {id}</h1>
+    <h1><i class="material-icons">settings</i>Pipeline Configuration {id}</h1>
     <div class="status { $view.initialized ? "ready" : "" }" title="{ !$view.initialized ? "not " : "" }ready"></div>
   </div>
   <div class="configuration">
@@ -72,7 +72,7 @@
         <!-- src: https://stackoverflow.com/a/2901298 -->
         <span class="total">{$view.pointsRetrieved.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }</span>
       </div>
-      <ProgressBar height={ 2 } progress={ $view.pointsRetrieved/$selectedDataset.size } />
+      <ProgressBar id="{id}-sample-progress" height={ 2 } progress={ $view.pointsRetrieved/$selectedDataset.size } />
     </div>
   </div>
 </div>
@@ -98,6 +98,12 @@
   }
   div.pipeline-config-view .title h1 {
     font-size: 15px;
+    display: flex;
+    align-items: center;
+  }
+  div.pipeline-config-view .title h1 i {
+    font-size: 13px;
+    margin-right: 5px;
   }
   div.pipeline-config-view .title .status {
     width: 10px;
