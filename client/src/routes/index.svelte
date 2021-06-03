@@ -8,7 +8,7 @@
   import { progressionState } from '$lib/state/progression-state';
   import { createPipelines } from '$lib/state/pipelines';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
-import { leftView, rightView } from '$lib/state/view-config';
+  import { leftView, rightView } from '$lib/state/view-config';
 
   let innerWidth = 0;
   let innerHeight = 0;

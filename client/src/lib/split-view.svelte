@@ -5,6 +5,7 @@
   import PipelineConfig from './pipeline-config.svelte';
   import Toggle from './widgets/toggle.svelte';
   import ViewConfig from './view-config.svelte';
+  import { scaleX, scaleY } from './state/scales';
 
   let innerWidth = 500;
   let innerHeight = 350;
@@ -15,6 +16,9 @@
 
   $: plotWidth = innerWidth / ($globalViewConfig.showCenter ? 3 : 2) - margin.horizontal;
   $: plotHeight = innerHeight - margin.vertical;
+
+  $: $scaleX.domain([0, 1]).range([0, plotWidth]);
+  $: $scaleY.domain([0, 1]).range([0, plotHeight]);
 
   function hideTooltip() {
     hoveredPosition.set([-1, -1]);

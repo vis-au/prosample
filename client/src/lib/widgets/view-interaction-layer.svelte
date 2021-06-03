@@ -1,9 +1,14 @@
 <script lang="typescript">
-  import { scaleLinear } from "d3-scale";
   import { hoveredPosition } from "$lib/state/hovered-position";
   import { selectedBins } from "$lib/state/selected-bin";
+  import { currentTransform } from "$lib/state/zoom-transform";
   import { hexagon, hexbinning } from "$lib/util/bin-generator";
-  import { afterUpdate } from "svelte";
+  import { select } from "d3-selection";
+  import type { Selection } from "d3-selection";
+  import { zoom, zoomTransform } from "d3-zoom";
+  import type { D3ZoomEvent } from "d3-zoom";
+  import { afterUpdate, onMount } from "svelte";
+  import { scaleX, scaleY } from "$lib/state/scales";
 
   export let id: string;
   export let width: number;
@@ -13,21 +18,30 @@
 
   let canvasElement: HTMLCanvasElement;
 
-  $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
-  $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
+  const zoomBehavior = zoom()
+    .scaleExtent([0.75, 10])
+    .on("zoom", onZoom);
+
+  function onZoom(event: D3ZoomEvent<Element, void>) {
+    if (event.sourceEvent === null) {
+      return;
+    }
+
+    $currentTransform = event.transform;
+  }
 
   function onHover(event) {
     const rect = event.target.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / width;
-    const y = (event.clientY - rect.top) / height;
+    const x = $scaleX.invert($currentTransform.invertX(event.clientX - rect.left));
+    const y = $scaleY.invert($currentTransform.invertY(event.clientY - rect.top));
 
     hoveredPosition.set([ x, y ]);
   }
 
   function onClick(event) {
     const rect = event.target.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / width;
-    const y = (event.clientY - rect.top) / height;
+    const x = $scaleX.invert($currentTransform.invertX(event.clientX - rect.left));
+    const y = $scaleY.invert($currentTransform.invertY(event.clientY - rect.top));
 
     const clickedBin = hexbinning([[x,y,-1]])[0];
     const selectedBin = $selectedBins.find(bin => bin.x === clickedBin.x && bin.y === clickedBin.y);
@@ -80,10 +94,6 @@
       return;
     }
 
-    hexbinning
-      .x(d => scaleX(d[0]))
-      .y(d => scaleY(d[1]));
-
     const hexagonPath = new Path2D(hexagon);
     const ctx = canvasElement.getContext("2d");
     ctx.clearRect(0, 0, width, height);
@@ -92,7 +102,20 @@
     renderSelectedBins(ctx, hexagonPath);
   }
 
-  afterUpdate(render);
+  onMount(() => {
+    const svg = select(canvasElement);
+    svg.call(zoomBehavior);
+  });
+
+  afterUpdate(() => {
+    const canvas = select(canvasElement) as Selection<Element, unknown, any, any>;
+    const myZoom = zoomTransform(canvasElement);
+    if (JSON.stringify(myZoom) !== JSON.stringify($currentTransform)) {
+      zoomBehavior.transform(canvas, $currentTransform);
+    }
+
+    render();
+  });
 </script>
 
 <canvas

@@ -5,17 +5,16 @@
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { divergingScheme, sequentialScheme } from "./state/color-schemes";
   import { leftView, rightView, globalViewConfig } from "./state/view-config";
-  import { generator, primaryBins, primaryData, secondaryBins, secondaryData, selectedPrimaryIds, selectedSecondaryIds } from "./util/bin-generator";
+  import { generator, primaryBins, primaryData, secondaryBins, secondaryData, selectedPrimaryIds,
+    selectedSecondaryIds } from "./util/bin-generator";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
-  import ZoomOverlay from "./zoom-overlay.svelte";
 
 
   export let id = "left";
   export let orientation: "left" | "right" | "center";
   export let width = 250;
   export let height = 100;
-  export let zoomable = false;
 
   let useRelativeBins = "relative";
   $: $globalViewConfig.useRelativeDifferenceScale = useRelativeBins === "relative";
@@ -77,15 +76,6 @@
       { height }
       { color }
       { bins }
-    />
-  { /if }
-
-  { #if zoomable }
-    <ZoomOverlay
-      id={ id }
-      orientation={ orientation }
-      width={ width }
-      height={ height }
     />
   { /if }
 

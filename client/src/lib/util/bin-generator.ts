@@ -1,7 +1,10 @@
 import { primarySample, secondarySample } from '$lib/state/sampled-data';
+import { scaleX, scaleY } from '$lib/state/scales';
 import { selectedBins } from '$lib/state/selected-bin';
+import { currentTransform } from '$lib/state/zoom-transform';
 import type { HexbinBin } from 'd3-hexbin';
 import { hexbin } from "d3-hexbin";
+import type { ScaleLinear } from 'd3-scale';
 import { writable } from 'svelte/store';
 
 type BinType = [number, number, number]; // x, y, id
@@ -34,6 +37,9 @@ class BinGenerator {
   private _secondaryIndex = {};
   private _differenceIndex = {};
 
+  private scaleX: ScaleLinear<number, number>;
+  private scaleY: ScaleLinear<number, number>;
+
   constructor() {
     primarySample.subscribe(value => {
       this.primaryData = value.slice(0);
@@ -48,6 +54,18 @@ class BinGenerator {
 
       selectedSecondaryIds.set(value
         .map(bin => this.getSecondaryBin([bin.x, bin.y, -1])?.map(item => item[2])).flat());
+    });
+
+    scaleX.subscribe(value => this.scaleX = value);
+    scaleY.subscribe(value => this.scaleY = value);
+
+    currentTransform.subscribe(value => {
+      hexbinning
+        .x(d => value.applyX(this.scaleX(d[0])))
+        .y(d => value.applyY(this.scaleY(d[1])));
+
+      this.updatePrimaryBins();
+      this.updateSecondaryBins();
     });
   }
 
@@ -159,6 +177,18 @@ class BinGenerator {
     });
   }
 
+  private updatePrimaryBins() {
+    this._primaryBins = hexbinning(this._primaryData.map(d => [d[1], d[2], d[0]]));
+    primaryBins.set(this._primaryBins);
+    this._primaryIndex = this.getIndexForBins(this._primaryBins);
+  }
+
+  private updateSecondaryBins() {
+    this._secondaryBins = hexbinning(this._secondaryData.map(d => [d[1], d[2], d[0]]));
+    secondaryBins.set(this._secondaryBins);
+    this._secondaryIndex = this.getIndexForBins(this._secondaryBins);
+  }
+
   public get primaryData(): number[][] {
     return this._primaryData;
   }
@@ -167,9 +197,8 @@ class BinGenerator {
     this._primaryData = data;
     this.insertDataIntoMap(data, this._primaryDataMap);
     primaryData.set(data);
-    this._primaryBins = hexbinning(data.map(d => [d[1], d[2], d[0]]));
-    primaryBins.set(this._primaryBins);
-    this._primaryIndex = this.getIndexForBins(this._primaryBins);
+
+    this.updatePrimaryBins();
   }
 
   public get secondaryData(): number[][] {
@@ -180,9 +209,8 @@ class BinGenerator {
     this._secondaryData = data;
     this.insertDataIntoMap(data, this._secondaryDataMap);
     secondaryData.set(data);
-    this._secondaryBins = hexbinning(data.map(d => [d[1], d[2], d[0]]));
-    secondaryBins.set(this._secondaryBins);
-    this._secondaryIndex = this.getIndexForBins(this._secondaryBins);
+
+    this.updateSecondaryBins();
   }
 
   // x and y are plot coordinates!

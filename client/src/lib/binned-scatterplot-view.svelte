@@ -2,10 +2,9 @@
   import { max, min } from 'd3-array';
   import type { HexbinBin } from 'd3-hexbin';
   import type { ScaleDiverging, ScaleSequential } from 'd3-scale';
-  import { scaleLinear } from 'd3-scale';
   import { afterUpdate } from 'svelte';
   import type { BinType } from './util/bin-generator';
-  import { hexagon, hexbinning } from './util/bin-generator';
+  import { hexagon } from './util/bin-generator';
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 
   export let id: string;
@@ -15,10 +14,6 @@
   export let bins: HexbinBin<BinType>[];
 
   let canvasElement: HTMLCanvasElement;
-
-  $: scaleX = scaleLinear().domain([0, 1]).range([0, width]);
-  $: scaleY = scaleLinear().domain([0, 1]).range([0, height]);
-
 
   function renderBins(ctx: CanvasRenderingContext2D, hexagonPath: Path2D) {
     ctx.clearRect(0, 0, width, height);
@@ -39,10 +34,6 @@
     if (!canvasElement) {
       return;
     }
-
-    hexbinning
-      .x(d => scaleX(d[0]))
-      .y(d => scaleY(d[1]));
 
     const ctx = canvasElement.getContext("2d");
     const hexagonPath = new Path2D(hexagon);
