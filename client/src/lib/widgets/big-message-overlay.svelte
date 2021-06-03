@@ -1,4 +1,5 @@
 <script lang="typescript">
+  export let title = "Info";
   export let message: string;
 
   let width: number;
@@ -7,7 +8,8 @@
 
 <div class="big-message-overlay" style="width:{width}px;height:{height}px">
   <div class="message-container">
-    <div class="message">{ message }</div>
+    <h1><i class="material-icons">info</i>{ title }</h1>
+    <p class="message">{ message }</p>
   </div>
 </div>
 
@@ -32,13 +34,29 @@
     background: white;
     border: 2px solid black;
     transform: translateY(-50px);
-    font-size: 25px;
-    font-weight: bold;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 7px 45px 8px;
+    justify-content: space-between;
     border-radius: 4px;
     box-shadow: 0 2px 14px #888;
+  }
+
+  div.message-container h1 {
+    font-size: 22px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+    background: black;
+    padding: 7px 20px 8px;
+    color: white;
+  }
+  div.message-container h1 i {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+  div.message-container p {
+    font-size: 16px;
+    padding: 15px 20px;
   }
 </style>

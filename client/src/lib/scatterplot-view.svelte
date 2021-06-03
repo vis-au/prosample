@@ -4,7 +4,7 @@
   import { ScatterplotLayer } from '@deck.gl/layers';
   import { selectAll } from 'd3-selection';
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
-  import { currentTransform } from './state/zoom-transform';
+  import { currentTransform } from './state/zoom';
   import { scaleX, scaleY } from './state/scales';
 
   export let id = "deck-gl-scatterplot";

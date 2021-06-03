@@ -72,7 +72,7 @@
   <SplitView></SplitView>
   { #if !($leftView.initialized && $rightView.initialized) }
     <BigMessageOverlay
-      message="Please wait, while we initialize the two pipelines."
+      message="Please wait, while we initialize the two pipelines ..."
     />
   { /if }
   <Tooltip

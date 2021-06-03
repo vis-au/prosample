@@ -4,7 +4,7 @@
   import type { ScaleDiverging, ScaleSequential } from 'd3-scale';
   import { afterUpdate } from 'svelte';
   import type { BinType } from './util/bin-generator';
-  import { hexagon } from './util/bin-generator';
+  import { hexbinning } from './util/bin-generator';
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
 
   export let id: string;
@@ -36,7 +36,7 @@
     }
 
     const ctx = canvasElement.getContext("2d");
-    const hexagonPath = new Path2D(hexagon);
+    const hexagonPath = new Path2D(hexbinning.hexagon());
 
     const minCount = (min(bins, d => d.length) || 0);
     const maxCount = (max(bins, d => d.length) || 1);

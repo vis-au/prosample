@@ -1,7 +1,7 @@
 import { primarySample, secondarySample } from '$lib/state/sampled-data';
 import { scaleX, scaleY } from '$lib/state/scales';
 import { selectedBins } from '$lib/state/selected-bin';
-import { currentTransform } from '$lib/state/zoom-transform';
+import { currentTransform } from '$lib/state/zoom';
 import type { HexbinBin } from 'd3-hexbin';
 import { hexbin } from "d3-hexbin";
 import type { ScaleLinear } from 'd3-scale';
@@ -11,7 +11,6 @@ type BinType = [number, number, number]; // x, y, id
 
 export const hexbinning = hexbin<BinType>()
   .radius(10);
-export const hexagon = hexbinning.hexagon();
 
 export const primaryBins = writable([] as HexbinBin<BinType>[]);
 export const secondaryBins = writable([] as HexbinBin<BinType>[]);
