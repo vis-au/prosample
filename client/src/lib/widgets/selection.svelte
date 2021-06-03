@@ -31,22 +31,19 @@
     margin: 0 2px 0 0px;
     transition: all 0.25s ease-in-out;
   }
-  label.selection.disabled {
+  label.selection.disabled select {
     color: #aaa;
     opacity: 0.4;
   }
   label.selection span {
     margin-right: 5px;
   }
-  label.selection.emph span {
-    text-decoration: underline
-  }
 
   label.selection select {
     -webkit-appearance: none;
     padding: 2px 25px 2px 8px;
     margin-right: 3px;
-    border: 1px solid black;
+    border: 1px solid #ccc;
     border-radius: 2px;
     background: white;
     color: black;
@@ -58,6 +55,10 @@
   label.selection select:focus {
     outline: none;
   }
+  label.selection.emph select {
+    border-color: black;
+    font-weight: bold;
+  }
 
   :global(label.selection svg) {
     position: absolute;
@@ -66,10 +67,13 @@
     width: 10px;
     height: 6px;
     stroke-width: 2px;
-    stroke: black;
+    stroke: #aaa;
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
     pointer-events: none;
+  }
+  :global(label.selection.emph svg) {
+    stroke: #333;
   }
 </style>

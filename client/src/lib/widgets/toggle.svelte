@@ -17,7 +17,7 @@
   id={id}
   class="toggle {active ? "active" : ""} {disabled ? "disabled" : ""} { theme }"
   for="{id}-toggle"
-  title={ disabled ? title : disabledTitle }>
+  title={ disabled ? disabledTitle : title }>
 
   <div class="toggle-text" style={ style } on:click={ null }>
     { #if $$slots.icon }

@@ -2,8 +2,8 @@
   export let title = "Info";
   export let message: string;
 
-  let width: number;
-  let height: number;
+  let width = 0;
+  let height = 0;
 </script>
 
 <div class="big-message-overlay" style="width:{width}px;height:{height}px">
