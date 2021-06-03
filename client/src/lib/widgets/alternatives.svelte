@@ -27,13 +27,17 @@
     justify-content: flex-start;
   }
 
+  div.alternatives .alternative {
+    margin-left: 5px;
+  }
+
 	div.alternatives div.alternative-text {
 		font-family: sans-serif;
 		background: #333;
 		color: white;
 		font-weight: bold;
 		padding: 2px 15px 1.5px;
-		border: 2px solid black;
+		border: 1px solid black;
 		border-radius: 20px;
 		cursor: pointer;
 	}

@@ -32,7 +32,7 @@
         bind:active={ $globalViewConfig.showCenter }
         activeText="-"
         passiveText="+"
-        style="width:25px; height:25px; line-height:25px;"
+        style="width:25px; height:25px; line-height:25px;color:white;background:#333;border-color:#333"
       />
     </div>
     <PipelineConfig id="B" orientation="right" />

@@ -76,7 +76,7 @@
 		flex-direction: row;
 		justify-content: flex-start;
 		align-items: center;
-		background: black;
+		background: #222;
 		color: white;
 		font-family: sans-serif;
 		box-sizing: border-box;

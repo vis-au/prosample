@@ -42,6 +42,7 @@
   }
   label.toggle .toggle-text {
     border: 2px solid black;
+    background: transparent;
     border-radius: 2px;
     font-weight: bold;
     text-align: center;
@@ -49,15 +50,15 @@
     margin: 0;
     line-height: 25px;
     cursor: pointer;
-    transition: background-color 0.1s ease-in-out;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    opacity: 0.92;
+    filter: brightness(95%);
+    transition: background-color 0.1s ease-in-out;
   }
   label.toggle .toggle-text:hover {
-    opacity: 1;
+    filter: brightness(100%)
   }
   label.toggle.light .toggle-text {
     font-size: 16px;
