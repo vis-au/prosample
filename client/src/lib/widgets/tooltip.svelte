@@ -4,6 +4,7 @@
   import type { BinType } from '$lib/util/bin-generator';
   import { generator } from "$lib/util/bin-generator";
   import { divergingScheme } from "$lib/state/color-schemes";
+  import { globalViewConfig } from "$lib/state/view-config";
 
   export let active = false;
   export let x: number;
@@ -19,8 +20,13 @@
 
   $: left = data.primary?.length || 0;
   $: right = data.secondary?.length || 0;
-  $: diff = left - right;
+  $: diff = left - right || 0;
   $: percentage = left === 0 && right === 0 ? 0 : diff / -Math.max(left, right);
+
+  // src: https://stackoverflow.com/a/2901298
+  $: labelText = $globalViewConfig.useRelativeDifferenceScale
+    ? `${ Math.abs(Math.round(percentage*100)) }%`
+    : `${ Math.abs(diff).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }`;
 
   let diffLabel: SVGTextElement;
   $: diffLabelWidth = diffLabel?.getBoundingClientRect().width;
@@ -62,7 +68,7 @@
         y={ plotHeight * 0.2 }
         fill="rgba(255,255,255,0.7)"
       />
-      <text class="diff" x={ plotWidth / 2 } y={ plotHeight / 2+5 } style="text-anchor:middle" bind:this={ diffLabel }>{ Math.abs(Math.round(percentage*100)) }%</text>
+      <text class="diff" x={ plotWidth / 2 } y={ plotHeight / 2+5 } style="text-anchor:middle" bind:this={ diffLabel }>{ labelText }</text>
     </svg>
     <span class="right {right>left?"greater":""}">{ right }</span>
   </div>
