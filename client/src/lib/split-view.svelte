@@ -4,14 +4,13 @@
   import { hoveredPosition } from './state/hovered-position';
   import PipelineConfig from './pipeline-config.svelte';
   import Toggle from './widgets/toggle.svelte';
-  import ViewConfig from './view-config.svelte';
   import { scaleX, scaleY } from './state/scales';
 
   let innerWidth = 500;
   let innerHeight = 350;
   let margin = {
     horizontal: 2,
-    vertical: 125
+    vertical: 102
   };
 
   $: plotWidth = innerWidth / ($globalViewConfig.showCenter ? 3 : 2) - margin.horizontal;
@@ -64,11 +63,6 @@
       height={ plotHeight }
       orientation={ "right" }
     />
-  </div>
-  <div class="view-configs">
-    <ViewConfig id="left" />
-    <ViewConfig id="center" />
-    <ViewConfig id="right" />
   </div>
 </div>
 
