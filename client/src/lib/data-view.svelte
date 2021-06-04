@@ -1,4 +1,6 @@
 <script lang="typescript">
+import { histogram } from "d3-array";
+
   import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
@@ -39,6 +41,10 @@
       : scaleSequential($sequentialScheme);
   let colorScaleType = view !== null ? $view.colorScaleType : null;
   $: view !== null ? $view.colorScaleType = colorScaleType : null;
+
+  $: histogramColors = orientation === "left" ? [$divergingScheme(0.1)]
+    : orientation === "right" ? [$divergingScheme(0.9)]
+    : [$divergingScheme(0.1), $divergingScheme(0.9)];
 
   const selectedDimensions = ["3"];
 
@@ -113,7 +119,7 @@
         data={ tabularSelectedData }
         dimension={ dim }
         groupDimension={ orientation === "center" ? "orientation" : null}
-        colors={ orientation === "center" ? [$divergingScheme(0.1), $divergingScheme(0.9)]: []}
+        colors={ histogramColors }
         height={30}
         width={100}
         showTitle={ false }

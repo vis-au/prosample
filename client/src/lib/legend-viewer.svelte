@@ -56,11 +56,11 @@
     </g>
     <g class="label left" transform="translate({margin},{blockSize + margin + 5})">
       <rect width=30 height=14 />
-      <text class="low">low</text>
+      <text class="low">{id === "center" ? "> left" : "low"}</text>
     </g>
     <g class="label right" transform="translate({width-margin},{blockSize + margin + 5})">
       <rect x={ -30 } width=30 height=14 />
-      <text class="high">high</text>
+      <text class="high">{id === "center" ? "> right" : "high"}</text>
     </g>
   </g>
   { #if colorScaleType !== null }
