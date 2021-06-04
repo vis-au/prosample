@@ -72,13 +72,13 @@ def _resolve_data(data):
 
 def _resolve_linearization(linearization):
   if linearization == "z-order":
-    return LinearizationZOrder
+    return LinearizationReaderZOrder
   elif linearization == "knn":
-    return LinearizationNearestNeighbour
+    return LinearizationReaderNearestNeighbour
   elif linearization == "strip":
-    return LinearizationStrip
+    return LinearizationReaderStrip
   elif linearization == "random":
-    return LinearizationRandom
+    return LinearizationReaderRandom
   else:
     return None
 

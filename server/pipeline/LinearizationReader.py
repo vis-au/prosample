@@ -3,14 +3,14 @@ import numpy as np
 import pathlib
 
 
-class Linearization(ABC):
+class LinearizationReader(ABC):
 
     @abstractmethod
     def read_linearization(self, data_set_name):
         pass
 
 
-class LinearizationZOrder(Linearization):
+class LinearizationReaderZOrder(LinearizationReader):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
@@ -19,7 +19,7 @@ class LinearizationZOrder(Linearization):
         return linearization
 
 
-class LinearizationNearestNeighbour(Linearization):
+class LinearizationReaderNearestNeighbour(LinearizationReader):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
@@ -28,7 +28,7 @@ class LinearizationNearestNeighbour(Linearization):
         return linearization
 
 
-class LinearizationStrip(Linearization):
+class LinearizationReaderStrip(LinearizationReader):
 
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
@@ -37,7 +37,7 @@ class LinearizationStrip(Linearization):
         return linearization
 
 
-class LinearizationRandom(Linearization):
+class LinearizationReaderRandom(LinearizationReader):
 
     def __init__(self, seed=None):
         if seed is not None:

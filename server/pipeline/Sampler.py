@@ -2,7 +2,7 @@ from pipeline import *
 
 class Sampler:
 
-    def __init__(self, data_set_name, linearization: Linearization, subdivision: Subdivision):
+    def __init__(self, data_set_name, linearization: LinearizationReader, subdivision: Subdivision):
         self.data_set_name = data_set_name
         self.linearization_frame = linearization
         self.subdivision_frame = subdivision

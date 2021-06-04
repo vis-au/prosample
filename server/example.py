@@ -2,7 +2,7 @@ from pipeline import *
 
 # Dataset, Linearization and Subdivision is chosen once
 data = MOUNTAIN_PEAKS
-lin = LinearizationZOrder()
+lin = LinearizationReaderZOrder()
 subd = SubdivisionStandard(0.1)
 sampler = Sampler(data, lin, subd)
 

@@ -1,5 +1,5 @@
 from .constants import *
-from .Linearization import *
+from .LinearizationReader import *
 from .Subdivision import *
 from .Selection import *
 from .Sampler import *
