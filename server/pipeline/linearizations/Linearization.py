@@ -4,6 +4,9 @@ import numpy as np
 import pathlib
 import functools
 import csv
+import duckdb
+
+connection = duckdb.connect()
 
 
 class Linearization(ABC):
@@ -18,7 +21,10 @@ class Linearization(ABC):
     def read_data(self):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_to_read = str(current_folder) + '/input_files/' + self.data_set_name + 'Data.csv'
-        data = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
+
+        data = connection.execute("SELECT * FROM read_csv_auto('"+file_to_read+"');").fetchnumpy()
+        # data = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
+
         with open(file_to_read) as f:
             reader = csv.reader(f)
             self.header = next(reader)[0]
