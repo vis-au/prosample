@@ -11,7 +11,8 @@ connection = duckdb.connect()
 
 class Linearization(ABC):
 
-    def __init__(self, data_set_name, dimensions):
+    def __init__(self, data_set_name, dimensions, exclude_attributes=[]):
+        self.exclude_attributes = exclude_attributes
         self.data_set_name = data_set_name
         self.dimensions = dimensions
         self.linearization = None
@@ -22,7 +23,14 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_to_read = str(current_folder) + '/input_files/' + self.data_set_name + 'Data.csv'
 
-        data = connection.execute("SELECT * FROM read_csv_auto('"+file_to_read+"');").fetchnumpy()
+        df = connection.execute("SELECT * FROM read_csv_auto('"+file_to_read+"');").fetchdf()
+        df = df.drop(self.exclude_attributes, axis=1)
+        data = df.to_numpy()
+
+        data[:, 0] = np.array(range(0, len(data)))
+
+        print(data[0])
+
         # data = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
 
         with open(file_to_read) as f:
