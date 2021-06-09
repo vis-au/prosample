@@ -15,6 +15,7 @@
   $: pipelineConfig = orientation === "left" ? leftPipelineConfig : rightPipelineConfig;
   $: otherPipelineConfig = orientation === "left" ? rightPipelineConfig : leftPipelineConfig;
   $: isSamplingRunning = $view?.pointsRetrieved > 0;
+  $: isConfigLoading = !$view.initialized || $isRemoteBusy;
 
   const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
   const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
@@ -24,7 +25,7 @@
 <div class="pipeline-config-view {orientation} {isSamplingRunning ? "disabled" : ""}">
   <div class="title">
     <h1><i class="material-icons">settings</i>Pipeline Configuration {id}</h1>
-    <div class="status { $view.initialized ? "ready" : "" }" title="{ !$view.initialized ? "not " : "" }ready"></div>
+    <div class="status { isConfigLoading ? "busy" : "ready" }" title="{ isConfigLoading ? "not " : "" }ready"></div>
   </div>
   <div class="configuration">
     <div class="pipeline" title="{$isRemoteBusy ? "wait a bit, server is busy" : ""}">
