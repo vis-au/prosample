@@ -1,6 +1,6 @@
 <script lang="typescript">
 	import Alternatives from './widgets/alternatives.svelte';
-	import { progressionState } from './state/progression-state';
+	import { isProgressionRunning } from './state/progression-state';
 	import { samplingRate } from './state/sampling-rate';
 	import Toggle from './widgets/toggle.svelte';
 	import NumberInput from './widgets/number-input.svelte';
@@ -10,12 +10,8 @@
 	import { reset } from './util/requests';
 	import { createPipelines } from './state/pipelines';
 
-	let isProgressionRunning = false;
-
-	$: progressionState.set(isProgressionRunning ? "running" : "paused");
-
 	function resetProgression() {
-		isProgressionRunning = false;
+		$isProgressionRunning = false;
 		$leftView.initialized = false;
 		$rightView.initialized = false;
 		$primarySample = [];
@@ -32,7 +28,7 @@
 			<h2><i class="material-icons">folder_open</i>Dataset:</h2>
 			<Alternatives
 				name="datasets"
-				alternatives={ ["mountain_peaks", "random", "fastfood_places"] }
+				alternatives={ ["mountain_peaks", "spotify"] }
 				bind:activeAlternative={ $selectedDataset.name }
 			/>
 		</div>
@@ -41,14 +37,14 @@
 			<h2><i class="material-icons">update</i>Sample interval:</h2>
 			<!-- <NumberInput id="sampling-amount" bind:disabled={ isProgressionRunning } bind:value={ $samplingAmount } />
 			<h2>points every</h2> -->
-			<NumberInput id="sampling-rate" bind:disabled={ isProgressionRunning } bind:value={ $samplingRate } />
+			<NumberInput id="sampling-rate" bind:disabled={ $isProgressionRunning } bind:value={ $samplingRate } />
 			<h2>ms</h2>
 		</div>
 	</div>
 	<div class="right side">
 		<Toggle
 			id="progression-running-indicator"
-			bind:active={ isProgressionRunning }
+			bind:active={ $isProgressionRunning }
 			disabled={ !($leftView.initialized && $rightView.initialized) }
 			title="start sampling the dataset"
 			disabledTitle="pipelines not ready"
@@ -59,7 +55,7 @@
 			theme="dark"
 		>
 			<i slot="icon" class="material-icons">
-				{ #if isProgressionRunning }pause{ :else }play_arrow{/if}
+				{ #if $isProgressionRunning }pause{ :else }play_arrow{/if}
 			</i>
 		</Toggle>
 		<button

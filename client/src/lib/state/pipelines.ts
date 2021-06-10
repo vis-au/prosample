@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
-import { createPipeline, getDatasetSize, updateDimension as updateSelectionDimension,
-  updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
+import { createPipeline, getDatasetSize, updateSelectionDimension, updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
 import type { PipelineConfig } from "$lib/util/types";
 import { leftView, rightView } from "./view-config";
 
@@ -27,7 +26,7 @@ function updateRemotePipeline(oldPipeline: PipelineConfig, newPipeline: Pipeline
 
 export const leftPipelineConfig = writable<PipelineConfig>({
   id: "left",
-  linearization: "knn",
+  linearization: "z-order",
   subdivision: "standard",
   selection: "minimum",
   selectionDimension: "3"
@@ -35,7 +34,7 @@ export const leftPipelineConfig = writable<PipelineConfig>({
 
 export const rightPipelineConfig = writable<PipelineConfig>({
   id: "right",
-  linearization: "knn",
+  linearization: "z-order",
   subdivision: "standard",
   selection: "random",
   selectionDimension: "3"
@@ -74,6 +73,4 @@ export async function createPipelines(): Promise<void> {
       v.initialized = true;
       return v;
     }));
-
-  await getDatasetSize(leftPipeline.id);
 }

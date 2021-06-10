@@ -3,12 +3,13 @@
   import SplitView from '$lib/split-view.svelte';
   import Tooltip from '$lib/widgets/tooltip.svelte';
   import BigMessageOverlay from '$lib/widgets/big-message-overlay.svelte'
-  import { reset, sample } from '$lib/util/requests';
+  import { getDatasetSize, reset, sample } from '$lib/util/requests';
   import { samplingRate } from '$lib/state/sampling-rate';
-  import { progressionState } from '$lib/state/progression-state';
-  import { createPipelines } from '$lib/state/pipelines';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
   import { leftView, rightView } from '$lib/state/view-config';
+  import { selectedDataset } from '$lib/state/selected-dataset';
+  import { createPipelines, leftPipelineConfig } from '$lib/state/pipelines';
+  import { isProgressionRunning } from '$lib/state/progression-state';
 
   let innerWidth = 0;
   let innerHeight = 0;
@@ -26,22 +27,44 @@
   };
 
   let samplingInterval = -1;
+  let datasetName = null;
 
   onMount(async () => {
     await reset();
-    createPipelines();
 
     samplingRate.subscribe(() => {
       window.clearInterval(samplingInterval);
       samplingInterval = startSampling();
     });
 
-    progressionState.subscribe(value => {
-      if (value === "running") {
+    isProgressionRunning.subscribe(value => {
+      if (value) {
         samplingInterval = startSampling();
       } else {
         window.clearInterval(samplingInterval);
       }
+    });
+
+    selectedDataset.subscribe(async value => {
+      if (value.name === datasetName) {
+        return;
+      }
+
+      $isProgressionRunning = false;
+      $leftView.initialized = false;
+      $rightView.initialized = false;
+      datasetName = value.name;
+
+      await createPipelines();
+      await getDatasetSize($leftPipelineConfig.id);
+
+      primarySample.set([]);
+      secondarySample.set([]);
+    });
+
+    selectedDataset.update(value => {
+      value.name = "spotify";
+      return value;
     });
   });
 

@@ -48,10 +48,10 @@ export function updateSelection(id: Orientation, selection: SelectionType): Prom
   .then(() => isRemoteBusy.set(false));
 }
 
-export function updateDimension(id: Orientation, dimension: string): Promise<void> {
+export function updateSelectionDimension(id: Orientation, dimension: string): Promise<void> {
   isRemoteBusy.set(true);
   return fetch(`${BASE_URL}/update_dimension/${id}?dimension=${dimension}`)
-   .then(() => isRemoteBusy.set(false))
+   .then(() => isRemoteBusy.set(false));
 }
 
 export async function sample(id: Orientation): Promise<Response> {
