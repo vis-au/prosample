@@ -67,6 +67,8 @@ class Pipeline:
 def _resolve_data(data):
   if data == "mountain_peaks":
     return MOUNTAIN_PEAKS
+  elif data == "spotify":
+    return SPOTIFY
   else:
     return None
 
