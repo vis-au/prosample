@@ -4,7 +4,6 @@
   import Tooltip from '$lib/widgets/tooltip.svelte';
   import BigMessageOverlay from '$lib/widgets/big-message-overlay.svelte'
   import { getDatasetSize, reset, sample } from '$lib/util/requests';
-  import { hasGroundTruthBeenLoaded, preloadGroundTruthDataset } from '$lib/state/ground-truth-data';
   import { samplingRate } from '$lib/state/sampling-rate';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
   import { leftView, rightView } from '$lib/state/view-config';
@@ -73,10 +72,6 @@
     return window.setInterval(async () => {
       const responseA = await sample("left");
       const jsonA = await responseA.json();
-
-      if (!$hasGroundTruthBeenLoaded) {
-        await preloadGroundTruthDataset();
-      }
 
       const responseB = await sample("right");
       const jsonB = await responseB.json();

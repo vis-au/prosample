@@ -1,3 +1,4 @@
+import { groundTruthData } from '$lib/state/ground-truth-data';
 import { primarySample, secondarySample } from '$lib/state/sampled-data';
 import { scaleX, scaleY } from '$lib/state/scales';
 import { selectedBins } from '$lib/state/selected-bin';
@@ -22,16 +23,20 @@ export const selectedPrimaryIds = writable([]);
 export const selectedSecondaryIds = writable([]);
 
 class BinGenerator {
+  private _groundTruthData: number[][] = [];
   private _primaryData: number[][] = [];
   private _secondaryData: number[][] = [];
 
+  private _groundTruthDataMap: Map<number, number[]> = new Map();
   private _primaryDataMap: Map<number, number[]> = new Map();
   private _secondaryDataMap: Map<number, number[]> = new Map();
 
+  private _groundTruthBins: HexbinBin<BinType>[];
   private _primaryBins: HexbinBin<BinType>[];
   private _secondaryBins: HexbinBin<BinType>[];
   private _differenceBins;
 
+  private _groundTruthIndex = {};
   private _primaryIndex = {};
   private _secondaryIndex = {};
   private _differenceIndex = {};
@@ -40,6 +45,9 @@ class BinGenerator {
   private scaleY: ScaleLinear<number, number>;
 
   constructor() {
+    groundTruthData.subscribe(value => {
+      this._groundTruthData = value
+    });
     primarySample.subscribe(value => {
       this.primaryData = value.slice(0);
     });
@@ -155,14 +163,33 @@ class BinGenerator {
     return differenceBins;
   }
 
-  public getDifferenceBins(relativeDifference=false): HexbinBin<BinType>[] {
+  public getDifferenceBins(relativeDifference=false,
+                           isLeftGroundTruth=false,
+                           isRightGroundTruth=false): HexbinBin<BinType>[] {
     this._differenceIndex = {};
 
     // first, compute the difference between the two indeces for all bins that exist in primary
-    this.getDifferenceWhereExistInPrimary(this._primaryIndex, this._secondaryIndex, relativeDifference);
+
+    if (isLeftGroundTruth) {
+      this.getDifferenceWhereExistInPrimary(
+        this._groundTruthIndex, this._secondaryIndex, relativeDifference
+      );
+    } else if (isRightGroundTruth) {
+      this.getDifferenceWhereExistInPrimary(
+        this._primaryIndex, this._groundTruthIndex, relativeDifference
+      );
+    } else {
+      this.getDifferenceWhereExistInPrimary(
+        this._primaryIndex, this._secondaryIndex, relativeDifference
+      );
+    }
 
     // then, for all bins that only exist in secondary, store these as well
-    this.getDifferenceWhereExistInSecondaryOnly(this._secondaryIndex, relativeDifference);
+    if (isRightGroundTruth) {
+      this.getDifferenceWhereExistInSecondaryOnly(this._groundTruthIndex, relativeDifference);
+    } else {
+      this.getDifferenceWhereExistInSecondaryOnly(this._secondaryIndex, relativeDifference);
+    }
 
     // unravel the differenceIndex into HexbinBins again.
     this._differenceBins = this.unravelIndexIntoBins();

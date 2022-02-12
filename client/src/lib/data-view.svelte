@@ -1,12 +1,15 @@
 <script lang="typescript">
+import type { HexbinBin } from "d3-hexbin";
+
   import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
   import { divergingScheme, sequentialScheme } from "./state/color-schemes";
   import { leftView, rightView, globalViewConfig } from "./state/view-config";
-  import { generator, primaryBins, primaryData, secondaryBins, secondaryData, selectedPrimaryIds,
-    selectedSecondaryIds } from "./util/bin-generator";
+  import { generator, primaryBins, primaryData, secondaryBins, secondaryData, selectedPrimaryIds, selectedSecondaryIds } from "./util/bin-generator";
+  import type { BinType } from "./util/bin-generator";
+  import type { ViewConfig } from "./util/types";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
 
@@ -27,9 +30,41 @@
     ? null
     : orientation === "left" ? $primaryData : $secondaryData;
 
-  $: bins = orientation === "center"
-    ? generator.getDifferenceBins($globalViewConfig.useRelativeDifferenceScale)
-    : orientation === "left" ? $primaryBins : $secondaryBins;
+  // $: isLeftGroundTruth = orientation === "left"  && ;
+  // $: isRightGroundTruth = orientation === "right"  && ;
+  // $: bins = orientation === "center"
+  //   ?
+  //   : orientation === "left" ? $leftView.viewType === "bins (ground truth)"
+  //     ?
+  //     :  : $secondaryBins;
+
+  function getBins(
+    leftView: ViewConfig,
+    rightView: ViewConfig,
+    globalViewConfig,
+    primaryBins: HexbinBin<BinType>[],
+    secondaryBins: HexbinBin<BinType>[]
+  ) {
+    if (orientation === "center") {
+      return generator.getDifferenceBins(globalViewConfig.useRelativeDifferenceScale)
+    } else {
+      if (orientation === "left") {
+        if (leftView.viewType === "bins (ground truth)") {
+          return generator.getDifferenceBins(globalViewConfig.useRelativeDifferenceScale, true)
+        } else {
+          return primaryBins
+        }
+      } else if (orientation === "right") {
+        if (rightView.viewType === "bins (ground truth)") {
+          return generator.getDifferenceBins(globalViewConfig.useRelativeDifferenceScale, false, true)
+        } else {
+          return secondaryBins
+        }
+      }
+    }
+  }
+
+  $: bins = getBins($leftView, $rightView, $globalViewConfig, $primaryBins, $secondaryBins);
 
   $: renderer = $view?.viewType;
   $: color = orientation === "center"
