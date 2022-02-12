@@ -1,4 +1,4 @@
-export type ViewType = "scatterplot" | "bins (absolute)" | "bins (delta)";
+export type ViewType = "scatterplot" | "bins (absolute)" | "bins (delta)" | "bins (ground truth)";
 export type BinColorScaleType = "linear" | "log";
 export type LinearizationType = "z-order" | "knn" | "strip" | "random";
 export type SubdivisionType = "standard" | "bucket_size";

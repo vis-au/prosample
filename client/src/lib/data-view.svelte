@@ -1,6 +1,4 @@
 <script lang="typescript">
-import { histogram } from "d3-array";
-
   import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
@@ -102,7 +100,7 @@ import { histogram } from "d3-array";
   { #if view !== null }
     <Alternatives
       name="{orientation}-renderer"
-      alternatives={ ["bins (absolute)", "scatterplot"] }
+      alternatives={ ["bins (absolute)", "scatterplot", "bins (ground truth)"] }
       bind:activeAlternative={ $view.viewType }
     />
   { :else }

@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { createPipeline, getDatasetSize, updateSelectionDimension, updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
+import { createPipeline, updateSelectionDimension, updateLinearization, updateSelection, updateSubdivision } from "$lib/util/requests";
 import type { PipelineConfig } from "$lib/util/types";
 import { leftView, rightView } from "./view-config";
 

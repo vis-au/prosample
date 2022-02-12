@@ -58,6 +58,10 @@ export async function sample(id: Orientation): Promise<Response> {
   return fetch(`${BASE_URL}/sample/${id}`);
 }
 
+export async function getAllData(id: Orientation): Promise<Response> {
+  return fetch(`${BASE_URL}/all_data/${id}`)
+}
+
 export function getDatasetSize(id: Orientation): Promise<void> {
   return fetch(`${BASE_URL}/data_size/${id}`)
     .then((res) => res.json())
