@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 # stores Pipeline objects, as specified by the client using pipeline configurations
-PIPELINES = {}
+PIPELINES: dict[str, Pipeline] = {}
 
 
 @app.route('/')
@@ -52,7 +52,7 @@ def create_pipeline(id):
 def update_linearization(id):
   pipeline = PIPELINES.get(id)
 
-  if pipeline == None:
+  if pipeline is None:
     print("couldn't find pipeline with id", id)
     abort(400)
 
@@ -67,7 +67,7 @@ def update_linearization(id):
 def update_subdivision(id):
   pipeline = PIPELINES.get(id)
 
-  if pipeline == None:
+  if pipeline is None:
     print("couldn't find pipeline with id", id)
     abort(400)
 
@@ -82,7 +82,7 @@ def update_subdivision(id):
 def update_selection(id):
   pipeline = PIPELINES.get(id)
 
-  if pipeline == None:
+  if pipeline is None:
     print("couldn't find pipeline with id", id)
     abort(400)
 
@@ -95,7 +95,7 @@ def update_selection(id):
 def update_dimension(id):
   pipeline = PIPELINES.get(id)
 
-  if pipeline == None:
+  if pipeline is None:
     print("couldn't find pipeline with id", id)
     abort(400)
 
@@ -134,7 +134,7 @@ def normalize_chunk_positions(chunk, dataset_name):
 def sample(id):
   pipeline = PIPELINES.get(id)
 
-  if pipeline == None:
+  if pipeline is None:
       print("couldn't find pipeline with id", id)
       abort(400)
 
@@ -142,6 +142,20 @@ def sample(id):
   dataset_name = pipeline.get_config()["data"]
   normalized_chunk = normalize_chunk_positions(next_chunk, dataset_name)
   return produce_response_for_sample(normalized_chunk.tolist())
+
+
+@app.route("/all_data/<id>", methods=["GET"])
+def get_all_data(id):
+  pipeline = PIPELINES.get(id)
+
+  if pipeline is None:
+    print("couldn't find pipeilne with id", id)
+    abort(400)
+
+  dataset_name = pipeline.sampler.data_set_name
+  all_data = pipeline.linearization.read_linearization(dataset_name)
+  normalize_chunk_positions(all_data, dataset_name)
+  return cors_response(all_data.tolist())
 
 
 @app.route('/reset', methods=["GET"])
@@ -155,7 +169,7 @@ def reset_pipelines():
 def data_size(id):
   pipeline = PIPELINES.get(id)
 
-  if pipeline == None:
+  if pipeline is None:
     print("couldn't find pipeline with id", id)
     abort(400)
 
