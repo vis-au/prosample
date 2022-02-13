@@ -5,7 +5,7 @@
 	import Toggle from './widgets/toggle.svelte';
 	import NumberInput from './widgets/number-input.svelte';
 	import { selectedDataset } from './state/selected-dataset';
-	import { leftView, rightView } from './state/view-config';
+	import { globalViewConfig, leftView, rightView } from './state/view-config';
 	import { primarySample, secondarySample } from './state/sampled-data';
 	import { reset } from './util/requests';
 	import { createPipelines } from './state/pipelines';
@@ -40,6 +40,11 @@
 			<NumberInput id="sampling-rate" bind:disabled={ $isProgressionRunning } bind:value={ $samplingRate } />
 			<h2>ms</h2>
 		</div>
+
+    <div class="bin-size config-component">
+      <h2>Bin size:</h2>
+      <NumberInput id="bins-ize" bind:value={ $globalViewConfig.binSize } />
+    </div>
 	</div>
 	<div class="right side">
 		<Toggle

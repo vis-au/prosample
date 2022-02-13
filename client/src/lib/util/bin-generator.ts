@@ -2,6 +2,7 @@ import { groundTruthData } from '$lib/state/ground-truth-data';
 import { primarySample, secondarySample } from '$lib/state/sampled-data';
 import { scaleX, scaleY } from '$lib/state/scales';
 import { selectedBins } from '$lib/state/selected-bin';
+import { globalViewConfig } from '$lib/state/view-config';
 import { currentTransform } from '$lib/state/zoom';
 import type { HexbinBin } from 'd3-hexbin';
 import { hexbin } from "d3-hexbin";
@@ -10,8 +11,7 @@ import { writable } from 'svelte/store';
 
 type BinType = [number, number, number]; // x, y, id
 
-export const hexbinning = hexbin<BinType>()
-  .radius(10);
+export const hexbinning = hexbin<BinType>();
 
 export const primaryBins = writable([] as HexbinBin<BinType>[]);
 export const secondaryBins = writable([] as HexbinBin<BinType>[]);
@@ -46,7 +46,9 @@ class BinGenerator {
 
   constructor() {
     groundTruthData.subscribe(value => {
-      this._groundTruthData = value
+      this._groundTruthData = value;
+      this.insertDataIntoMap(value, this._groundTruthDataMap);
+      this.updatePrimaryBins();
     });
     primarySample.subscribe(value => {
       this.primaryData = value.slice(0);
@@ -73,6 +75,14 @@ class BinGenerator {
 
       this.updatePrimaryBins();
       this.updateSecondaryBins();
+      this.updateGroundTruthBins();
+    });
+
+    globalViewConfig.subscribe(value => {
+      hexbinning.radius(value.binSize);
+      this.updatePrimaryBins();
+      this.updateSecondaryBins();
+      this.updateGroundTruthBins();
     });
   }
 
@@ -201,6 +211,11 @@ class BinGenerator {
     data.forEach(datum => {
       map.set(datum[0], datum);
     });
+  }
+
+  private updateGroundTruthBins() {
+    this._groundTruthBins = hexbinning(this._groundTruthData.map(d => [d[1], d[2], d[0]]));
+    this._groundTruthIndex = this.getIndexForBins(this._groundTruthBins)
   }
 
   private updatePrimaryBins() {

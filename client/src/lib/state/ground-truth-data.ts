@@ -28,9 +28,11 @@ const viewsReady = derived(
     && !$isRemoteBusy;
 });
 
-viewsReady.subscribe(async value => {
-  if (value) {
-    await preloadGroundTruthDataset();
-    console.log("done loading ground truth")
-  }
-});
+// FIXME: enable this snippet to load the ground truth data from the frontend, which will allow the
+// comparisons with the "real" data to assess the sampling quality.
+// viewsReady.subscribe(async value => {
+//   if (value) {
+//     await preloadGroundTruthDataset();
+//     console.log("done loading ground truth")
+//   }
+// });

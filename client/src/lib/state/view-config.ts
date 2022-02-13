@@ -5,7 +5,8 @@ import { primarySample, secondarySample } from "./sampled-data";
 export const globalViewConfig = writable({
   showCenter: false,
   useRelativeDifferenceScale: false,
-  areLeftAndRightLinked: true
+  areLeftAndRightLinked: true,
+  binSize: 10
 });
 
 export const leftView = writable<ViewConfig>({
