@@ -30,7 +30,7 @@ class Pipeline:
     if sub_class == SubdivisionBucketSize:
       self.subdivision = sub_class(self.config["dimension"], 1000)
     else:
-      self.subdivision = sub_class(0.01)
+      self.subdivision = sub_class(0.001)
 
     return Sampler(data, self.linearization, self.subdivision)
 
