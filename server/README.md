@@ -1,4 +1,4 @@
-# PVA Sampling Comparison Tool - Server
+# ProSample Server
 This directory contains the code for the python-based backend to the pva sampling pipeline.
 It implements the modular pipeline architecture discussed in our paper and can be controlled using HTTP requests.
 The API is documented below.
