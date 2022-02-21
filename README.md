@@ -9,17 +9,3 @@ Both components communicate through an eel API.
 ## Installation
 Client and server need to be installed separately.
 Follow the instructions in the respective directories for more details.
-
-## Cite this Project
-We kindly ask you to include the following citation when referring to this tool in your publications:
-
-```tex
-@article {Lorem2021,
-  journal = {Ipsum dolor sit},
-  title = {{A Sampling Pipeline for Progressive Visual Analytics}},
-  author = {Burkhardt, Jakob and Hogr\"{a}fer, Marius and Schulz, Hans-J\"{o}rg},
-  year = {2021},
-  publisher = {Consectetur}
-  DOI = {TBA}
-}
-```
