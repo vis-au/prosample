@@ -11,7 +11,7 @@ The client is web-based, using the visualization libraries [D3](https://d3js.org
 To install the client, you need a local installation of [nodeJS](https://nodejs.org/) (version 14.16.1 or higher) with the package manager npm (version 7.11.2 or higher).
 Run the following command inside this directory to load the required dependencies (see [package.json](./package.json) for more details).
 ```sh
-npm intall
+npm install
 ```
 
 ## Getting Started
