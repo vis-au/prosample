@@ -73,8 +73,7 @@
     width: 100%;
   }
   div.split-view div.pipeline-configs,
-  div.split-view div.data,
-  div.split-view div.view-configs {
+  div.split-view div.data {
     width: 100%;
     display: flex;
     flex-direction: row;
