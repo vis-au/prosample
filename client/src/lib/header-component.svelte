@@ -150,6 +150,7 @@
 		display: flex;
 		align-items: center;
 		margin-right: 10px;
+		white-space: nowrap;
 	}
 	header .config-component h2 i {
 		font-size: 18px;

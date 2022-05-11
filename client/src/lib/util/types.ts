@@ -1,11 +1,16 @@
-export type ViewType = "scatterplot" | "bins (absolute)" | "bins (delta)" | "bins (ground truth)";
+// scatterplot: plot each data item as a dot
+// bins (absolute): bin the data into hexagonal bins
+// bins (ground truth): plot the difference in bin density from the final dataset
+export type ViewType = "scatterplot" | "bins (absolute)" | "bins (ground truth)";
+
 export type BinColorScaleType = "linear" | "log";
+
 export type LinearizationType = "z-order" | "knn" | "strip" | "random";
 export type SubdivisionType = "standard" | "bucket_size";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
 export type ProgressionState = "paused" | "running";
-export type Orientation = "left" | "center" | "right";
+export type Orientation = "left" | "center" | "right";  // position of a view in the interface
 
 export type InteractionMode = "zoom" | "brush";
 
