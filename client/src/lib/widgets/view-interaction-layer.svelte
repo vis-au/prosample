@@ -7,14 +7,14 @@
   import type { D3ZoomEvent } from "d3-zoom";
   import { afterUpdate, onMount } from "svelte";
 
-  import { hoveredPosition } from "$lib/state/hovered-position";
   import { interactionMode } from "$lib/state/interaction-mode";
   import { selectedBins } from "$lib/state/selected-bin";
-  import { currentTransform, isZooming } from "$lib/state/zoom";
+  import { currentTransform } from "$lib/state/zoom";
   import { hexbinning } from "$lib/util/bin-generator";
   import { scaleX, scaleY } from "$lib/state/scales";
   import { cancelSteering, steer } from "$lib/util/requests";
   import { steeringFilters } from "$lib/state/steering-filters";
+  import { hoveredPosition } from "$lib/state/hovered-position";
 
   export let id: string;
   export let width: number;
@@ -26,12 +26,13 @@
   let brushCanvas: SVGElement;
 
   let isBrushing = false;
+  let isZooming = false;
 
   const zoomBehavior = zoom()
     .scaleExtent([0.75, 10])
-    .on("start", () => $isZooming = true)
+    .on("start", () => isZooming = true)
     .on("zoom", onZoom)
-    .on("end", () => $isZooming = false);
+    .on("end", () => isZooming = false);
 
   const brushBehavior = brush()
     .on("start", () => isBrushing = true)
@@ -39,7 +40,7 @@
 
   function onZoom(event: D3ZoomEvent<Element, void>) {
     if (event.sourceEvent === null) {
-      return;
+      return true;
     }
 
     $currentTransform = event.transform;
@@ -195,13 +196,13 @@
     style="display: {$interactionMode === "brush" ? "block" : "none"}">
   </svg>
   <canvas
-    class="zoom-canvas"
+    id="{id}-interaction-canvas"
+    class="interaction-canvas {isZooming ? "zooming" : ""}"
     width={ width }
     height={ height }
     on:mousemove={ onHover }
     on:click={ onClick }
     bind:this={ zoomCanvas }
-    style="display: {$interactionMode === "zoom" ? "block" : "none"}"
   />
 </div>
 
@@ -212,6 +213,9 @@
   div.interaction-canvas canvas,
   div.interaction-canvas svg {
     position: absolute;
+  }
+  .zooming {
+    cursor: move;
   }
   svg.active-brush .steering-filter {
     fill: transparent;
