@@ -1,3 +1,3 @@
 import { writable } from "svelte/store";
 
-export const samplingRate = writable(1000);
+export const samplingRate = writable(5000);
