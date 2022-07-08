@@ -1,5 +1,6 @@
+import { scaleLinear } from "d3";
 import { writable } from "svelte/store";
-import { selectedDataset } from "../state/data";
+import { getExtent, selectedDataset } from "../state/data";
 import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType, Filter } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
@@ -64,7 +65,9 @@ export async function getAllData(id: Orientation): Promise<Response> {
 
 export async function steer(filter: Filter): Promise<Response> {
   const { dimension, min, max } = filter;
-  return fetch(`${BASE_URL}/steer?dimension=${dimension}&min=${min}&max=${max}`);
+  const extent = getExtent(+dimension);
+  const scale = scaleLinear([0, 1], extent);
+  return fetch(`${BASE_URL}/steer?dimension=${dimension}&min=${scale(min)}&max=${scale(max)}`);
 }
 
 export async function cancelSteering(): Promise<Response> {

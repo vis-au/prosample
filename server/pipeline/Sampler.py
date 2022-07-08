@@ -1,4 +1,6 @@
+import pandas as pd
 from pipeline import *
+
 
 class Sampler:
 
@@ -25,4 +27,3 @@ class Sampler:
 
     def get_dataset_size(self):
         return self.dataset_size
-

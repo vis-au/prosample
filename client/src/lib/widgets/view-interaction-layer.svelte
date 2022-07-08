@@ -54,7 +54,10 @@
       $steeringFilters.y = null;
       cancelSteering();
     } else {
-      const [[minX, minY], [maxX, maxY]] = selection as [[number, number], [number, number]];
+      // y scale is flipped!!! meaning that minY in selection is greater than maxY!!!
+      // therefore vertical min and max values from the selection have to be inverted
+      const [[minX, maxY], [maxX, minY]] = selection as [[number, number], [number, number]];
+      console.log(minY, maxY);
 
       $steeringFilters.x = {
         dimension: "1",
@@ -172,16 +175,16 @@
       <rect
         class="steering-filter"
         x={ $currentTransform.applyX($scaleX($steeringFilters.x.min))}
-        y={ $currentTransform.applyY($scaleY($steeringFilters.y.min))}
+        y={ $currentTransform.applyY($scaleY($steeringFilters.y.max))}
         width={
           $currentTransform.applyX($scaleX($steeringFilters.x.max))
           -
           $currentTransform.applyX($scaleX($steeringFilters.x.min))
         }
         height={
-          $currentTransform.applyY($scaleY($steeringFilters.y.max))
-          -
           $currentTransform.applyY($scaleY($steeringFilters.y.min))
+          -
+          $currentTransform.applyY($scaleY($steeringFilters.y.max))
         }
       />
     {/if}

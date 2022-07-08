@@ -1,5 +1,6 @@
 from . import *
 
+
 class Pipeline:
   def __init__(self, config):
     self.config = {
@@ -14,7 +15,6 @@ class Pipeline:
     self.sampler = self._get_sampler()
     # defines the way by which the next chunk is retrieved
     self.selection = self._get_selection(config["selection"])
-
 
   def _get_sampler(self):
     data = _resolve_data(self.config["data"])
@@ -34,7 +34,6 @@ class Pipeline:
 
     return Sampler(data, self.linearization, self.subdivision)
 
-
   def _get_selection(self, selection_string):
     sel_class = _resolve_selection(selection_string)
 
@@ -44,18 +43,14 @@ class Pipeline:
 
     return sel_class(self.config["dimension"]) if sel_class not in [SelectionFirst, SelectionRandom] else sel_class()
 
-
   def update_dimension(self, dimension):
     self.config["dimension"] = int(dimension)
-
 
   def update_selection(self, new_selection):
     self.selection = self._get_selection(new_selection)
 
-
   def get_next_chunk(self):
     return self.sampler.sample(self.selection)
-
 
   def get_config(self):
     return self.config

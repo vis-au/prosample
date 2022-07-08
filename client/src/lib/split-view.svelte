@@ -17,7 +17,7 @@
   $: plotHeight = innerHeight - margin.vertical;
 
   $: $scaleX.domain([0, 1]).range([0, plotWidth]);
-  $: $scaleY.domain([0, 1]).range([0, plotHeight]);
+  $: $scaleY.domain([0, 1]).range([plotHeight, 0]);
 
   function hideTooltip() {
     hoveredPosition.set([-1, -1]);
