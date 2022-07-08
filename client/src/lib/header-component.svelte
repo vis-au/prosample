@@ -1,14 +1,15 @@
 <script lang="typescript">
-	import Alternatives from './widgets/alternatives.svelte';
   import { dimensionsInData, selectedDataset } from './state/data';
 	import { isProgressionRunning } from './state/progression-state';
+  import { interactionMode } from '$lib/state/interaction-mode';
+	import { createPipelines } from './state/pipelines';
+	import { primarySample, secondarySample } from './state/sampled-data';
+	import { globalViewConfig, leftView, rightView } from './state/view-config';
+	import { reset } from './util/requests';
+	import Alternatives from './widgets/alternatives.svelte';
+	import NumberInput from './widgets/number-input.svelte';
 	import { samplingRate } from './state/sampling-rate';
 	import Toggle from './widgets/toggle.svelte';
-	import NumberInput from './widgets/number-input.svelte';
-	import { globalViewConfig, leftView, rightView } from './state/view-config';
-	import { primarySample, secondarySample } from './state/sampled-data';
-	import { reset } from './util/requests';
-	import { createPipelines } from './state/pipelines';
   import Selection from './widgets/selection.svelte';
 
   let steeringConfig = {
@@ -70,6 +71,12 @@
         options={ $dimensionsInData }
         bind:value={ steeringConfig.dimension }
       />
+      <h2>View interaction:</h2>
+      <Alternatives
+				name="view-interaction-mode"
+				alternatives={ ["zoom", "brush"] }
+				bind:activeAlternative={ $interactionMode }
+			/>
     </div>
 	</div>
 	<div class="right side">
