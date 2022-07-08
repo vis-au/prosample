@@ -7,6 +7,8 @@ export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median
 export type ProgressionState = "paused" | "running";
 export type Orientation = "left" | "center" | "right";
 
+export type InteractionMode = "zoom" | "brush";
+
 export type PipelineConfig = {
   id: Orientation,
   linearization: LinearizationType,
