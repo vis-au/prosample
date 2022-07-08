@@ -203,6 +203,7 @@
     on:mousemove={ onHover }
     on:click={ onClick }
     bind:this={ zoomCanvas }
+    style="display: {$interactionMode === "zoom" ? "block" : "none"}"
   />
 </div>
 
