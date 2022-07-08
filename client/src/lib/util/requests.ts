@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { selectedDataset } from "../state/data";
-import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType } from "./types";
+import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType, Filter } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
 
@@ -60,6 +60,15 @@ export async function sample(id: Orientation): Promise<Response> {
 
 export async function getAllData(id: Orientation): Promise<Response> {
   return fetch(`${BASE_URL}/all_data/${id}`)
+}
+
+export async function steer(filter: Filter): Promise<Response> {
+  const { dimension, min, max } = filter;
+  return fetch(`${BASE_URL}/steer?dimension=${dimension}&min=${min}&max=${max}`);
+}
+
+export async function cancelSteering(): Promise<Response> {
+  return fetch(`${BASE_URL}/steer/cancel`);
 }
 
 export function getDatasetSize(id: Orientation): Promise<void> {

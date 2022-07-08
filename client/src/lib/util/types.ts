@@ -27,3 +27,9 @@ export type Dataset = {
   name: string,
   size: number
 };
+
+export type Filter = {
+  dimension: string,
+  min: number,
+  max: number
+};

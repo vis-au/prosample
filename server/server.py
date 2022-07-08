@@ -103,6 +103,19 @@ def update_dimension(id):
   pipeline.update_dimension(selection)
   return cors_response("ok")
 
+@app.route('/steer/', methods=["GET"])
+def steer():
+  # TODO: get both pipelines, set their selection's steering parameters
+  # dimension = request.args.get("dimension")
+  # dimension = request.args.get("min")
+  # dimension = request.args.get("max")
+  return cors_response("ok")
+
+@app.route('/steer/cancel/')
+def cancel_steering():
+  # TODO: get both pipelines, clear their selection's steering parameters
+  return cors_response("ok")
+
 
 def normalize_chunk_positions(chunk, dataset_name):
   x = chunk[:, 1]
