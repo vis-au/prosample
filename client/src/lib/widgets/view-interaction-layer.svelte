@@ -146,10 +146,12 @@
   }
 
   onMount(() => {
-    const zoom = select(zoomCanvas);
-    zoom.call(zoomBehavior);
-    const brushSvg = select(brushCanvas);
-    brushSvg.call(brushBehavior);
+    window.setTimeout(() => {
+      const zoom = select(zoomCanvas);
+      zoom.call(zoomBehavior);
+      const brushSvg = select(brushCanvas);
+      brushSvg.call(brushBehavior);
+    }, 100);
   });
 
   afterUpdate(() => {
@@ -186,7 +188,7 @@
       <rect
         class="steering-filter"
         x={$scaleX($steeringFilters.x.min)}
-        y={$scaleX($steeringFilters.y.min)}
+        y={$scaleY($steeringFilters.y.min)}
         width={$scaleX(Math.abs($steeringFilters.x.max - $steeringFilters.x.min))}
         height={$scaleY(Math.abs($steeringFilters.y.max - $steeringFilters.y.min))}
       />
