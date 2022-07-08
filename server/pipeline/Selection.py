@@ -8,43 +8,47 @@ import numpy as np
 class Selection(ABC):
     def __init__(self) -> None:
         super().__init__()
-        self.steer()
+        self.steering_filters = {}  # a dict mapping a steered dimension to a min-max filter.
 
     def steer(self, dimension: int = None, min_value: int = 0, max_value: int = 1):
-        self.steering = {
-            "dimension": int(dimension) if dimension is not None else dimension,
+        steering_filter = {
             "min_value": float(min_value),
             "max_value": float(max_value)
         }
+        self.steering_filters[dimension] = steering_filter
 
     def clear_steering(self):
-        self.steering["dimension"] = None
+        self.steering_filters = {}
 
     def load_subdivision(self, subdivision):
         self.subdivision = subdivision
 
     def is_steered_subspace_empty(self):
-        # FIXME: this is a sinful hack, compacting all items into a numpy array to make queries fast
+        # FIXME: this is a sinful hack, compacting all items into a numpy array for "fast" checking
         all_items = np.array(list(itertools.chain.from_iterable(list(self.subdivision.values()))))
+        check = np.full(len(all_items), True)  # boolean index indicating items matching steering
 
-        dim = self.steering["dimension"]
-        min_value = self.steering["min_value"]
-        max_value = self.steering["max_value"]
-        check = (all_items[:, dim] >= min_value) & (all_items[:, dim] <= max_value)
+        for dim in self.steering_filters:
+            min_value = self.steering_filters[dim]["min_value"]
+            max_value = self.steering_filters[dim]["max_value"]
+            dim = int(dim)
+            check = (all_items[:, dim] >= min_value) & (all_items[:, dim] <= max_value) & check
+
         is_empty = check.sum() == 0
-
         return is_empty
 
     def get_indeces_matching_steering_in_bucket(self, bucket_index: int) -> List[int]:
-        dim = self.steering["dimension"]
-        bucket = np.array(self.subdivision[bucket_index])[:, dim]
+        bucket = np.array(self.subdivision[bucket_index])
+        check = np.full(len(bucket), True)  # boolean index indiciating items matching steering
 
-        min_value = self.steering["min_value"]
-        max_value = self.steering["max_value"]
-        matches_query = (bucket >= min_value) & (bucket <= max_value)
+        for dim in self.steering_filters:
+            min_value = self.steering_filters[dim]["min_value"]
+            max_value = self.steering_filters[dim]["max_value"]
+            values = bucket[:, int(dim)]
+            check = (values >= min_value) & (values <= max_value) & check
 
         # use the 0 index below, because nonzero() gets indeces, but returns a tuple
-        indeces = matches_query.nonzero()[0].tolist()
+        indeces = check.nonzero()[0].tolist()
         return indeces
 
     def create_steered_chunk(self, chunk_size: int) -> np.ndarray:
@@ -94,7 +98,7 @@ class Selection(ABC):
         # this is a simple extension for enabling steering: check if steering parameters are set,
         # if that steering subspace is not empty and then sample from there, otherwise use the
         # default strategy for selecting
-        if self.steering["dimension"] is not None:
+        if len(self.steering_filters.keys()) > 0:
             if not self.is_steered_subspace_empty():
                 print("using steering ...")
                 # use number of buckets as chunk size
@@ -176,6 +180,7 @@ class SelectionMedian(Selection):
 
     def select_element(self, chunk, chunk_index, bucket_number):
         subdivision_size = len(self.subdivision[bucket_number])
-        median_index = np.argsort(np.array(self.subdivision[bucket_number])[:, 3])[int(subdivision_size / 2)]  # <-- Slow
+        med = int(subdivision_size / 2)
+        median_index = np.argsort(np.array(self.subdivision[bucket_number])[:, 3])[med]  # <-- Slow
         chunk[chunk_index] = self.subdivision[bucket_number][median_index]
         return median_index
