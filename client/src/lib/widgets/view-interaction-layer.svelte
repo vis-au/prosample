@@ -57,13 +57,13 @@
 
       $steeringFilters.x = {
         dimension: "1",
-        min: $scaleX.invert(minX),
-        max: $scaleX.invert(maxX)
+        min: $scaleX.invert($currentTransform.invertX(minX)),
+        max: $scaleX.invert($currentTransform.invertX(maxX))
       };
       $steeringFilters.y = {
         dimension: "2",
-        min: $scaleY.invert(minY),
-        max: $scaleY.invert(maxY)
+        min: $scaleY.invert($currentTransform.invertY(minY)),
+        max: $scaleY.invert($currentTransform.invertY(maxY))
       };
 
       steer($steeringFilters.x);
@@ -166,6 +166,34 @@
 </script>
 
 <div id="{id}-interaction-canvas" class="interaction-canvas">
+  <svg class="active-brush" width={ width } height={ height }>
+    {#if $steeringFilters.x && $steeringFilters.y}
+      <rect
+        class="steering-filter"
+        x={ $currentTransform.applyX($scaleX($steeringFilters.x.min))}
+        y={ $currentTransform.applyY($scaleY($steeringFilters.y.min))}
+        width={
+          $currentTransform.applyX($scaleX($steeringFilters.x.max))
+          -
+          $currentTransform.applyX($scaleX($steeringFilters.x.min))
+        }
+        height={
+          $currentTransform.applyY($scaleY($steeringFilters.y.max))
+          -
+          $currentTransform.applyY($scaleY($steeringFilters.y.min))
+        }
+      />
+    {/if}
+  </svg>
+  <svg
+    class="brush-canvas {isBrushing ? "brushing" : ""}"
+    width={ width }
+    height={ height }
+    on:mousemove={ onHover }
+    on:click={ onClick }
+    bind:this={ brushCanvas }
+    style="display: {$interactionMode === "brush" ? "block" : "none"}">
+  </svg>
   <canvas
     class="zoom-canvas"
     width={ width }
@@ -175,35 +203,18 @@
     bind:this={ zoomCanvas }
     style="display: {$interactionMode === "zoom" ? "block" : "none"}"
   />
-  <svg
-    class="brush-canvas {isBrushing ? "brushing" : ""}"
-    width={ width }
-    height={ height }
-    on:mousemove={ onHover }
-    on:click={ onClick }
-    bind:this={ brushCanvas }
-    style="display: {$interactionMode === "brush" ? "block" : "none"}">
-
-    {#if $steeringFilters.x && $steeringFilters.y}
-      <rect
-        class="steering-filter"
-        x={$scaleX($steeringFilters.x.min)}
-        y={$scaleY($steeringFilters.y.min)}
-        width={$scaleX(Math.abs($steeringFilters.x.max - $steeringFilters.x.min))}
-        height={$scaleY(Math.abs($steeringFilters.y.max - $steeringFilters.y.min))}
-      />
-    {/if}
-  </svg>
 </div>
 
 <style>
   div.interaction-canvas {
     position: absolute;
   }
-  div.interaction-canvas canvas {
+  div.interaction-canvas canvas,
+  div.interaction-canvas svg {
     position: absolute;
   }
-  svg.brush-canvas .steering-filter {
+  svg.active-brush .steering-filter {
+    fill: transparent;
     stroke: black;
     stroke-width: 2px;
   }
