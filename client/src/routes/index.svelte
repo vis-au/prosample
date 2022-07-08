@@ -7,7 +7,7 @@
   import { samplingRate } from '$lib/state/sampling-rate';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
   import { leftView, rightView } from '$lib/state/view-config';
-  import { selectedDataset } from '$lib/state/selected-dataset';
+  import { selectedDataset } from '$lib/state/data';
   import { createPipelines, leftPipelineConfig } from '$lib/state/pipelines';
   import { isProgressionRunning } from '$lib/state/progression-state';
 

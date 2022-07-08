@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { selectedDataset } from "../state/selected-dataset";
+import { selectedDataset } from "../state/data";
 import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";

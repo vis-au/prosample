@@ -1,7 +1,6 @@
 <script lang="typescript">
-  import { dimensionsInData } from "./state/dimensions-in-data";
+  import { dimensionsInData, selectedDataset } from "./state/data";
   import { leftPipelineConfig, rightPipelineConfig } from "./state/pipelines";
-  import { selectedDataset } from "./state/selected-dataset";
   import { globalViewConfig, leftView, rightView } from "./state/view-config";
   import { isRemoteBusy } from "./util/requests";
   import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";

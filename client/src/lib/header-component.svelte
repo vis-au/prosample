@@ -1,14 +1,21 @@
 <script lang="typescript">
 	import Alternatives from './widgets/alternatives.svelte';
+  import { dimensionsInData, selectedDataset } from './state/data';
 	import { isProgressionRunning } from './state/progression-state';
 	import { samplingRate } from './state/sampling-rate';
 	import Toggle from './widgets/toggle.svelte';
 	import NumberInput from './widgets/number-input.svelte';
-	import { selectedDataset } from './state/selected-dataset';
 	import { globalViewConfig, leftView, rightView } from './state/view-config';
 	import { primarySample, secondarySample } from './state/sampled-data';
 	import { reset } from './util/requests';
 	import { createPipelines } from './state/pipelines';
+  import Selection from './widgets/selection.svelte';
+
+  let steeringConfig = {
+    dimension: "",
+    min: 0,
+    max: 0
+  };
 
 	function resetProgression() {
 		$isProgressionRunning = false;
@@ -44,6 +51,25 @@
     <div class="bin-size config-component">
       <h2>Bin size:</h2>
       <NumberInput id="bins-ize" bind:value={ $globalViewConfig.binSize } />
+    </div>
+
+    <div class="steering config-component">
+      <h2>x:</h2>
+      <Selection
+        id="steering-dimension"
+        title="set steering dimension"
+        label=""
+        options={ $dimensionsInData }
+        bind:value={ steeringConfig.dimension }
+      />
+      <h2>y:</h2>
+      <Selection
+        id="steering-dimension"
+        title="set steering dimension"
+        label=""
+        options={ $dimensionsInData }
+        bind:value={ steeringConfig.dimension }
+      />
     </div>
 	</div>
 	<div class="right side">
