@@ -2,8 +2,8 @@
   export let id: string;
   export let title: string;
   export let label: string;
-  export let value: string;
-  export let options: string[];
+  export let value: string | number;
+  export let options: string[] | number[];
   export let isEmphasized = false;
   export let isDisabled = false;
 </script>

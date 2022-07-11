@@ -10,11 +10,12 @@
   import { interactionMode } from "$lib/state/interaction-mode";
   import { selectedBins } from "$lib/state/selected-bin";
   import { currentTransform } from "$lib/state/zoom";
-  import { hexbinning } from "$lib/util/bin-generator";
   import { scaleX, scaleY } from "$lib/state/scales";
-  import { cancelSteering, steer } from "$lib/util/requests";
   import { steeringFilters } from "$lib/state/steering-filters";
   import { hoveredPosition } from "$lib/state/hovered-position";
+  import { globalViewConfig} from "$lib/state/view-config"
+  import { hexbinning } from "$lib/util/bin-generator";
+  import { cancelSteering, steer } from "$lib/util/requests";
 
   export let id: string;
   export let width: number;
@@ -60,12 +61,12 @@
       console.log(minY, maxY);
 
       $steeringFilters.x = {
-        dimension: "1",
+        dimension: $globalViewConfig.encoding.x,
         min: $scaleX.invert($currentTransform.invertX(minX)),
         max: $scaleX.invert($currentTransform.invertX(maxX))
       };
       $steeringFilters.y = {
-        dimension: "2",
+        dimension:  $globalViewConfig.encoding.y,
         min: $scaleY.invert($currentTransform.invertY(minY)),
         max: $scaleY.invert($currentTransform.invertY(maxY))
       };
@@ -159,7 +160,7 @@
   });
 
   afterUpdate(() => {
-    const canvas = select(zoomCanvas) as Selection<Element, unknown, any, any>;
+    const canvas = select(zoomCanvas) as Selection<Element, unknown, null, undefined>;
     const myZoom = zoomTransform(zoomCanvas);
     if (JSON.stringify(myZoom) !== JSON.stringify($currentTransform)) {
       zoomBehavior.transform(canvas, $currentTransform);

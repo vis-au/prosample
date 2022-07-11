@@ -12,12 +12,6 @@
 	import Toggle from './widgets/toggle.svelte';
   import Selection from './widgets/selection.svelte';
 
-  let steeringConfig = {
-    dimension: "",
-    min: 0,
-    max: 0
-  };
-
 	function resetProgression() {
 		$isProgressionRunning = false;
 		$leftView.initialized = false;
@@ -61,7 +55,7 @@
         title="set steering dimension"
         label=""
         options={ $dimensionsInData }
-        bind:value={ steeringConfig.dimension }
+        bind:value={ $globalViewConfig.encoding.x }
       />
       <h2>y:</h2>
       <Selection
@@ -69,7 +63,7 @@
         title="set steering dimension"
         label=""
         options={ $dimensionsInData }
-        bind:value={ steeringConfig.dimension }
+        bind:value={ $globalViewConfig.encoding.y }
       />
       <h2>View interaction:</h2>
       <Alternatives

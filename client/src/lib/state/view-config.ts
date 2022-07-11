@@ -6,7 +6,11 @@ export const globalViewConfig = writable({
   showCenter: false,
   useRelativeDifferenceScale: false,
   areLeftAndRightLinked: true,
-  binSize: 10
+  binSize: 10,
+  encoding: {
+    x: "1",
+    y: "2"
+  }
 });
 
 export const leftView = writable<ViewConfig>({

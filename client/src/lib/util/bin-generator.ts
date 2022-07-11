@@ -1,13 +1,14 @@
+import type { HexbinBin } from 'd3-hexbin';
+import { hexbin } from "d3-hexbin";
+import type { ScaleLinear } from 'd3-scale';
+import { writable } from 'svelte/store';
+
 import { groundTruthData } from '$lib/state/ground-truth-data';
 import { primarySample, secondarySample } from '$lib/state/sampled-data';
 import { scaleX, scaleY } from '$lib/state/scales';
 import { selectedBins } from '$lib/state/selected-bin';
 import { globalViewConfig } from '$lib/state/view-config';
 import { currentTransform } from '$lib/state/zoom';
-import type { HexbinBin } from 'd3-hexbin';
-import { hexbin } from "d3-hexbin";
-import type { ScaleLinear } from 'd3-scale';
-import { writable } from 'svelte/store';
 
 type BinType = [number, number, number]; // x, y, id
 
@@ -43,6 +44,9 @@ class BinGenerator {
 
   private scaleX: ScaleLinear<number, number>;
   private scaleY: ScaleLinear<number, number>;
+
+  private X: string;
+  private Y: string;
 
   constructor() {
     groundTruthData.subscribe(value => {
@@ -83,6 +87,8 @@ class BinGenerator {
       this.updatePrimaryBins();
       this.updateSecondaryBins();
       this.updateGroundTruthBins();
+      this.X = value.encoding.x;
+      this.Y = value.encoding.y;
     });
   }
 
@@ -214,18 +220,18 @@ class BinGenerator {
   }
 
   private updateGroundTruthBins() {
-    this._groundTruthBins = hexbinning(this._groundTruthData.map(d => [d[1], d[2], d[0]]));
+    this._groundTruthBins = hexbinning(this._groundTruthData.map(d => [d[this.X], d[this.Y], d[0]]));
     this._groundTruthIndex = this.getIndexForBins(this._groundTruthBins)
   }
 
   private updatePrimaryBins() {
-    this._primaryBins = hexbinning(this._primaryData.map(d => [d[1], d[2], d[0]]));
+    this._primaryBins = hexbinning(this._primaryData.map(d => [d[this.X], d[this.Y], d[0]]));
     primaryBins.set(this._primaryBins);
     this._primaryIndex = this.getIndexForBins(this._primaryBins);
   }
 
   private updateSecondaryBins() {
-    this._secondaryBins = hexbinning(this._secondaryData.map(d => [d[1], d[2], d[0]]));
+    this._secondaryBins = hexbinning(this._secondaryData.map(d => [d[this.X], d[this.Y], d[0]]));
     secondaryBins.set(this._secondaryBins);
     this._secondaryIndex = this.getIndexForBins(this._secondaryBins);
   }

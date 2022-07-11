@@ -1,4 +1,5 @@
 import type { Dataset } from "$lib/util/types";
+import { range } from "d3";
 import { derived, writable } from "svelte/store";
 
 export const presetDatasetNames = writable(["mountain_peaks", "spotify"]);
@@ -8,13 +9,22 @@ export const selectedDataset = writable<Dataset>({
   size: null
 });
 
-export const dimensionsInData = writable(["1", "2", "3"] );
+export const dimensionsInData = derived([selectedDataset], ([$selectedDataset]) => {
+  // HACK: hard coded dimension names ... not great but does the job
+  if ($selectedDataset.name === "mountain_peaks") {
+    return range(0, 4).map(d => d + "");
+  } else if ($selectedDataset.name === "spotify") {
+    return range(0, 13).map(d => d + "");
+  } else {
+    return [];
+  }
+});
 
 export const dimensionNames = derived([selectedDataset], ([$selectedDataset]) => {
   // HACK: hard coded dimension names ... not great but does the job
-  if ($selectedDataset.name === "spotify") {
-    return ["longitude", "latitude", "altitude"];
-  } else if ($selectedDataset.name === "mountain_peaks") {
+  if ($selectedDataset.name === "mountain_peaks") {
+    return ["id", "longitude", "latitude", "altitude"];
+  } else if ($selectedDataset.name === "spotify") {
     return  ["id", "popularity", "duration_ms", "explicit", "danceability", "energy", "loudness",
              "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]
   } else {

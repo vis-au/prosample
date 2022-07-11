@@ -1,11 +1,13 @@
 <script lang="typescript">
+  import { selectAll } from 'd3-selection';
   import { afterUpdate, onMount } from 'svelte';
   import { Deck, OrthographicView } from '@deck.gl/core';
   import { ScatterplotLayer } from '@deck.gl/layers';
-  import { selectAll } from 'd3-selection';
+
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
   import { currentTransform } from './state/zoom';
   import { scaleX, scaleY } from './state/scales';
+  import { globalViewConfig } from "./state/view-config";
 
   export let id = "deck-gl-scatterplot";
   export let data: number[][] = [];
@@ -38,11 +40,12 @@
     INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
 
     const t = $currentTransform;
+    const {x, y} = $globalViewConfig.encoding;
 
     layers = [
       new ScatterplotLayer({
         id: `${id}-layer`,
-        getPosition: d => [t.applyX($scaleX(d[1])), t.applyY($scaleY(d[2]))],
+        getPosition: d => [t.applyX($scaleX(d[x])), t.applyY($scaleY(d[y]))],
         getRadius: radius,
         getLineWidth: 0,
         opacity: 0.3,
