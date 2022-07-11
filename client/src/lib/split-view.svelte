@@ -16,8 +16,14 @@
   $: plotWidth = innerWidth / ($globalViewConfig.showCenter ? 3 : 2) - margin.horizontal;
   $: plotHeight = innerHeight - margin.vertical;
 
-  $: $scaleX.domain([0, 1]).range([0, plotWidth]);
-  $: $scaleY.domain([0, 1]).range([plotHeight, 0]);
+  $: {
+    $scaleX.range([0, plotWidth])
+    $scaleX = $scaleX;
+  };
+  $: {
+    $scaleY.range([plotHeight, 0]);
+    $scaleY = $scaleY;
+  }
 
   function hideTooltip() {
     hoveredPosition.set([-1, -1]);

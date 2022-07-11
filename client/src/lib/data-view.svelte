@@ -12,6 +12,7 @@ import type { HexbinBin } from "d3-hexbin";
   import type { ViewConfig } from "./util/types";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
+import AxisViewer from "./axis-viewer.svelte";
 
 
   export let id = "left";
@@ -99,6 +100,8 @@ import type { HexbinBin } from "d3-hexbin";
 </script>
 
 <div class="data-view" style="width: {width}px; height: {height}px">
+  <AxisViewer id="{id}-axis" { width } { height } />
+
   { #if renderer === "scatterplot"}
     <ScatterplotGlView
       { id }

@@ -52,6 +52,6 @@ selectedDataset.subscribe($selectedDataset => {
   _dimensionExtents.maxs = maxs;
 });
 
-export function getExtent(dimension: number): [number, number] {
-  return [_dimensionExtents.mins[dimension], _dimensionExtents.maxs[dimension]];
+export function getExtent(dimension: string): [number, number] {
+  return [_dimensionExtents.mins[+dimension], _dimensionExtents.maxs[+dimension]];
 };

@@ -10,7 +10,7 @@
   import { interactionMode } from "$lib/state/interaction-mode";
   import { selectedBins } from "$lib/state/selected-bin";
   import { currentTransform } from "$lib/state/zoom";
-  import { scaleX, scaleY } from "$lib/state/scales";
+  import { getPlotScale, scaleX, scaleY } from "$lib/state/scales";
   import { steeringFilters } from "$lib/state/steering-filters";
   import { hoveredPosition } from "$lib/state/hovered-position";
   import { globalViewConfig} from "$lib/state/view-config"
@@ -45,6 +45,8 @@
     }
 
     $currentTransform = event.transform;
+    $scaleX = $currentTransform.rescaleX(getPlotScale([0, width]));
+    $scaleY = $currentTransform.rescaleY(getPlotScale([height, 0]));
   }
 
   function onBrushEnd(event: D3BrushEvent<Element>) {
@@ -62,13 +64,13 @@
 
       $steeringFilters.x = {
         dimension: $globalViewConfig.encoding.x,
-        min: $scaleX.invert($currentTransform.invertX(minX)),
-        max: $scaleX.invert($currentTransform.invertX(maxX))
+        min: $scaleX.invert(minX),
+        max: $scaleX.invert(maxX)
       };
       $steeringFilters.y = {
         dimension:  $globalViewConfig.encoding.y,
-        min: $scaleY.invert($currentTransform.invertY(minY)),
-        max: $scaleY.invert($currentTransform.invertY(maxY))
+        min: $scaleY.invert(minY),
+        max: $scaleY.invert(maxY)
       };
 
       steer($steeringFilters.x);
@@ -80,16 +82,16 @@
 
   function onHover(event) {
     const rect = event.target.getBoundingClientRect();
-    const x = $scaleX.invert($currentTransform.invertX(event.clientX - rect.left));
-    const y = $scaleY.invert($currentTransform.invertY(event.clientY - rect.top));
+    const x = $scaleX.invert(event.clientX - rect.left);
+    const y = $scaleY.invert(event.clientY - rect.top);
 
     hoveredPosition.set([ x, y ]);
   }
 
   function onClick(event) {
     const rect = event.target.getBoundingClientRect();
-    const x = $scaleX.invert($currentTransform.invertX(event.clientX - rect.left));
-    const y = $scaleY.invert($currentTransform.invertY(event.clientY - rect.top));
+    const x = $scaleX.invert(event.clientX - rect.left);
+    const y = $scaleY.invert(event.clientY - rect.top);
 
     const clickedBin = hexbinning([[x,y,-1]])[0];
     const selectedBin = $selectedBins.find(bin => bin.x === clickedBin.x && bin.y === clickedBin.y);
@@ -160,6 +162,10 @@
   });
 
   afterUpdate(() => {
+    // the code below ensures that "zoom" is not called recursively between the different views.
+    // When user zooms in one view, on("zoom") is also called in the other views, which would
+    // cascade infintely, so this code here ensures that zoom transform is only updated once per
+    // interaction.
     const canvas = select(zoomCanvas) as Selection<Element, unknown, null, undefined>;
     const myZoom = zoomTransform(zoomCanvas);
     if (JSON.stringify(myZoom) !== JSON.stringify($currentTransform)) {
@@ -175,17 +181,17 @@
     {#if $steeringFilters.x && $steeringFilters.y}
       <rect
         class="steering-filter"
-        x={ $currentTransform.applyX($scaleX($steeringFilters.x.min))}
-        y={ $currentTransform.applyY($scaleY($steeringFilters.y.max))}
+        x={ $scaleX($steeringFilters.x.min) }
+        y={ $scaleY($steeringFilters.y.max) }
         width={
-          $currentTransform.applyX($scaleX($steeringFilters.x.max))
+          $scaleX($steeringFilters.x.max)
           -
-          $currentTransform.applyX($scaleX($steeringFilters.x.min))
+          $scaleX($steeringFilters.x.min)
         }
         height={
-          $currentTransform.applyY($scaleY($steeringFilters.y.min))
+          $scaleY($steeringFilters.y.min)
           -
-          $currentTransform.applyY($scaleY($steeringFilters.y.max))
+          $scaleY($steeringFilters.y.max)
         }
       />
     {/if}

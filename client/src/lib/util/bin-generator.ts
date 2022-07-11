@@ -72,10 +72,11 @@ class BinGenerator {
     scaleX.subscribe(value => this.scaleX = value);
     scaleY.subscribe(value => this.scaleY = value);
 
-    currentTransform.subscribe(value => {
+    currentTransform.subscribe(() => {
+      // transform updates scales
       hexbinning
-        .x(d => value.applyX(this.scaleX(d[0])))
-        .y(d => value.applyY(this.scaleY(d[1])));
+        .x(d => this.scaleX(d[0]))
+        .y(d => this.scaleY(d[1]));
 
       this.updatePrimaryBins();
       this.updateSecondaryBins();
