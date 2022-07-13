@@ -5,7 +5,6 @@
   import { ScatterplotLayer } from '@deck.gl/layers';
 
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
-  import { currentTransform } from './state/zoom';
   import { scaleX, scaleY } from './state/scales';
   import { globalViewConfig } from "./state/view-config";
 
@@ -39,13 +38,12 @@
   function render() {
     INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
 
-    const t = $currentTransform;
     const {x, y} = $globalViewConfig.encoding;
 
     layers = [
       new ScatterplotLayer({
         id: `${id}-layer`,
-        getPosition: d => [t.applyX($scaleX(d[x])), t.applyY($scaleY(d[y]))],
+        getPosition: d => [$scaleX(d[x]), $scaleY(d[y])],
         getRadius: radius,
         getLineWidth: 0,
         opacity: 0.3,

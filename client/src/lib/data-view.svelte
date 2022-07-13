@@ -1,7 +1,8 @@
 <script lang="typescript">
-import type { HexbinBin } from "d3-hexbin";
-
+  import type { HexbinBin } from "d3-hexbin";
   import { scaleDiverging, scaleSequential, scaleSequentialLog } from "d3-scale";
+
+  import AxisViewer from "./axis-viewer.svelte";
   import BinnedScatterplotView from "./binned-scatterplot-view.svelte";
   import LegendViewer from "./legend-viewer.svelte";
   import ScatterplotGlView from "./scatterplot-view.svelte";
@@ -12,7 +13,6 @@ import type { HexbinBin } from "d3-hexbin";
   import type { ViewConfig } from "./util/types";
   import Alternatives from "./widgets/alternatives.svelte";
   import Histogram from "./widgets/histogram.svelte";
-import AxisViewer from "./axis-viewer.svelte";
 
 
   export let id = "left";
