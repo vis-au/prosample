@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-#from sklearn.neighbors import KDTree
-import numpy as np
-import pathlib
-import functools
 import csv
-import duckdb
+import functools
+import pathlib
 
-connection = duckdb.connect()
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KDTree
 
 
 class Linearization(ABC):
@@ -23,13 +22,11 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_to_read = str(current_folder) + '/input_files/' + self.data_set_name + 'Data.csv'
 
-        df = connection.execute("SELECT * FROM read_csv_auto('"+file_to_read+"');").fetchdf()
+        df = pd.read_csv(file_to_read, delimiter=";")
         df = df.drop(self.exclude_attributes, axis=1)
         data = df.to_numpy()
 
         data[:, 0] = np.array(range(0, len(data)))
-
-        print(data[0])
 
         # data = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
 
@@ -57,7 +54,9 @@ class LinearizationZOrder2D(Linearization):
         diffs = maxs - mins
         normalized_data = (self.data - mins) / diffs
 
-        indexes = self.construct_z_order_2d(list(range(len(normalized_data))), normalized_data[:, 1:3])
+        indexes = self.construct_z_order_2d(
+            list(range(len(normalized_data))), normalized_data[:, 1:3]
+        )
 
         self.linearization = self.data[indexes]
         self.write_data('ZOrder')
@@ -135,7 +134,9 @@ class LinearizationZOrderKD(Linearization):
         diffs = maxs - mins
         normalized_data = (self.data - mins) / diffs
 
-        indexes = self.construct_z_order_kd(list(range(len(normalized_data))), normalized_data[:, 1:self.dimensions+1])
+        indexes = self.construct_z_order_kd(
+            list(range(len(normalized_data))), normalized_data[:, 1:self.dimensions+1]
+        )
 
         self.linearization = self.data[indexes]
         self.write_data('ZOrder')
@@ -237,7 +238,9 @@ class LinearizationNearestNeighbour(Linearization):
 
             if not found:
                 current_point = data[current_index]
-                all_neighbours = kdt.query(current_point.reshape(1, -1), k=no_of_points, return_distance=False)
+                all_neighbours = kdt.query(
+                    current_point.reshape(1, -1), k=no_of_points, return_distance=False
+                )
                 for close in all_neighbours[0]:
                     if not visited[close] and not close == current_index:
                         visited[close] = True
