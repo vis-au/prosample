@@ -1,4 +1,8 @@
-from . import *
+from constants import *
+from Selection import *
+from Subdivision import *
+from LinearizationReader import *
+from Sampler import *
 
 
 class Pipeline:
@@ -37,11 +41,14 @@ class Pipeline:
   def _get_selection(self, selection_string):
     sel_class = _resolve_selection(selection_string)
 
-    if sel_class == None:
+    if sel_class is None:
       print("cannot resolve selection.")
       return None
 
-    return sel_class(self.config["dimension"]) if sel_class not in [SelectionFirst, SelectionRandom] else sel_class()
+    if sel_class not in [SelectionFirst, SelectionRandom]:
+      return sel_class(self.config["dimension"])
+    else:
+      return sel_class()
 
   def update_dimension(self, dimension):
     self.config["dimension"] = int(dimension)
@@ -64,12 +71,21 @@ def _resolve_data(data):
     return MOUNTAIN_PEAKS
   elif data == "spotify":
     return SPOTIFY
+  elif data == "taxis":
+    return TAXIS
   else:
     return None
+
 
 def _resolve_linearization(linearization):
   if linearization == "z-order":
     return LinearizationReaderZOrder
+  elif linearization == "z-order-geo":
+    return LinearizationReaderGeoZOrder
+  elif linearization == "numeric":
+    return LinearizationReaderNumeric
+  elif linearization == "temporal":
+    return LinearizationReaderTemporal
   elif linearization == "knn":
     return LinearizationReaderNearestNeighbour
   elif linearization == "strip":
@@ -79,6 +95,7 @@ def _resolve_linearization(linearization):
   else:
     return None
 
+
 def _resolve_subdivision(subdivision):
   if subdivision == "standard":
     return SubdivisionStandard
@@ -86,6 +103,7 @@ def _resolve_subdivision(subdivision):
     return SubdivisionBucketSize
   else:
     return None
+
 
 def _resolve_selection(selection):
   if selection == "random":

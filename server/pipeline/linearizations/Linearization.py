@@ -5,6 +5,7 @@ import pathlib
 
 import numpy as np
 import pandas as pd
+import pymorton as pm
 from sklearn.neighbors import KDTree
 
 
@@ -44,7 +45,7 @@ class Linearization(ABC):
         file_name = self.data_set_name + 'Linearization' + linearization_type + '.csv'
         file_name = str(current_folder) + '/output_files/' + file_name
         # np.savetxt(file_name, self.linearization, delimiter=';', header=self.header, fmt='%f')
-        pd.DataFrame(self.linearization).to_csv(file_name, sep=";", header=self.header, index=False)
+        pd.DataFrame(self.linearization).to_csv(file_name, sep=";", header=False, index=False)
         print('Linearized file into folder output_files')
 
 
@@ -273,3 +274,22 @@ class LinearizationNearestNeighbour(Linearization):
                         break
 
         return indexes.astype(int)
+
+
+class LinearizationGeoZorder(Linearization):
+    def __init__(self, data_set_name, dimensions, lat: int, lng: int, exclude_attributes=[]):
+        super().__init__(data_set_name, dimensions, exclude_attributes)
+        self.lat = lat  # attribute containing latitude
+        self.lng = lng  # attribute containing longitude
+
+    def linearize(self):
+        # this generates a hash for every element of the data, and sorting by that hash gives
+        # the zorder of the data
+        hashes = pd.DataFrame(self.data).apply(
+            lambda row: pm.interleave_latlng(row[self.lat], row[self.lng]),
+            axis=1
+        )
+        order = np.argsort(hashes)
+        self.linearization = self.data[order]
+        self.write_data("GeoZorder")
+        return self.linearization

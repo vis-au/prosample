@@ -1,6 +1,7 @@
 import pandas as pd
-from pipeline import *
-
+from LinearizationReader import *
+from Subdivision import *
+from Selection import *
 
 class Sampler:
 
