@@ -43,8 +43,31 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_name = self.data_set_name + 'Linearization' + linearization_type + '.csv'
         file_name = str(current_folder) + '/output_files/' + file_name
-        np.savetxt(file_name, self.linearization, delimiter=';', header=self.header, fmt='%f')
+        # np.savetxt(file_name, self.linearization, delimiter=';', header=self.header, fmt='%f')
+        pd.DataFrame(self.linearization).to_csv(file_name, sep=";", header=self.header, index=False)
         print('Linearized file into folder output_files')
+
+
+class LinearizationNumericAttr(Linearization):
+    def __init__(self, data_set_name, dimensions, sort_attr: int, exclude_attributes=[]):
+        super().__init__(data_set_name, dimensions, exclude_attributes)
+        self.sort_attr = sort_attr
+
+    def linearize(self):
+        order = np.argsort(self.data[:, self.sort_attr])
+        self.linearization = self.data[order]
+        self.write_data("SortByNumAttr")
+        return self.linearization
+
+
+class LinearizationDatetimeAttr(LinearizationNumericAttr):
+    def linearize(self):
+        attr = self.data[:, self.sort_attr].astype(np.datetime64)
+        attr_datetime = pd.to_datetime(attr)
+        order = np.argsort(attr_datetime)
+        self.linearization = self.data[order]
+        self.write_data("SortByTempAttr")
+        return self.linearization
 
 
 class LinearizationZOrder2D(Linearization):
