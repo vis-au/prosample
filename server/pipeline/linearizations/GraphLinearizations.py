@@ -29,7 +29,7 @@ class GraphLinearization(Linearization):
 
     while is_cyclic:
       try:
-        cycle = nx.find_cycle(G_)
+        cycle = nx.find_cycle(G)
         G.remove_edge(*cycle[0])
       except nx.NetworkXError:
         is_cyclic = False
@@ -55,6 +55,9 @@ class RandomGraphLinearization(GraphLinearization):
 
 
 class BasicGraphLinearization(GraphLinearization):
+  '''An implementation of the naïve linearization algorithm without optimization as a basic
+      proof-of-concept of using graph algorithms in the pipeline. Local neighborhoods are "sorted"
+      in order of appearance of predecessors/successors to a node.'''
   def linearize(self) -> np.ndarray:
     G_ = nx.from_edgelist(self.data[:, [1, 2]])
 
@@ -114,7 +117,8 @@ class BasicGraphLinearization(GraphLinearization):
 class WeightedGraphLinearization(GraphLinearization):
   def linearize(self) -> np.ndarray:
     '''An implementation of the naïve linearization algorithm without optimization as a basic
-       proof-of-concept of using graph algorithms in the pipeline.'''
+       proof-of-concept of using graph algorithms in the pipeline. Uses node id as weights to "sort"
+       the local neighborhoods.'''
     G_ = nx.from_edgelist(self.data[:, [1, 2]])
 
     # graph may be disconnected, so as a first step, add edges between its conn. components
