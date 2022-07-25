@@ -1,8 +1,4 @@
-from constants import *
-from Selection import *
-from Subdivision import *
-from LinearizationReader import *
-from Sampler import *
+from . import *
 
 
 class Pipeline:

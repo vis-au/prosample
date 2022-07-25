@@ -99,8 +99,8 @@ def update_dimension(id):
     print("couldn't find pipeline with id", id)
     abort(400)
 
-  selection = request.args.get("selection")
-  pipeline.update_dimension(selection)
+  dimension = request.args.get("dimension")
+  pipeline.update_dimension(dimension)
   return cors_response("ok")
 
 

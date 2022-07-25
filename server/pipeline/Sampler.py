@@ -1,10 +1,8 @@
 import pandas as pd
-from LinearizationReader import *
-from Subdivision import *
-from Selection import *
+from . import *
+
 
 class Sampler:
-
     def __init__(self, data_set_name, linearization: LinearizationReader, subdivision: Subdivision):
         self.data_set_name = data_set_name
         self.linearization_frame = linearization
