@@ -7,7 +7,7 @@
   import { samplingRate } from '$lib/state/sampling-rate';
   import { primarySample, secondarySample } from '$lib/state/sampled-data';
   import { leftView, rightView } from '$lib/state/view-config';
-  import { selectedDataset } from '$lib/state/data';
+  import { scaleChunk, selectedDataset } from '$lib/state/data';
   import { createPipelines, leftPipelineConfig } from '$lib/state/pipelines';
   import { isProgressionRunning } from '$lib/state/progression-state';
 
@@ -76,8 +76,8 @@
       const responseB = await sample("right");
       const jsonB = await responseB.json();
 
-      $primarySample = $primarySample.concat(jsonA.sample);
-      $secondarySample = $secondarySample.concat(jsonB.sample);
+      $primarySample = $primarySample.concat(scaleChunk(jsonA.sample));
+      $secondarySample = $secondarySample.concat(scaleChunk(jsonB.sample));
     }, $samplingRate);
   }
 

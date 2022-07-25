@@ -124,32 +124,6 @@ def cancel_steering():
   return cors_response("ok")
 
 
-def normalize_chunk_positions(chunk, dataset_name):
-  x = chunk[:, 1]
-  y = chunk[:, 2]
-
-  # TODO: hardcoded transformation from geo to screen coordinates
-
-  if dataset_name == "mountain_peaks":
-    min_x = -179.8806635
-    min_y = -85.3475888
-    max_x = 179.9872917
-    max_y = 83.5714722
-  elif dataset_name == "spotify":
-    min_x = 0
-    min_y = 3344
-    max_x = 100
-    max_y = 5621218
-
-  normalized_x = (x - min_x) / (max_x - min_x)
-  normalized_y = (y - min_y) / (max_y - min_y)
-
-  chunk[:, 1] = normalized_x
-  chunk[:, 2] = normalized_y
-
-  return chunk
-
-
 @app.route('/sample/<id>', methods=["GET"])
 def sample(id):
   pipeline = PIPELINES.get(id)
@@ -159,9 +133,7 @@ def sample(id):
       abort(400)
 
   next_chunk = pipeline.get_next_chunk()
-  dataset_name = pipeline.get_config()["data"]
-  normalized_chunk = normalize_chunk_positions(next_chunk, dataset_name)
-  return produce_response_for_sample(normalized_chunk.tolist())
+  return produce_response_for_sample(next_chunk.tolist())
 
 
 @app.route("/all_data/<id>", methods=["GET"])
@@ -174,7 +146,6 @@ def get_all_data(id):
 
   dataset_name = pipeline.sampler.data_set_name
   all_data = pipeline.linearization.read_linearization(dataset_name)
-  normalize_chunk_positions(all_data, dataset_name)
   return cors_response(all_data.tolist())
 
 
