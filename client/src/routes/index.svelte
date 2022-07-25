@@ -63,7 +63,7 @@
     });
 
     selectedDataset.update(value => {
-      value.name = "spotify";
+      value.name = "taxis";
       return value;
     });
   });
