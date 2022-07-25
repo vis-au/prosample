@@ -5,9 +5,15 @@ export type ViewType = "scatterplot" | "bins (absolute)" | "bins (ground truth)"
 
 export type BinColorScaleType = "linear" | "log";
 
-export type LinearizationType = "z-order" | "knn" | "strip" | "random";
+export type LinearizationType = "z-order" | "knn" | "strip" | "random" | "geo-z-order" | "numeric" |
+                                "temporal";
 export type SubdivisionType = "standard" | "bucket_size";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
+
+export const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random",
+                                                        "geo-z-order", "numeric", "temporal"];
+export const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
+export const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
 
 export type ProgressionState = "paused" | "running";
 export type Orientation = "left" | "center" | "right";  // position of a view in the interface

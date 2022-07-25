@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { dimensionsInData, selectedDataset } from './state/data';
+  import { dimensionsInData, selectedDataset, presetDatasetNames } from './state/data';
 	import { isProgressionRunning } from './state/progression-state';
   import { interactionMode } from '$lib/state/interaction-mode';
 	import { createPipelines } from './state/pipelines';
@@ -30,7 +30,7 @@
 			<h2><i class="material-icons">folder_open</i>Dataset:</h2>
 			<Alternatives
 				name="datasets"
-				alternatives={ ["mountain_peaks", "spotify"] }
+				alternatives={ $presetDatasetNames }
 				bind:activeAlternative={ $selectedDataset.name }
 			/>
 		</div>

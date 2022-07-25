@@ -3,7 +3,7 @@
   import { leftPipelineConfig, rightPipelineConfig } from "./state/pipelines";
   import { globalViewConfig, leftView, rightView } from "./state/view-config";
   import { isRemoteBusy } from "./util/requests";
-  import type { LinearizationType, SelectionType, SubdivisionType } from "./util/types";
+  import { linearizationTypes, selectionTypes, subdivisionTypes } from "./util/types";
   import ProgressBar from "./widgets/progress-bar.svelte";
   import Selection from "./widgets/selection.svelte";
 
@@ -15,10 +15,6 @@
   $: otherPipelineConfig = orientation === "left" ? rightPipelineConfig : leftPipelineConfig;
   $: isSamplingRunning = $view?.pointsRetrieved > 0;
   $: isConfigLoading = !$view.initialized || $isRemoteBusy;
-
-  const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random"];
-  const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
-  const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
 </script>
 
 <div class="pipeline-config-view {orientation} {isSamplingRunning ? "disabled" : ""}">

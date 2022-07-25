@@ -65,7 +65,7 @@ export async function getAllData(id: Orientation): Promise<Response> {
 
 export async function steer(filter: Filter): Promise<Response> {
   const { dimension, min, max } = filter;
-  const extent = getExtent(+dimension);
+  const extent = getExtent(dimension);
   const scale = scaleLinear([0, 1], extent);
   return fetch(`${BASE_URL}/steer?dimension=${dimension}&min=${scale(min)}&max=${scale(max)}`);
 }
