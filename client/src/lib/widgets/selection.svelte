@@ -4,16 +4,24 @@
   export let label: string;
   export let value: string | number;
   export let options: string[] | number[];
+  export let labels: string[] = null;
   export let isEmphasized = false;
   export let isDisabled = false;
+  export let style = "";
 </script>
 
 <label for="{id}-selection" class="selection {isEmphasized ? "emph" : ""} {isDisabled ? "disabled" : ""}">
   <span title={title}>{label}</span>
-  <select id="{id}-selection" name="{id}-selection" bind:value={ value } disabled={ isDisabled }>
-    { #each options as option }
-      <option value={ option }>{ option }</option>
-    { /each }
+  <select id="{id}-selection" name="{id}-selection" bind:value={ value } disabled={ isDisabled } {style}>
+    { #if labels === null }
+      { #each options as option }
+        <option value={ option }>{ option }</option>
+      { /each }
+    { :else}
+      { #each options as option, i }
+        <option value={ option }>{ labels[i] }</option>
+      { /each }
+    { /if }
   </select>
   <svg>
     <use xlink:href="#select-arrow-down"></use>

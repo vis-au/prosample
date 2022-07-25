@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { dimensionsInData, selectedDataset, presetDatasetNames } from './state/data';
+  import { dimensionsInData, selectedDataset, presetDatasetNames, dimensionNames } from './state/data';
 	import { isProgressionRunning } from './state/progression-state';
   import { interactionMode } from '$lib/state/interaction-mode';
 	import { createPipelines } from './state/pipelines';
@@ -36,7 +36,7 @@
 		</div>
 
 		<div class="sampling-rate config-component">
-			<h2><i class="material-icons">update</i>Sample interval:</h2>
+			<h2><i class="material-icons">update</i>Interval:</h2>
 			<!-- <NumberInput id="sampling-amount" bind:disabled={ isProgressionRunning } bind:value={ $samplingAmount } />
 			<h2>points every</h2> -->
 			<NumberInput id="sampling-rate" bind:disabled={ $isProgressionRunning } bind:value={ $samplingRate } />
@@ -54,18 +54,22 @@
         id="steering-dimension"
         title="set steering dimension"
         label=""
+				labels={ $dimensionNames }
         options={ $dimensionsInData }
         bind:value={ $globalViewConfig.encoding.x }
+				style="width: 100px"
       />
       <h2>y:</h2>
       <Selection
         id="steering-dimension"
         title="set steering dimension"
         label=""
+				labels={ $dimensionNames }
         options={ $dimensionsInData }
         bind:value={ $globalViewConfig.encoding.y }
+				style="width: 100px"
       />
-      <h2>View interaction:</h2>
+      <h2>drag:</h2>
       <Alternatives
 				name="view-interaction-mode"
 				alternatives={ ["zoom", "brush"] }
