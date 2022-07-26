@@ -184,8 +184,7 @@ class SelectionMinimum(Selection):
         self.attribute = attribute
 
     def select_element(self, chunk, chunk_index, bucket_number):
-        min_indexes = np.array(self.subdivision[bucket_number]).argmin(axis=0)  # <-- Slow
-        min_index = min_indexes[self.attribute]
+        min_index = np.array(self.subdivision[bucket_number][self.attribute]).argmin(axis=0)  # <-- Slow
         chunk[chunk_index] = self.subdivision[bucket_number][min_index]
         return min_index
 

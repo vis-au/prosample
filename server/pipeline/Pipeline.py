@@ -8,6 +8,7 @@ class Pipeline:
       "linearization": config["linearization"],
       "subdivision": config["subdivision"],
       "selection": config["selection"],
+      "params": config["params"],
       "dimension": int(config["dimension"])
     }
 
@@ -29,8 +30,17 @@ class Pipeline:
 
     if sub_class == SubdivisionBucketSize:
       self.subdivision = sub_class(self.config["dimension"], 1000)
-    else:
+    elif sub_class == SubdivisionStandard:
       self.subdivision = sub_class(0.001)
+    elif sub_class == SubdivisionRepresentativeClustering:
+      subspace = self.config["params"]["subspace"]
+      k = self.config["params"]["k"]
+      self.subdivision = sub_class(subspace=subspace, k=k)
+    elif sub_class == SubdivisionDensityClustering:
+      subspace = self.config["params"]["subspace"]
+      eps = self.config["params"]["eps"]
+      min_samples = self.config["params"]["min_samples"]
+      self.subdivision = sub_class(subspace=subspace, eps=eps, min_samples=min_samples)
 
     return Sampler(data, self.linearization, self.subdivision)
 
@@ -95,6 +105,10 @@ def _resolve_subdivision(subdivision):
     return SubdivisionStandard
   elif subdivision == "bucket_size":
     return SubdivisionBucketSize
+  elif subdivision == "representative":
+    return SubdivisionRepresentativeClustering
+  elif subdivision == "density":
+    return SubdivisionDensityClustering
   else:
     return None
 

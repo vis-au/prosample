@@ -31,12 +31,29 @@ def produce_response_for_sample(sample_as_list):
 
 
 def get_pipeline_config(req):
+  # request contains list of supplied subdivision parameters
+  params_in_req = req.args.get("params").split(" ")  # clients sends "+", but server reads " "??
+
+  params = {}
+  for param in params_in_req:
+    if param == "-1":  # -1 indicates "no parameters"
+      continue
+    elif param == "subspace":
+      params[param] = [int(x) for x in req.args.get(param).split(":")]
+    elif param == "k" or param == "min_samples":
+      params[param] = int(req.args.get(param))
+    elif param == "eps":
+      params[param] = float(req.args.get(param))
+    else:
+      params[param] = req.args.get(param)
+
   configuration = {
     "linearization": req.args.get("linearization"),
     "subdivision": req.args.get("subdivision"),
     "selection": req.args.get("selection"),
     "data": req.args.get("data"),
-    "dimension": req.args.get("dimension")
+    "dimension": req.args.get("dimension"),
+    "params": params,
   }
 
   return configuration
