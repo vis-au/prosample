@@ -76,8 +76,6 @@ def _resolve_data(data):
 def _resolve_linearization(linearization):
   if linearization == "z-order":
     return LinearizationReaderZOrder
-  elif linearization == "z-order-geo":
-    return LinearizationReaderGeoZOrder
   elif linearization == "numeric":
     return LinearizationReaderNumeric
   elif linearization == "temporal":
