@@ -1,7 +1,7 @@
 import { scaleLinear } from "d3";
 import { writable } from "svelte/store";
 import { getExtent, selectedDataset } from "../state/data";
-import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType, Filter } from "./types";
+import type { PipelineConfig, Orientation, SelectionType, LinearizationType, SubdivisionType, Filter, SubdivisionParamType } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000";
 
@@ -16,7 +16,30 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
   const sel = `selection=${configuration.selection}`;
   const dim = `dimension=${configuration.selectionDimension}`;
 
-  return `${lin}&${sub}&${sel}&${dim}`;
+  const params = getParamsForSubdivision(
+    configuration.subdivision, configuration.subdivisionParams
+  );
+
+  return `${lin}&${sub}&${sel}&${dim}&${params}`;
+}
+
+function getParamsForSubdivision(subdivision: SubdivisionType, params: SubdivisionParamType) {
+  let url = "";
+
+  if (subdivision === "density") {
+    const eps = params.eps;
+    const min_samples = params.min_samples;
+    const subspace = params.subspace.join(":");;
+    url = `params=eps+min_samples+subspace&eps=${eps}&min_samples=${min_samples}&subspace=${subspace}`;
+  } else if (subdivision === "representative") {
+    const k = params.k;
+    const subspace = params.subspace.join(":");
+    url = `params=k+subspace&k=${k}&subspace=${subspace}`;
+  } else {
+    url = `params=-1`;
+  }
+
+  return url;
 }
 
 export async function createPipeline(pipeline: PipelineConfig): Promise<void> {
@@ -37,10 +60,15 @@ export function updateLinearization(id: Orientation, linearization: Linearizatio
     .then(() => isRemoteBusy.set(false));
 }
 
-export function updateSubdivision(id: Orientation, subdivision: SubdivisionType): Promise<void> {
+export function updateSubdivision(id: Orientation, subdivision: SubdivisionType, subdivisionParams?: SubdivisionParamType): Promise<void> {
   isRemoteBusy.set(true);
-  return fetch(`${BASE_URL}/update_subdivision/${id}?subdivision=${subdivision}`)
-  .then(() => isRemoteBusy.set(false));
+
+  const params = getParamsForSubdivision(subdivision, subdivisionParams);
+
+  // this basic url sets the subdivision type
+  let url = `${BASE_URL}/update_subdivision/${id}?subdivision=${subdivision}&${params}`;
+
+  return fetch(url).then(() => isRemoteBusy.set(false));
 }
 
 export function updateSelection(id: Orientation, selection: SelectionType): Promise<void> {

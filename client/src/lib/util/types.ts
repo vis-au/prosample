@@ -7,11 +7,18 @@ export type BinColorScaleType = "linear" | "log";
 
 export type LinearizationType = "z-order" | "knn" | "strip" | "random" | "z-order-geo" | "numeric" |
                                 "temporal";
-export type SubdivisionType = "standard" | "bucket_size";
+export type SubdivisionType = "standard" | "bucket_size" | "density" | "representative";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
+export type SubdivisionParamType = {
+  subspace: number[]
+  k: number,
+  eps: number,
+  min_samples: number
+}
+
 export const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random", "numeric", "temporal"];
-export const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
+export const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size", "density", "representative"];
 export const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
 
 export type ProgressionState = "paused" | "running";
@@ -23,6 +30,7 @@ export type PipelineConfig = {
   id: Orientation,
   linearization: LinearizationType,
   subdivision: SubdivisionType,
+  subdivisionParams: SubdivisionParamType,
   selection: SelectionType,
   selectionDimension: string,
 };
