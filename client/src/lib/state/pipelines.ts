@@ -26,7 +26,7 @@ function updateRemotePipeline(oldPipeline: PipelineConfig, newPipeline: Pipeline
 
 export const leftPipelineConfig = writable<PipelineConfig>({
   id: "left",
-  linearization: "z-order-geo",
+  linearization: "z-order",
   subdivision: "standard",
   selection: "minimum",
   selectionDimension: "3"
@@ -34,7 +34,7 @@ export const leftPipelineConfig = writable<PipelineConfig>({
 
 export const rightPipelineConfig = writable<PipelineConfig>({
   id: "right",
-  linearization: "z-order-geo",
+  linearization: "z-order",
   subdivision: "standard",
   selection: "random",
   selectionDimension: "3"

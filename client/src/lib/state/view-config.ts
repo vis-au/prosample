@@ -9,7 +9,8 @@ export const globalViewConfig = writable({
   binSize: 10,
   encoding: {
     x: "1",
-    y: "2"
+    y: "2",
+    color: "3"
   }
 });
 

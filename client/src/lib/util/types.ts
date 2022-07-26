@@ -10,8 +10,7 @@ export type LinearizationType = "z-order" | "knn" | "strip" | "random" | "z-orde
 export type SubdivisionType = "standard" | "bucket_size";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
-export const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random",
-                                                        "z-order-geo", "numeric", "temporal"];
+export const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random", "numeric", "temporal"];
 export const subdivisionTypes: SubdivisionType[] = ["standard", "bucket_size"];
 export const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
 

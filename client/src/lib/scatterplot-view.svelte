@@ -1,4 +1,6 @@
 <script lang="typescript">
+  import { rgb } from "d3-color";
+  import { scaleSequentialLog } from 'd3-scale';
   import { selectAll } from 'd3-selection';
   import { afterUpdate, onMount } from 'svelte';
   import { Deck, OrthographicView } from '@deck.gl/core';
@@ -7,12 +9,13 @@
   import ViewInteractionLayer from './widgets/view-interaction-layer.svelte';
   import { scaleX, scaleY } from './state/scales';
   import { globalViewConfig } from "./state/view-config";
+  import { sequentialScheme } from "./state/color-schemes";
+  import { getExtent } from "./state/data";
 
   export let id = "deck-gl-scatterplot";
   export let data: number[][] = [];
   export let width = 100;
   export let height = 50;
-  export let radius = 5; // size of points
   export let orientation = "right"; // left or right side of the screen?
 
   const INITIAL_VIEW_STATE = {
@@ -38,13 +41,18 @@
   function render() {
     INITIAL_VIEW_STATE["target"] = [width / 2, height / 2, 0];
 
-    const {x, y} = $globalViewConfig.encoding;
+    const {x, y, color} = $globalViewConfig.encoding;
+    const scaleColor = scaleSequentialLog($sequentialScheme).domain(getExtent(color));
 
     layers = [
       new ScatterplotLayer({
         id: `${id}-layer`,
         getPosition: d => [$scaleX(d[x]), $scaleY(d[y])],
-        getRadius: radius,
+        getFillColor: d => {
+          const c = rgb(scaleColor(d[color]));
+          return [c.r, c.g, c.b]
+        },
+        getRadius: 2,
         getLineWidth: 0,
         opacity: 0.3,
         lineWidthUnits: "pixels",
