@@ -291,5 +291,5 @@ class LinearizationGeoZorder(Linearization):
         )
         order = np.argsort(hashes)
         self.linearization = self.data[order]
-        self.write_data("GeoZorder")
+        self.write_data("ZOrder")  # same as non-spatial z-order
         return self.linearization
