@@ -122,14 +122,47 @@ class Selection(ABC):
 
 
 class SelectionRandom(Selection):
+    chunk_counter = 0
 
     def __init__(self, seed=0):
         super().__init__()
         self.seed = seed
 
+    def next_chunk(self) -> np.ndarray:
+        # HACK: overwrite the next_chunk function of Selection to get seeded randomness working
+        # the idea is that for every chunk, two instances of SelectionRandom return the same
+        # "random" elements from the subdivision; between two chunks, the selected elements should,
+        # however, differ!
+        if len(self.subdivision) == 0:
+            return None
+        first_key = next(iter(self.subdivision))
+        data_dimension = len(self.subdivision[first_key][0])
+        chunk = np.full((len(self.subdivision), data_dimension), None)
+        chunk_index = 0
+
+        if len(self.steering_filters.keys()) > 0:
+            if not self.is_steered_subspace_empty():
+                print("using steering ...")
+                # use number of buckets as chunk size
+                chunk = self.create_steered_chunk(len(self.subdivision))
+                return chunk
+
+        # NOTE: THIS IS THE PART THAT IS DIFFERENT FROM BASE CLASS:
+        random.seed(self.seed + self.chunk_counter)
+        self.chunk_counter += 1
+        # NOTE: END
+
+        keys = self.subdivision.copy()
+        for i in keys:
+            next_index = self.select_element(chunk, chunk_index, i)
+            chunk_index += 1
+            del self.subdivision[i][next_index]
+            if len(self.subdivision[i]) == 0:
+                del self.subdivision[i]
+        return chunk
+
     def select_element(self, chunk, chunk_index, bucket_number):
         subdivision_size = len(self.subdivision[bucket_number])
-        random.seed(self.seed + chunk_index)
         next_index = random.randint(0, subdivision_size - 1)
         chunk[chunk_index] = self.subdivision[bucket_number][next_index]
         return next_index
