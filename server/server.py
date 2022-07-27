@@ -30,11 +30,9 @@ def produce_response_for_sample(sample_as_list):
   return cors_response(payload)
 
 
-def get_pipeline_config(req):
-  # request contains list of supplied subdivision parameters
-  params_in_req = req.args.get("params").split(" ")  # clients sends "+", but server reads " "??
-
+def get_subdivision_params(req):
   params = {}
+  params_in_req = req.args.get("params").split(" ")  # clients sends "+", but server reads " "??
   for param in params_in_req:
     if param == "-1":  # -1 indicates "no parameters"
       continue
@@ -46,6 +44,12 @@ def get_pipeline_config(req):
       params[param] = float(req.args.get(param))
     else:
       params[param] = req.args.get(param)
+  return params
+
+def get_pipeline_config(req):
+  # request contains list of supplied subdivision parameters
+
+  params = get_subdivision_params(req)
 
   configuration = {
     "linearization": req.args.get("linearization"),
@@ -91,6 +95,8 @@ def update_subdivision(id):
   subdivision = request.args.get("subdivision")
   config = pipeline.get_config()
   config["subdivision"] = subdivision
+  config["params"] = get_subdivision_params(request)
+
   PIPELINES[str(id)] = Pipeline(config)
   return cors_response("ok")
 

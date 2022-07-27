@@ -19,11 +19,11 @@ class Subdivision(ABC):
 class SubdivisionStandard(Subdivision):
     sampling_rate = 0
 
-    def __init__(self, sampling_rate):
-        self.sampling_rate = sampling_rate
+    def __init__(self, chunk_size: int):
+        self.chunk_size = chunk_size
 
     def subdivide(self):
-        bucket_size = math.floor(1 / self.sampling_rate)
+        bucket_size = int(len(self.linearization) / self.chunk_size)
         no_of_points = len(self.linearization)
         subdivision = {}
         division_number = 0
@@ -36,8 +36,9 @@ class SubdivisionStandard(Subdivision):
 
 
 class SubdivisionDensityClustering(Subdivision):
-    def __init__(self, subspace: list[int], eps=3, min_samples=10) -> None:
+    def __init__(self, chunk_size: int, subspace: list[int], eps=3, min_samples=10) -> None:
         super().__init__()
+        self.chunk_size = chunk_size  # number of items/subdivisions to produce
         self.subspace = subspace  # list of columns used for clustering
         self.eps = eps  # espsilon neighborhood to be checked
         self.min_samples = min_samples  # number of minimum samples for density connectivity
@@ -50,19 +51,26 @@ class SubdivisionDensityClustering(Subdivision):
         X = self.linearization[:, self.subspace]
 
         # HACK: train dbscan on random sample :) otherwise this takes too long
-        X_sample = X[np.random.rand(len(X)) < 0.01]
+        p = (self.chunk_size / len(X)) * 10  # make sure that there are enough training points
+        X_sample = X[np.random.rand(len(X)) < p]
         y_sample = DBSCAN(eps=self.eps, min_samples=self.min_samples).fit_predict(X_sample)
 
         # HACK: use the nearest neighbor of each point as prediction for the cluster label
         tree = KDTree(X_sample)
         y = y_sample[tree.query(X, k=1, return_distance=False).reshape(-1, )]
 
-        # y contains the labels per element
-        labels = list(np.unique(y))
+        # HACK: to get the number of buckets up to chunk_size, further subdivide each each bucket
+        n_labels = len(np.unique(y))
+        groups_per_label = self.chunk_size // n_labels
+        y = y * groups_per_label  # for g_p_l:=3, this means that 0, 1, 2 becomes 0, 3, 6
+        y = y + np.random.randint(0, groups_per_label, len(y)) # means that 0 becomes 0 - 3
 
-        for i in range(len(labels)):
-            label = labels[i]
-            subdivision[i] = list(X[y == label])
+        # y contains the labels per element
+        buckets = list(np.unique(y))
+
+        for i in range(len(buckets)):
+            bucket = buckets[i]
+            subdivision[i] = list(self.linearization[y == bucket])
 
         return subdivision
 
@@ -77,37 +85,15 @@ class SubdivisionRepresentativeClustering(Subdivision):
         subdivision = {}
 
         X = self.linearization[:, self.subspace]
-        clustering = KMeans(n_clusters=self.k, random_state=0).fit(X[:10000])
+
+        # HACK: train clustering on random sample :) otherwise this takes too long
+        p = (self.k / len(X)) * 10
+        X_sample = X[np.random.rand(len(X)) < p]
+        clustering = KMeans(n_clusters=self.k, random_state=0).fit(X_sample)
         y = clustering.predict(X)
 
         # y contains the labels per element
         for i in range(self.k):
-            subdivision[i] = list(X[y == i])
+            subdivision[i] = list(self.linearization[y == i])
 
-        return subdivision
-
-
-class SubdivisionBucketSize(Subdivision):
-    attribute = 0
-    bucket_size = 0
-
-    def __init__(self, attribute, bucket_size):
-        self.attribute = attribute
-        self.bucket_size = bucket_size
-
-    def subdivide(self):
-        no_of_points = len(self.linearization)
-        subdivision = {}
-        division_number = 0
-        subdivision[division_number] = []
-        current_size = 0
-        for i in range(0, no_of_points):
-            next_point = self.linearization[i]
-            if current_size+next_point[self.attribute] < self.bucket_size:
-                subdivision[division_number].append(next_point)
-                current_size += next_point[self.attribute]
-            else:
-                division_number += 1
-                subdivision[division_number] = [next_point]
-                current_size = next_point[self.attribute]
         return subdivision

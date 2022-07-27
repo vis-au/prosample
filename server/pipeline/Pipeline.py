@@ -18,20 +18,17 @@ class Pipeline:
     self.selection = self._get_selection(config["selection"])
 
   def _get_sampler(self):
-    data = _resolve_data(self.config["data"])
+    dataset_name = _resolve_data(self.config["data"])
     lin_class = _resolve_linearization(self.config["linearization"])
     sub_class = _resolve_subdivision(self.config["subdivision"])
 
-    if None in [data, lin_class, sub_class]:
-      print("cannot get sampler, because configuration contains unknown values.")
+    if None in [dataset_name, lin_class, sub_class]:
       return None
 
     self.linearization = lin_class()
 
-    if sub_class == SubdivisionBucketSize:
-      self.subdivision = sub_class(self.config["dimension"], 1000)
-    elif sub_class == SubdivisionStandard:
-      self.subdivision = sub_class(0.001)
+    if sub_class == SubdivisionStandard:
+      self.subdivision = sub_class(chunk_size=1000)
     elif sub_class == SubdivisionRepresentativeClustering:
       subspace = self.config["params"]["subspace"]
       k = self.config["params"]["k"]
@@ -40,9 +37,11 @@ class Pipeline:
       subspace = self.config["params"]["subspace"]
       eps = self.config["params"]["eps"]
       min_samples = self.config["params"]["min_samples"]
-      self.subdivision = sub_class(subspace=subspace, eps=eps, min_samples=min_samples)
+      self.subdivision = sub_class(
+        chunk_size=1000, subspace=subspace, eps=eps, min_samples=min_samples
+      )
 
-    return Sampler(data, self.linearization, self.subdivision)
+    return Sampler(dataset_name, self.linearization, self.subdivision)
 
   def _get_selection(self, selection_string):
     sel_class = _resolve_selection(selection_string)
@@ -103,8 +102,6 @@ def _resolve_linearization(linearization):
 def _resolve_subdivision(subdivision):
   if subdivision == "standard":
     return SubdivisionStandard
-  elif subdivision == "bucket_size":
-    return SubdivisionBucketSize
   elif subdivision == "representative":
     return SubdivisionRepresentativeClustering
   elif subdivision == "density":

@@ -8,11 +8,12 @@ let leftPipeline: PipelineConfig = null;
 let rightPipeline: PipelineConfig = null;
 
 function updateRemotePipeline(oldPipeline: PipelineConfig, newPipeline: PipelineConfig) {
+  console.log(oldPipeline.subdivision, newPipeline.subdivision)
   if (oldPipeline.linearization !== newPipeline.linearization) {
     updateLinearization(newPipeline.id, newPipeline.linearization);
   }
   if (oldPipeline.subdivision !== newPipeline.subdivision) {
-    updateSubdivision(newPipeline.id, newPipeline.subdivision);
+    updateSubdivision(newPipeline.id, newPipeline.subdivision, newPipeline.subdivisionParams);
   }
   if (oldPipeline.selection !== newPipeline.selection) {
     updateSelection(newPipeline.id, newPipeline.selection);
@@ -30,7 +31,7 @@ export const leftPipelineConfig = writable<PipelineConfig>({
   subdivision: "standard",
   subdivisionParams: {
     subspace: [15, 16],
-    k: 100,
+    k: 1000,
     eps: 3,
     min_samples: 100
   },
@@ -41,10 +42,10 @@ export const leftPipelineConfig = writable<PipelineConfig>({
 export const rightPipelineConfig = writable<PipelineConfig>({
   id: "right",
   linearization: "z-order",
-  subdivision: "standard",
+  subdivision: "representative",
   subdivisionParams: {
     subspace: [15, 16],
-    k: 100,
+    k: 1000,
     eps: 3,
     min_samples: 100
   },

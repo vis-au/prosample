@@ -8,8 +8,8 @@ export const globalViewConfig = writable({
   areLeftAndRightLinked: true,
   binSize: 10,
   encoding: {
-    x: "1",
-    y: "2",
+    x: "15",
+    y: "16",
     color: "3"
   }
 });
