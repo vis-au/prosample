@@ -23,17 +23,12 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_to_read = str(current_folder) + '/input_files/' + self.data_set_name + 'Data.csv'
 
-        df = pd.read_csv(file_to_read, delimiter=";")
+        df = pd.read_csv(file_to_read, delimiter=";", index_col=0, header=None)
         df = df.drop(self.exclude_attributes, axis=1)
         data = df.to_numpy()
 
         data[:, 0] = np.array(range(0, len(data)))
 
-        # data = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
-
-        with open(file_to_read) as f:
-            reader = csv.reader(f)
-            self.header = next(reader)[0]
         return data
 
     @abstractmethod
@@ -44,9 +39,16 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_name = self.data_set_name + 'Linearization' + linearization_type + '.csv'
         file_name = str(current_folder) + '/output_files/' + file_name
-        # np.savetxt(file_name, self.linearization, delimiter=';', header=self.header, fmt='%f')
         pd.DataFrame(self.linearization).to_csv(file_name, sep=";", header=False, index=False)
         print('Linearized file into folder output_files')
+
+
+class LinearizationRandom(Linearization):
+    def linearize(self):
+        order = np.argsort(np.random.rand(len(self.data)))
+        self.linearization = self.data[order]
+        self.write_data("Random")
+        return self.linearization
 
 
 class LinearizationNumericAttr(Linearization):
