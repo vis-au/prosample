@@ -33,10 +33,11 @@ export const dimensionNames = derived([selectedDataset], ([$selectedDataset]) =>
     return  ["id", "popularity", "duration_ms", "explicit", "danceability", "energy", "loudness",
              "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]
   } else if ($selectedDataset.name === "taxis") {
-    return ["tripID", "VendorID", "passenger_count", "trip_distance", "RatecodeID", "PULocationID",
-            "DOLocationID", "payment_type", "fare_amount", "extra", "mta_tax", "tip_amount",
-            "tolls_amount", "improvement_surcharge", "total_amount", "PURepresentativeX",
-            "PURepresentativeY", "DORepresentativeX", "DORepresentativeY"];
+    return ["tripID", "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime", "passenger_count",
+            "trip_distance", "RatecodeID", "PULocationID", "DOLocationID", "payment_type",
+            "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount",
+            "improvement_surcharge", "total_amount", "PURepresentativeX", "PURepresentativeY",
+            "DORepresentativeX", "DORepresentativeY"];
   } else {
     return [];
   }
@@ -57,10 +58,11 @@ selectedDataset.subscribe($selectedDataset => {
     mins = [2.480150e+05, -179.880663, -85.347589, 1.000000];
     maxs = [7.838285e+09, 179.987292, 83.571472, 52.000000];
   } else if ($selectedDataset.name === "taxis") {
-    mins = [0.0, 1.0, 0.0, 0.01, 1.0, 1.0, 1.0, 1.0, 0.01, -0.49, 0.0, 0.0, 0.0, 0.0, 0.31,
-            -74.190861, 40.542776, -74.237539, 40.520042];
-    maxs = [982881.0, 4.0, 9.0, 63.30, 99.0, 263.0, 263.0, 4.0, 398.00, 17.50, 0.5, 300.0, 950.7,
-            0.3, 1003.50, -73.715146, 40.900405, -73.714274, 40.900818];
+    mins = [73.0, 1.0, 1.041384e+18, 1.041384e+18, 0.0, 0.01, 1.0, 1.0, 1.0, 1.0, 0.01, -0.49, 0.0,
+            0.0, 0.0, 0.0, 0.31, -74.197663, 40.543353, -74.254741, 40.504555];
+    maxs = [76955200.0, 4.0, 1.607632e+18, 1.607634e+18, 9.0, 63.30, 99.0, 263.0, 263.0, 4.0,
+            398.00, 17.50, 0.5, 300.0, 950.7, 0.3, 1003.50, -73.702319, 40.912294, -73.701511,
+            40.914637];
   }
 
   _dimensionExtents.mins = mins;

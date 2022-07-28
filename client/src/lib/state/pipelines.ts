@@ -30,27 +30,27 @@ export const leftPipelineConfig = writable<PipelineConfig>({
   linearization: "z-order",
   subdivision: "standard",
   subdivisionParams: {
-    subspace: [15, 16],
+    subspace: [17, 18],  // pickup location x, y
     k: 1000,
     eps: 3,
     min_samples: 100
   },
   selection: "minimum",
-  selectionDimension: "3"
+  selectionDimension: "5"
 });
 
 export const rightPipelineConfig = writable<PipelineConfig>({
   id: "right",
   linearization: "z-order",
-  subdivision: "representative",
+  subdivision: "standard",
   subdivisionParams: {
-    subspace: [15, 16],
+    subspace: [17, 18],  // pickup location x, y
     k: 1000,
     eps: 3,
     min_samples: 100
   },
   selection: "random",
-  selectionDimension: "3"
+  selectionDimension: "5"
 });
 
 

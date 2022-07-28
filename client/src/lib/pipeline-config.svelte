@@ -1,5 +1,5 @@
 <script lang="typescript">
-  import { dimensionsInData, selectedDataset } from "./state/data";
+  import { dimensionsInData, dimensionNames, selectedDataset } from "./state/data";
   import { leftPipelineConfig, rightPipelineConfig } from "./state/pipelines";
   import { globalViewConfig, leftView, rightView } from "./state/view-config";
   import { isRemoteBusy } from "./util/requests";
@@ -56,9 +56,11 @@
           id="{id}-selection-dimension"
           title="selection-dimension"
           label="in"
+          labels={ $dimensionNames }
           options={ $dimensionsInData }
           isDisabled={ $isRemoteBusy }
           bind:value={ $pipelineConfig.selectionDimension }
+          style="width: 100px"
         />
       { /if }
     </div>
