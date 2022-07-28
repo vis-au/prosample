@@ -23,7 +23,7 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_to_read = str(current_folder) + '/input_files/' + self.data_set_name + 'Data.csv'
 
-        df = pd.read_csv(file_to_read, delimiter=";", index_col=0, header=None)
+        df = pd.read_csv(file_to_read, delimiter=";", header=None)
         df = df.drop(self.exclude_attributes, axis=1)
         data = df.to_numpy()
 
