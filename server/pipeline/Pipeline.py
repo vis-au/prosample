@@ -40,6 +40,9 @@ class Pipeline:
       self.subdivision = sub_class(
         chunk_size=1000, subspace=subspace, eps=eps, min_samples=min_samples
       )
+    elif sub_class == SubdivisionNaiveStratified:
+      subspace = self.config["params"]["subspace"]
+      self.subdivision = sub_class(chunk_size=1000, attributes=subspace)
 
     return Sampler(dataset_name, self.linearization, self.subdivision)
 
@@ -106,6 +109,8 @@ def _resolve_subdivision(subdivision):
     return SubdivisionRepresentativeClustering
   elif subdivision == "density":
     return SubdivisionDensityClustering
+  elif subdivision == "stratified":
+    return SubdivisionNaiveStratified
   else:
     return None
 

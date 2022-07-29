@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-import math
+import numpy as np
+import pandas as pd
+from scipy.stats import mode
 from sklearn.cluster import DBSCAN, KMeans
 from sklearn.neighbors import KDTree
-import numpy as np
-
 
 
 class Subdivision(ABC):
@@ -63,7 +63,7 @@ class SubdivisionDensityClustering(Subdivision):
         n_labels = len(np.unique(y))
         groups_per_label = self.chunk_size // n_labels
         y = y * groups_per_label  # for g_p_l:=3, this means that 0, 1, 2 becomes 0, 3, 6
-        y = y + np.random.randint(0, groups_per_label, len(y)) # means that 0 becomes 0 - 3
+        y = y + np.random.randint(0, groups_per_label, len(y))  # means that 0 becomes 0 - 3
 
         # y contains the labels per element
         buckets = list(np.unique(y))
@@ -95,5 +95,27 @@ class SubdivisionRepresentativeClustering(Subdivision):
         # y contains the labels per element
         for i in range(self.k):
             subdivision[i] = list(self.linearization[y == i])
+
+        return subdivision
+
+
+class SubdivisionNaiveStratified(Subdivision):
+    def __init__(self, chunk_size: int, attributes: list[int]) -> None:
+        super().__init__()
+        self.attributes = attributes
+
+    def subdivide(self):
+        subdivision = {}
+
+        X = self.linearization[:, self.attributes]
+
+        # assigns a label (i.e., a bin) along every attribute
+        y = np.digitize(X, bins=np.histogram(X, bins=self.chunk_size)[1])
+
+        # finds the most frequent label per row
+        most_frequent_label = mode(y, axis=1)[0]
+
+        for label in np.unique(most_frequent_label):
+            subdivision[label] = self.linearization[most_frequent_label == label]
 
         return subdivision
