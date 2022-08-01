@@ -19,10 +19,10 @@ class Sampler:
         self.subdivision = subdivision
         print("Done with the pre-processing")
 
-    def sample(self, selection: Selection):
+    def sample(self, selection: Selection, chunk_size: int = -1):
         # return the next chunk of data points
         selection.load_subdivision(self.subdivision)
-        return selection.next_chunk()                           # <-- Check for None!
+        return selection.next_chunk(chunk_size)                           # <-- Check for None!
 
     def get_dataset_size(self):
         return self.dataset_size

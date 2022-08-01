@@ -64,8 +64,8 @@ class Pipeline:
   def update_selection(self, new_selection):
     self.selection = self._get_selection(new_selection)
 
-  def get_next_chunk(self):
-    return self.sampler.sample(self.selection)
+  def get_next_chunk(self, chunk_size: int = 1000):
+    return self.sampler.sample(self.selection, chunk_size)
 
   def get_config(self):
     return self.config
