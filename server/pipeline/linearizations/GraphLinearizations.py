@@ -31,7 +31,7 @@ class GraphLinearization(Linearization):
       try:
         cycle = nx.find_cycle(G)
         G.remove_edge(*cycle[0])
-      except nx.NetworkXError:
+      except (nx.NetworkXError, nx.NetworkXNoCycle):
         is_cyclic = False
 
     return G
@@ -76,7 +76,6 @@ class BasicGraphLinearization(GraphLinearization):
     # perform the linearization algorithm, locally ordering the graph by replacing left and right
     # neighbors until all nodes have degree 2, except a start and an end with degree 1
     while((pd.DataFrame(G.degree)[1] > 2).sum() > 0):
-      print((pd.DataFrame(G.degree)[1] > 2).sum())
       for node in nodes:
         left_neighbors = list(G.predecessors(node))
         in_edges = list(G.in_edges(node))
