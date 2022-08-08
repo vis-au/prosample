@@ -19,32 +19,43 @@ class Pipeline:
 
   def _get_sampler(self):
     dataset_name = _resolve_data(self.config["data"])
-    lin_class = _resolve_linearization(self.config["linearization"])
-    sub_class = _resolve_subdivision(self.config["subdivision"])
+    self.linearization = self._get_linearization(self.config["linearization"])
+    self.subdivision = self._get_subdivision(self.config["subdivision"])
 
-    if None in [dataset_name, lin_class, sub_class]:
+    if None in [dataset_name, self.linearization, self.subdivision]:
       return None
 
-    self.linearization = lin_class()
+    return Sampler(dataset_name, self.linearization, self.subdivision)
+
+  def _get_linearization(self, linearization_string):
+    lin_class = _resolve_linearization(linearization_string)
+    linearization = lin_class()
+    return linearization
+
+  def _get_subdivision(self, subdivision_string: str):
+    sub_class = _resolve_subdivision(subdivision_string)
+    subdivision = None
 
     if sub_class == SubdivisionStandard:
-      self.subdivision = sub_class(chunk_size=1000)
+      subdivision = sub_class(chunk_size=1000)
     elif sub_class == SubdivisionRepresentativeClustering:
       subspace = self.config["params"]["subspace"]
       k = self.config["params"]["k"]
-      self.subdivision = sub_class(subspace=subspace, k=k)
+      subdivision = sub_class(subspace=subspace, k=k)
     elif sub_class == SubdivisionDensityClustering:
       subspace = self.config["params"]["subspace"]
       eps = self.config["params"]["eps"]
       min_samples = self.config["params"]["min_samples"]
-      self.subdivision = sub_class(
+      subdivision = sub_class(
         chunk_size=1000, subspace=subspace, eps=eps, min_samples=min_samples
       )
     elif sub_class == SubdivisionNaiveStratified:
       subspace = self.config["params"]["subspace"]
-      self.subdivision = sub_class(chunk_size=1000, attributes=subspace)
+      subdivision = sub_class(chunk_size=1000, attributes=subspace)
+    elif sub_class is not None:
+      subdivision = sub_class()
 
-    return Sampler(dataset_name, self.linearization, self.subdivision)
+    return subdivision
 
   def _get_selection(self, selection_string):
     sel_class = _resolve_selection(selection_string)
@@ -61,8 +72,12 @@ class Pipeline:
   def update_dimension(self, dimension):
     self.config["dimension"] = int(dimension)
 
-  def update_selection(self, new_selection):
+  def update_selection(self, new_selection: str):
     self.selection = self._get_selection(new_selection)
+
+  def update_subdivision(self, new_subdivision: str):
+    self.subdivision = self._get_subdivision(new_subdivision)
+    self.sampler.update_subdivision(self.subdivision)
 
   def get_next_chunk(self, chunk_size: int = 1000):
     return self.sampler.sample(self.selection, chunk_size)

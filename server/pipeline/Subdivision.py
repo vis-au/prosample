@@ -120,4 +120,3 @@ class SubdivisionNaiveStratified(Subdivision):
             subdivision[label] = list(self.linearization[most_frequent_label == label])
 
         return subdivision
-

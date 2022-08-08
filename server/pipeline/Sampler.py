@@ -19,6 +19,16 @@ class Sampler:
         self.subdivision = subdivision
         print("Done with the pre-processing")
 
+    def update_subdivision(self, subdivision: Subdivision):
+        print("updating the subdivision")
+        # load the remaining data from the linearization into the new subdivision
+        subdivision.load_linearization(self.subdivision_frame.linearization)
+
+        # generate the bins with the new subdivision over the remaining data
+        subdivision = self.subdivision_frame.subdivide()
+        self.subdivision = subdivision
+        print("Done updating the subdivision")
+
     def sample(self, selection: Selection, chunk_size: int = -1):
         # return the next chunk of data points
         selection.load_subdivision(self.subdivision)
