@@ -15,8 +15,8 @@ class Sampler:
         linearization = self.linearization_frame.read_linearization(self.data_set_name)
         self.dataset_size = linearization.shape[0]
         self.subdivision_frame.load_linearization(linearization)
-        subdivision = self.subdivision_frame.subdivide()
-        self.subdivision = subdivision
+        bins = self.subdivision_frame.subdivide()
+        self.subdivision = bins
         print("Done with the pre-processing")
 
     def update_subdivision(self, subdivision: Subdivision):
@@ -25,14 +25,14 @@ class Sampler:
         subdivision.load_linearization(self.subdivision_frame.linearization)
 
         # generate the bins with the new subdivision over the remaining data
-        subdivision = self.subdivision_frame.subdivide()
-        self.subdivision = subdivision
+        bins = subdivision.subdivide()
+        self.subdivision = bins
         print("Done updating the subdivision")
 
     def sample(self, selection: Selection, chunk_size: int = -1):
         # return the next chunk of data points
         selection.load_subdivision(self.subdivision)
-        return selection.next_chunk(chunk_size)                           # <-- Check for None!
+        return selection.next_chunk(chunk_size)
 
     def get_dataset_size(self):
         return self.dataset_size

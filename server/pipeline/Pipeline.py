@@ -64,6 +64,7 @@ class Pipeline:
       print("cannot resolve selection.")
       return None
 
+    # some selection strategies work on specific dimensions, so pass that parameter in those cases
     if sel_class not in [SelectionFirst, SelectionRandom]:
       return sel_class(self.config["dimension"])
     else:
