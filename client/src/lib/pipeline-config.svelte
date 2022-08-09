@@ -39,7 +39,7 @@
         label={ $globalViewConfig.showCenter ? "Sub." : "Subdivision"}
         options={ subdivisionTypes }
         isEmphasized={ $pipelineConfig.subdivision !== $otherPipelineConfig.subdivision }
-        isDisabled={ isSamplingRunning || $isRemoteBusy }
+        isDisabled={ $isRemoteBusy }
         bind:value={ $pipelineConfig.subdivision }
       />
       <Selection

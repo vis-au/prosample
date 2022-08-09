@@ -1,3 +1,4 @@
+import { isProgressionRunning } from "$lib/state/progression-state";
 import { scaleLinear } from "d3";
 import { writable } from "svelte/store";
 import { getExtent, selectedDataset } from "../state/data";
@@ -9,6 +10,10 @@ let currentDataset = null;
 selectedDataset.subscribe(value => currentDataset = value.name);
 
 export const isRemoteBusy = writable(false);
+let _isProgressionRunning = false;
+isProgressionRunning.subscribe(value => {
+  _isProgressionRunning = value;
+});
 
 function pipelineConfigToURLParams(configuration: PipelineConfig) {
   const lin = `linearization=${configuration.linearization}`;
@@ -61,14 +66,18 @@ export function updateLinearization(id: Orientation, linearization: Linearizatio
 }
 
 export function updateSubdivision(id: Orientation, subdivision: SubdivisionType, subdivisionParams?: SubdivisionParamType): Promise<void> {
+  const wasProgressionRunning = _isProgressionRunning;
+  isProgressionRunning.set(false);
   isRemoteBusy.set(true);
-
   const params = getParamsForSubdivision(subdivision, subdivisionParams);
 
   // this basic url sets the subdivision type
-  let url = `${BASE_URL}/update_subdivision/${id}?subdivision=${subdivision}&${params}`;
+  const url = `${BASE_URL}/update_subdivision/${id}?subdivision=${subdivision}&${params}`;
 
-  return fetch(url).then(() => isRemoteBusy.set(false));
+  return fetch(url).then(() => {
+    isRemoteBusy.set(false);
+    isProgressionRunning.set(wasProgressionRunning);
+  });
 }
 
 export function updateSelection(id: Orientation, selection: SelectionType): Promise<void> {

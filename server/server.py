@@ -46,6 +46,7 @@ def get_subdivision_params(req):
       params[param] = req.args.get(param)
   return params
 
+
 def get_pipeline_config(req):
   # request contains list of supplied subdivision parameters
 
@@ -94,10 +95,11 @@ def update_subdivision(id):
 
   subdivision = request.args.get("subdivision")
   config = pipeline.get_config()
-  config["subdivision"] = subdivision
+  # config["subdivision"] = subdivision
   config["params"] = get_subdivision_params(request)
+  pipeline.update_subdivision(subdivision)
 
-  PIPELINES[str(id)] = Pipeline(config)
+  # PIPELINES[str(id)] = Pipeline(config)
   return cors_response("ok")
 
 
