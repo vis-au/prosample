@@ -7,7 +7,7 @@ export type BinColorScaleType = "linear" | "log";
 
 export type LinearizationType = "z-order" | "knn" | "strip" | "random" | "z-order-geo" | "numeric" |
                                 "temporal";
-export type SubdivisionType = "standard" | "density" | "representative";
+export type SubdivisionType = "standard";
 export type SelectionType = "random" | "first" | "minimum" | "maximum" | "median";
 
 export type SubdivisionParamType = {
@@ -18,7 +18,7 @@ export type SubdivisionParamType = {
 }
 
 export const linearizationTypes: LinearizationType[] = ["z-order", "knn", "strip", "random", "numeric", "temporal"];
-export const subdivisionTypes: SubdivisionType[] = ["standard", "density", "representative"];
+export const subdivisionTypes: SubdivisionType[] = ["standard"];
 export const selectionTypes: SelectionType[] = ["first", "median", "minimum", "maximum", "random"];
 
 export type ProgressionState = "paused" | "running";

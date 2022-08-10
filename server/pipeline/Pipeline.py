@@ -38,20 +38,9 @@ class Pipeline:
 
     if sub_class == SubdivisionStandard:
       subdivision = sub_class(chunk_size=1000)
-    elif sub_class == SubdivisionRepresentativeClustering:
-      subspace = self.config["params"]["subspace"]
-      k = self.config["params"]["k"]
-      subdivision = sub_class(subspace=subspace, k=k)
-    elif sub_class == SubdivisionDensityClustering:
-      subspace = self.config["params"]["subspace"]
-      eps = self.config["params"]["eps"]
-      min_samples = self.config["params"]["min_samples"]
-      subdivision = sub_class(
-        chunk_size=1000, subspace=subspace, eps=eps, min_samples=min_samples
-      )
     elif sub_class == SubdivisionNaiveStratified:
       subspace = self.config["params"]["subspace"]
-      subdivision = sub_class(chunk_size=1000, attributes=subspace)
+      subdivision = sub_class(chunk_size=1000, attribute=subspace[0])
     elif sub_class is not None:
       subdivision = sub_class()
 
@@ -121,10 +110,6 @@ def _resolve_linearization(linearization):
 def _resolve_subdivision(subdivision):
   if subdivision == "standard":
     return SubdivisionStandard
-  elif subdivision == "representative":
-    return SubdivisionRepresentativeClustering
-  elif subdivision == "density":
-    return SubdivisionDensityClustering
   elif subdivision == "stratified":
     return SubdivisionNaiveStratified
   else:

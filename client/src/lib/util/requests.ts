@@ -29,20 +29,21 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
 }
 
 function getParamsForSubdivision(subdivision: SubdivisionType, params: SubdivisionParamType) {
-  let url = "";
+  const url = "params=-1";
 
-  if (subdivision === "density") {
-    const eps = params.eps;
-    const min_samples = params.min_samples;
-    const subspace = params.subspace.join(":");;
-    url = `params=eps+min_samples+subspace&eps=${eps}&min_samples=${min_samples}&subspace=${subspace}`;
-  } else if (subdivision === "representative") {
-    const k = params.k;
-    const subspace = params.subspace.join(":");
-    url = `params=k+subspace&k=${k}&subspace=${subspace}`;
-  } else {
-    url = `params=-1`;
-  }
+  // if (subdivision === "density") {
+  //   const eps = params.eps;
+  //   const min_samples = params.min_samples;
+  //   const subspace = params.subspace.join(":");;
+  //   url = `params=eps+min_samples+subspace&eps=${eps}&min_samples=${min_samples}&subspace=${subspace}`;
+  // } else if (subdivision === "representative") {
+  //   const k = params.k;
+  //   const subspace = params.subspace.join(":");
+  //   url = `params=k+subspace&k=${k}&subspace=${subspace}`;
+  // } else {
+  //   url = `params=-1`;
+  // }
+
 
   return url;
 }
