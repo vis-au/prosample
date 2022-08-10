@@ -109,15 +109,19 @@ class Selection(ABC):
 
         chunk_index = 0
         while chunk_index < chunk_size:
-            keys = self.subdivision.copy()
-            for i in keys:
+            bins = list(self.subdivision.copy().keys())
+
+            # prevent ordering bias when chunk_size is bigger than number of bins
+            random.shuffle(bins)
+
+            for b in bins:
                 if chunk_index >= chunk_size:
                     break
-                next_index = self.select_element(chunk, chunk_index, i)
+                next_index = self.select_element(chunk, chunk_index, b)
                 chunk_index += 1
-                del self.subdivision[i][next_index]
-                if len(self.subdivision[i]) == 0:
-                    del self.subdivision[i]
+                del self.subdivision[b][next_index]
+                if len(self.subdivision[b]) == 0:
+                    del self.subdivision[b]
         return chunk
 
     # Selects from bucket bucket_number, expands chunk at index chunk_index with it and returns
