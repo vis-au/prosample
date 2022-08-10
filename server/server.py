@@ -38,10 +38,6 @@ def get_subdivision_params(req):
       continue
     elif param == "subspace":
       params[param] = [int(x) for x in req.args.get(param).split(":")]
-    elif param == "k" or param == "min_samples":
-      params[param] = int(req.args.get(param))
-    elif param == "eps":
-      params[param] = float(req.args.get(param))
     else:
       params[param] = req.args.get(param)
   return params

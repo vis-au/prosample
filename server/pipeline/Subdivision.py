@@ -35,6 +35,41 @@ class SubdivisionStandard(Subdivision):
         return subdivision
 
 
+class SubdivisionDistance(Subdivision):
+    def __init__(self, attributes: list(int), n_bins: int) -> None:
+        super().__init__()
+        self.attributes = attributes
+        self.n_bins = n_bins
+
+    def subdivide(self):
+        subdivision = {}
+
+        # find the n_bins biggest jumps in the data along the attribute column
+        X = self.linearization[:, self.attributes]
+        X_ = np.empty_like(X)
+        X_[:-1] = X[1:]
+        X_[-1] = X[0]
+
+        X_jump = np.linalg.norm(X - X_, axis=1)  # computes euclidean distance
+        biggest_jump_indeces = np.argsort(X_jump)[-self.n_bins-1:]  # one larger than n_bins
+
+        for i in range(self.n_bins):
+            if i == 0:
+                first = 0
+                last = biggest_jump_indeces[i]
+                subdivision[i] = X[first:last + 1]
+            elif i == self.n_bins - 1:
+                first = biggest_jump_indeces[i - 1]
+                last = -1
+                subdivision[i] = X[first+1:]
+            else:
+                first = biggest_jump_indeces[i - 1]
+                last = biggest_jump_indeces[i]
+                subdivision[i] = X[first+1:last+1]
+
+        return subdivision
+
+
 class SubdivisionNaiveStratified(Subdivision):
     def __init__(self, chunk_size: int, attributes: list[int]) -> None:
         super().__init__()
