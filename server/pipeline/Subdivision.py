@@ -113,23 +113,20 @@ class SubdivisionDistance(Subdivision):
 
 
 class SubdivisionNaiveStratified(Subdivision):
-    def __init__(self, chunk_size: int, attributes: list[int]) -> None:
+    def __init__(self, chunk_size: int, attribute: int) -> None:
         super().__init__()
         self.chunk_size = chunk_size
-        self.attributes = attributes
+        self.attribute = attribute
 
     def subdivide(self):
         subdivision = {}
 
-        X = self.linearization[:, self.attributes]
+        X = self.linearization[:, self.attribute]
 
         # assigns a label (i.e., a bin) along every attribute
         y = np.digitize(X, bins=np.histogram(X, bins=self.chunk_size)[1])
 
-        # for each item, gets the most frequent label per row
-        most_frequent_label = mode(y, axis=1)[0].reshape(-1, )
-
-        for label in np.unique(most_frequent_label):
-            subdivision[label] = list(self.linearization[most_frequent_label == label])
+        for label in np.unique(y):
+            subdivision[label] = list(self.linearization[y == label])
 
         return subdivision
