@@ -6,9 +6,12 @@ import numpy as np
 
 
 class Selection(ABC):
-    def __init__(self) -> None:
+    chunk_counter = 0  # used for seeding randomness
+
+    def __init__(self, random_state=0) -> None:
         super().__init__()
         self.steering_filters = {}  # a dict mapping a steered dimension to a min-max filter.
+        self.random_state = random_state  # used for seeding randomness
 
     def steer(self, dimension: int = None, min_value: int = 0, max_value: int = 1):
         steering_filter = {
@@ -107,6 +110,10 @@ class Selection(ABC):
                 chunk = self.create_steered_chunk(chunk_size)
                 return chunk
 
+        # seed any randomness in the selections
+        random.seed(self.random_state + self.chunk_counter)
+        self.chunk_counter += 1
+
         pos_in_chunk = 0
         while pos_in_chunk < chunk_size:
             bucket_keys = list(self.subdivision.copy().keys())
@@ -132,53 +139,6 @@ class Selection(ABC):
 
 
 class SelectionRandom(Selection):
-    chunk_counter = 0
-
-    def __init__(self, seed=0):
-        super().__init__()
-        self.seed = seed
-
-    def next_chunk(self, chunk_size: int = -1) -> np.ndarray:
-        # HACK: overwrite the next_chunk function of Selection to get seeded randomness working
-        # the idea is that for every chunk, two instances of SelectionRandom return the same
-        # "random" elements from the subdivision; between two chunks, the selected elements should,
-        # however, differ!
-        if len(self.subdivision) == 0:
-            return None
-
-        first_key = next(iter(self.subdivision))  # iterator over the subdivision bins
-        data_dimension = len(self.subdivision[first_key][0])
-
-        chunk_size = chunk_size if chunk_size > -1 else len(self.subdivision)
-        chunk = np.full((chunk_size, data_dimension), None)
-
-        # this is a simple extension for enabling steering: check if steering parameters are set,
-        # if that steering subspace is not empty and then sample from there, otherwise use the
-        # default strategy for selecting
-        if len(self.steering_filters.keys()) > 0:
-            if not self.is_steered_subspace_empty():
-                print("using steering ...")
-                # use number of buckets as chunk size
-                chunk = self.create_steered_chunk(chunk_size)
-                return chunk
-
-        # NOTE: THIS IS THE PART THAT IS DIFFERENT FROM BASE CLASS:
-        random.seed(self.seed + self.chunk_counter)
-        self.chunk_counter += 1
-        # NOTE: END
-
-        chunk_index = 0
-        while chunk_index < chunk_size:
-            keys = self.subdivision.copy()
-            for bucket_index in keys:
-                if chunk_index >= chunk_size:
-                    break
-                next_index = self.select_element(chunk, chunk_index, bucket_index)
-                chunk_index += 1
-                del self.subdivision[bucket_index][next_index]
-                if len(self.subdivision[bucket_index]) == 0:
-                    del self.subdivision[bucket_index]
-        return chunk
 
     def select_element(self, chunk, pos_in_chunk, bucket_index):
         subdivision_size = len(self.subdivision[bucket_index])
