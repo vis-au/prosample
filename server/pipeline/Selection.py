@@ -3,6 +3,7 @@ from typing import List
 import random
 import itertools
 import numpy as np
+from sklearn.utils.random import sample_without_replacement
 
 
 class Selection(ABC):
@@ -131,10 +132,17 @@ class Selection(ABC):
                     del self.subdivision[bucket_key]
         return chunk
 
-    # Selects from bucket bucket_key, expands chunk at index chunk_index with it and returns
+    # Selects from bucket bucket_key, expands chunk at index pos_in_chunk with it and returns
     # which index was selected
     @abstractmethod
     def select_element(self, chunk: np.ndarray, pos_in_chunk: int, bucket_key: str or int) -> int:
+        pass
+
+    # Same as select_element, but selects multiple items per run
+    @abstractmethod
+    def select_elements(
+        self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int, bucket_key: int
+    ) -> int:
         pass
 
 
@@ -146,6 +154,16 @@ class SelectionRandom(Selection):
         chunk[pos_in_chunk] = self.subdivision[bucket_index][next_index]
         return next_index
 
+    def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
+        subdivision_size = len(self.subdivision[bucket_key])
+        indeces = sample_without_replacement(
+            n_population=subdivision_size,
+            n_samples=n_elements,
+            random_state=random.randint(0, subdivision_size - 1)
+        )
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][indeces]
+        return indeces
+
 
 class SelectionFirst(Selection):
 
@@ -153,6 +171,11 @@ class SelectionFirst(Selection):
         next_index = 0
         chunk[pos_in_chunk] = self.subdivision[bucket_key][next_index]
         return next_index
+
+    def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
+        indeces = range(0, n_elements)
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][indeces]
+        return indeces
 
 
 class SelectionMinimum(Selection):
@@ -168,6 +191,12 @@ class SelectionMinimum(Selection):
         chunk[pos_in_chunk] = self.subdivision[bucket_key][min_index]
         return min_index
 
+    def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
+        sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
+        n_min_indeces = np.argpartition(sorted_indeces, n_elements)[:n_elements]
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][n_min_indeces]
+        return n_min_indeces
+
 
 class SelectionMaximum(Selection):
     attribute = 0
@@ -181,6 +210,12 @@ class SelectionMaximum(Selection):
         max_index = max_indexes[self.attribute]
         chunk[pos_in_chunk] = self.subdivision[bucket_key][max_index]
         return max_index
+
+    def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
+        sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
+        n_min_indeces = np.argpartition(sorted_indeces, -n_elements)[-n_elements:]
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][n_min_indeces]
+        return n_min_indeces
 
 
 class SelectionMedian(Selection):
@@ -196,3 +231,25 @@ class SelectionMedian(Selection):
         median_index = np.argsort(np.array(self.subdivision[bucket_key])[:, 3])[med]  # <-- Slow
         chunk[pos_in_chunk] = self.subdivision[bucket_key][median_index]
         return median_index
+
+    def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
+        sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
+
+        # the central element in sorted_indeces is the index of the "median" in the bucket
+        center_pos = len(sorted_indeces) // 2
+
+        # padding around the center position. If even number of elements is returned, right end
+        # of the window is bigger than left end by 1
+        pad_left = (n_elements - 1) // 2
+        pad_right = (n_elements - 1) // 2 if n_elements % 2 == 0 else n_elements // 2
+
+        # as a heuristic, get n/2 elements before and after that element as "medians"
+        if len(self.subdivision[bucket_key]) < n_elements:
+            # if less than n_elements in bucket, just return all elements in bucket
+            n_median_indeces = np.arange(0, len(self.subdivision[bucket_key]))
+        else:
+            # otherwise us a window centered around center_pos
+            n_median_indeces = np.arange(center_pos - pad_left, center_pos + pad_right)
+
+        chunk[pos_in_chunk:pos_in_chunk+n_elements] = self.subdivision[bucket_key][n_median_indeces]
+        return n_median_indeces
