@@ -120,7 +120,6 @@ class Selection(ABC):
                 self.subdivision[bucket_key] = np.delete(
                     self.subdivision[bucket_key], [next_index], axis=0
                 )
-                # del self.subdivision[bucket_key][next_index]
 
                 if len(self.subdivision[bucket_key]) == 0:
                     del self.subdivision[bucket_key]
@@ -148,15 +147,12 @@ class Selection(ABC):
                 next_indeces.sort(reverse=True)
                 pos_in_chunk += len(next_indeces)
 
-                # for index in next_indeces:
-                #     del self.subdivision[bucket_key][index]
                 self.subdivision[bucket_key] = np.delete(
                     self.subdivision[bucket_key], next_indeces, axis=0
                 )
 
                 if len(self.subdivision[bucket_key]) == 0:
                     del self.subdivision[bucket_key]
-
 
         return chunk
 
