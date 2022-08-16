@@ -28,7 +28,6 @@ class SubdivisionStandard(Subdivision):
         division_number = 0
         for i in range(0, no_of_points, bucket_size):
             next_division = self.linearization[i:i + bucket_size]
-            next_division = list(next_division)                     # <-- for deleting in selection
             subdivision[division_number] = next_division
             division_number += 1
         return subdivision
@@ -54,15 +53,15 @@ class SubdivisionRandom(Subdivision):
             if i == 0:
                 first = 0
                 last = bin_edges[i]
-                subdivision[i] = list(self.linearization[first:last + 1])
+                subdivision[i] = self.linearization[first:last + 1]
             elif i == self.n_bins - 1:
                 first = bin_edges[i - 1]
                 last = -1
-                subdivision[i] = list(self.linearization[first+1:])
+                subdivision[i] = self.linearization[first+1:]
             else:
                 first = bin_edges[i - 1]
                 last = bin_edges[i]
-                subdivision[i] = list(self.linearization[first+1:last+1])
+                subdivision[i] = self.linearization[first+1:last+1]
 
         # throw out empty bins (can happen when two edges are right after each one another)
         for i in range(self.n_bins):
@@ -95,15 +94,15 @@ class SubdivisionDistance(Subdivision):
             if i == 0:
                 first = 0
                 last = biggest_jump_indeces[i]
-                subdivision[i] = list(self.linearization[first:last + 1])
+                subdivision[i] = self.linearization[first:last + 1]
             elif i == self.n_bins - 1:
                 first = biggest_jump_indeces[i - 1]
                 last = -1
-                subdivision[i] = list(self.linearization[first+1:])
+                subdivision[i] = self.linearization[first+1:]
             else:
                 first = biggest_jump_indeces[i - 1]
                 last = biggest_jump_indeces[i]
-                subdivision[i] = list(self.linearization[first+1:last+1])
+                subdivision[i] = self.linearization[first+1:last+1]
 
         # throw out empty bins (can happen when two jumps are right after each one another)
         for i in range(self.n_bins):
@@ -127,6 +126,6 @@ class SubdivisionNaiveStratified(Subdivision):
         y = np.digitize(X, bins=np.histogram(X, bins=self.chunk_size)[1])
 
         for label in np.unique(y):
-            subdivision[label] = list(self.linearization[y == label])
+            subdivision[label] = self.linearization[y == label]
 
         return subdivision

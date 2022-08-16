@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
+import time
 import random
 import itertools
 import numpy as np
@@ -26,6 +27,19 @@ class Selection(ABC):
 
     def load_subdivision(self, subdivision):
         self.subdivision = subdivision
+
+    def _load_subdivision_sorted(self, subdivision, attribute: int):
+        '''Auxilary function for subdivsions that select elements based on some order in the bucket.
+           Rather than sorting the buckets before each selection, this function sorts the data once.
+           This is done for performance reasons.'''
+        _subdivision = {}
+
+        bucket_keys = list(subdivision.copy().keys())
+        for bucket_key in bucket_keys:
+            bucket = np.array(subdivision[bucket_key])
+            _subdivision[bucket_key] = list(bucket[bucket[:, attribute].argsort(axis=0)])
+
+        self.subdivision = _subdivision
 
     def is_steered_subspace_empty(self):
         # FIXME: this is a sinful hack, compacting all items into a numpy array for "fast" checking
@@ -90,6 +104,62 @@ class Selection(ABC):
         steered_chunk = [c for c in steered_chunk if c is not None]
         return np.array(steered_chunk)
 
+    def select_one(self, chunk: np.ndarray, chunk_size: int = -1) -> np.ndarray:
+        pos_in_chunk = 0
+        while pos_in_chunk < chunk_size:
+            bucket_keys = list(self.subdivision.copy().keys())
+
+            # prevent ordering bias when chunk_size is bigger than number of bins
+            random.shuffle(bucket_keys)
+
+            for bucket_key in bucket_keys:
+                if pos_in_chunk >= chunk_size:
+                    break
+                next_index = self.select_element(chunk, pos_in_chunk, bucket_key)
+                pos_in_chunk += 1
+                self.subdivision[bucket_key] = np.delete(
+                    self.subdivision[bucket_key], [next_index], axis=0
+                )
+                # del self.subdivision[bucket_key][next_index]
+
+                if len(self.subdivision[bucket_key]) == 0:
+                    del self.subdivision[bucket_key]
+        return chunk
+
+    def select_multi(self, chunk: np.ndarray, chunk_size: int) -> np.ndarray:
+        pos_in_chunk = 0
+        while pos_in_chunk < chunk_size:
+            bucket_keys = list(self.subdivision.copy().keys())
+
+            # prevent ordering bias when chunk_size is bigger than number of bins
+            random.shuffle(bucket_keys)
+
+            # select evenly from all bins, but at least 1 item (for cases where division is 0)
+            n_elements_per_bucket = max((chunk_size - pos_in_chunk) // len(bucket_keys), 1)
+
+            for bucket_key in bucket_keys:
+                if pos_in_chunk >= chunk_size:
+                    break
+
+                # ensure to only select at most as many items as there are in the bucket
+                n_elements = min(len(self.subdivision[bucket_key]), n_elements_per_bucket)
+
+                next_indeces = self.select_elements(n_elements, chunk, pos_in_chunk, bucket_key)
+                next_indeces.sort(reverse=True)
+                pos_in_chunk += len(next_indeces)
+
+                # for index in next_indeces:
+                #     del self.subdivision[bucket_key][index]
+                self.subdivision[bucket_key] = np.delete(
+                    self.subdivision[bucket_key], next_indeces, axis=0
+                )
+
+                if len(self.subdivision[bucket_key]) == 0:
+                    del self.subdivision[bucket_key]
+
+
+        return chunk
+
     def next_chunk(self, chunk_size: int = -1) -> np.ndarray:
         # If the first subdivision is empty, None is returned
         if len(self.subdivision) == 0:
@@ -115,22 +185,12 @@ class Selection(ABC):
         random.seed(self.random_state + self.chunk_counter)
         self.chunk_counter += 1
 
-        pos_in_chunk = 0
-        while pos_in_chunk < chunk_size:
-            bucket_keys = list(self.subdivision.copy().keys())
-
-            # prevent ordering bias when chunk_size is bigger than number of bins
-            random.shuffle(bucket_keys)
-
-            for bucket_key in bucket_keys:
-                if pos_in_chunk >= chunk_size:
-                    break
-                next_index = self.select_element(chunk, pos_in_chunk, bucket_key)
-                pos_in_chunk += 1
-                del self.subdivision[bucket_key][next_index]
-                if len(self.subdivision[bucket_key]) == 0:
-                    del self.subdivision[bucket_key]
-        return chunk
+        if len(self.subdivision[next(iter(self.subdivision))]) == chunk_size:
+            print("selecting one element")
+            return self.select_one(chunk, chunk_size)
+        else:
+            print("selecting multiple elements")
+            return self.select_multi(chunk, chunk_size)
 
     # Selects from bucket bucket_key, expands chunk at index pos_in_chunk with it and returns
     # which index was selected
@@ -142,7 +202,7 @@ class Selection(ABC):
     @abstractmethod
     def select_elements(
         self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int, bucket_key: int
-    ) -> int:
+    ) -> list[int]:
         pass
 
 
@@ -161,8 +221,10 @@ class SelectionRandom(Selection):
             n_samples=n_elements,
             random_state=random.randint(0, subdivision_size - 1)
         )
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][indeces]
-        return indeces
+
+        bucket = np.array(self.subdivision[bucket_key])
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[indeces]
+        return list(indeces)
 
 
 class SelectionFirst(Selection):
@@ -174,8 +236,10 @@ class SelectionFirst(Selection):
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         indeces = range(0, n_elements)
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][indeces]
-        return indeces
+
+        bucket = np.array(self.subdivision[bucket_key])
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[indeces]
+        return list(indeces)
 
 
 class SelectionMinimum(Selection):
@@ -184,6 +248,9 @@ class SelectionMinimum(Selection):
     def __init__(self, attribute):
         super().__init__()
         self.attribute = attribute
+
+    def load_subdivision(self, subdivision):
+        super()._load_subdivision_sorted(subdivision, self.attribute)
 
     def select_element(self, chunk, pos_in_chunk, bucket_key):
         min_indexes = np.array(self.subdivision[bucket_key]).argmin(axis=0)  # <-- Slow
@@ -194,8 +261,10 @@ class SelectionMinimum(Selection):
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
         n_min_indeces = np.argpartition(sorted_indeces, n_elements)[:n_elements]
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][n_min_indeces]
-        return n_min_indeces
+
+        bucket = np.array(self.subdivision[bucket_key])
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_min_indeces]
+        return list(n_min_indeces)
 
 
 class SelectionMaximum(Selection):
@@ -204,6 +273,9 @@ class SelectionMaximum(Selection):
     def __init__(self, attribute):
         super().__init__()
         self.attribute = attribute
+
+    def load_subdivision(self, subdivision):
+        super()._load_subdivision_sorted(subdivision, self.attribute)
 
     def select_element(self, chunk, pos_in_chunk, bucket_key):
         max_indexes = np.array(self.subdivision[bucket_key]).argmax(axis=0)  # <-- Slow
@@ -214,8 +286,10 @@ class SelectionMaximum(Selection):
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
         n_min_indeces = np.argpartition(sorted_indeces, -n_elements)[-n_elements:]
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = self.subdivision[bucket_key][n_min_indeces]
-        return n_min_indeces
+
+        bucket = np.array(self.subdivision[bucket_key])
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_min_indeces]
+        return list(n_min_indeces)
 
 
 class SelectionMedian(Selection):
@@ -225,6 +299,9 @@ class SelectionMedian(Selection):
         super().__init__()
         self.attribute = attribute
 
+    def load_subdivision(self, subdivision):
+        super()._load_subdivision_sorted(subdivision, self.attribute)
+
     def select_element(self, chunk, pos_in_chunk, bucket_key):
         subdivision_size = len(self.subdivision[bucket_key])
         med = int(subdivision_size / 2)
@@ -233,23 +310,23 @@ class SelectionMedian(Selection):
         return median_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
-        sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
-
         # the central element in sorted_indeces is the index of the "median" in the bucket
-        center_pos = len(sorted_indeces) // 2
+        center_pos = len(self.subdivision[bucket_key]) // 2
 
         # padding around the center position. If even number of elements is returned, right end
         # of the window is bigger than left end by 1
         pad_left = (n_elements - 1) // 2
-        pad_right = (n_elements - 1) // 2 if n_elements % 2 == 0 else n_elements // 2
+        pad_right = (n_elements - 1) // 2 + 1 if n_elements % 2 == 0 else n_elements // 2
 
         # as a heuristic, get n/2 elements before and after that element as "medians"
-        if len(self.subdivision[bucket_key]) < n_elements:
+        if len(self.subdivision[bucket_key]) <= n_elements:
             # if less than n_elements in bucket, just return all elements in bucket
             n_median_indeces = np.arange(0, len(self.subdivision[bucket_key]))
         else:
             # otherwise us a window centered around center_pos
-            n_median_indeces = np.arange(center_pos - pad_left, center_pos + pad_right)
+            n_median_indeces = np.arange(center_pos - pad_left, center_pos + pad_right + 1)
 
-        chunk[pos_in_chunk:pos_in_chunk+n_elements] = self.subdivision[bucket_key][n_median_indeces]
-        return n_median_indeces
+        bucket = np.array(self.subdivision[bucket_key])
+        chunk[pos_in_chunk:pos_in_chunk+n_elements] = bucket[n_median_indeces]
+
+        return list(n_median_indeces)
