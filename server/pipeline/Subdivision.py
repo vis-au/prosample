@@ -15,7 +15,7 @@ class Subdivision(ABC):
         pass
 
 
-class SubdivisionStandard(Subdivision):
+class SubdivisionCardinality(Subdivision):
     sampling_rate = 0
 
     def __init__(self, chunk_size: int):

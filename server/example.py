@@ -3,7 +3,7 @@ from pipeline import *
 # Dataset, Linearization and Subdivision is chosen once
 data = MOUNTAIN_PEAKS
 lin = LinearizationReaderZOrder()
-subd = SubdivisionStandard(0.1)
+subd = SubdivisionCardinality(0.1)
 
 # Selection is chosen dynamically
 sel = SelectionMinimum(3)
