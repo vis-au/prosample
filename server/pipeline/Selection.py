@@ -37,7 +37,7 @@ class Selection(ABC):
         bucket_keys = list(subdivision.copy().keys())
         for bucket_key in bucket_keys:
             bucket = np.array(subdivision[bucket_key])
-            _subdivision[bucket_key] = list(bucket[bucket[:, attribute].argsort(axis=0)])
+            _subdivision[bucket_key] = bucket[bucket[:, attribute].argsort(axis=0)]
 
         self.subdivision = _subdivision
 
@@ -218,7 +218,7 @@ class SelectionRandom(Selection):
             random_state=random.randint(0, subdivision_size - 1)
         )
 
-        bucket = np.array(self.subdivision[bucket_key])
+        bucket = self.subdivision[bucket_key]
         chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[indeces]
         return list(indeces)
 
@@ -233,7 +233,7 @@ class SelectionFirst(Selection):
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         indeces = range(0, n_elements)
 
-        bucket = np.array(self.subdivision[bucket_key])
+        bucket = self.subdivision[bucket_key]
         chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[indeces]
         return list(indeces)
 
@@ -255,10 +255,9 @@ class SelectionMinimum(Selection):
         return min_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
-        sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
-        n_min_indeces = np.argpartition(sorted_indeces, n_elements)[:n_elements]
+        n_min_indeces = np.arange(0, n_elements)
 
-        bucket = np.array(self.subdivision[bucket_key])
+        bucket = self.subdivision[bucket_key]
         chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_min_indeces]
         return list(n_min_indeces)
 
@@ -280,12 +279,12 @@ class SelectionMaximum(Selection):
         return max_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
-        sorted_indeces = self.subdivision[bucket_key][:, self.attribute].argsort(axis=0)
-        n_min_indeces = np.argpartition(sorted_indeces, -n_elements)[-n_elements:]
+        size = len(self.subdivision[bucket_key])
+        n_max_indeces = np.arange(size - n_elements, size)
 
-        bucket = np.array(self.subdivision[bucket_key])
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_min_indeces]
-        return list(n_min_indeces)
+        bucket = self.subdivision[bucket_key]
+        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_max_indeces]
+        return list(n_max_indeces)
 
 
 class SelectionMedian(Selection):
@@ -322,7 +321,7 @@ class SelectionMedian(Selection):
             # otherwise us a window centered around center_pos
             n_median_indeces = np.arange(center_pos - pad_left, center_pos + pad_right + 1)
 
-        bucket = np.array(self.subdivision[bucket_key])
+        bucket = self.subdivision[bucket_key]
         chunk[pos_in_chunk:pos_in_chunk+n_elements] = bucket[n_median_indeces]
 
         return list(n_median_indeces)
