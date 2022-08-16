@@ -4,14 +4,15 @@ from pipeline import *
 data = MOUNTAIN_PEAKS
 lin = LinearizationReaderZOrder()
 subd = SubdivisionStandard(0.1)
-sampler = Sampler(data, lin, subd)
 
 # Selection is chosen dynamically
 sel = SelectionMinimum(3)
+sampler = Sampler(data, lin, subd, sel)
 chunk = sampler.sample(sel)
 print(chunk)
 
 sel = SelectionMaximum(3)
+sampler.update_selection(sel)
 chunk = sampler.sample(sel)
 print(chunk)
 chunk = sampler.sample(sel)
@@ -20,5 +21,6 @@ chunk = sampler.sample(sel)
 print(chunk)
 
 sel = SelectionRandom(42)
+sampler.update_selection(sel)
 chunk = sampler.sample(sel)
 print(chunk)

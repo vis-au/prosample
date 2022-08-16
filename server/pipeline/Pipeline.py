@@ -14,18 +14,17 @@ class Pipeline:
 
     # retrieves next chunk given the current_selection
     self.sampler = self._get_sampler()
-    # defines the way by which the next chunk is retrieved
-    self.selection = self._get_selection(config["selection"])
 
   def _get_sampler(self):
     dataset_name = _resolve_data(self.config["data"])
     self.linearization = self._get_linearization(self.config["linearization"])
     self.subdivision = self._get_subdivision(self.config["subdivision"])
+    self.selection = self._get_selection(self.config["selection"])
 
-    if None in [dataset_name, self.linearization, self.subdivision]:
+    if None in [dataset_name, self.linearization, self.subdivision, self.selection]:
       return None
 
-    return Sampler(dataset_name, self.linearization, self.subdivision)
+    return Sampler(dataset_name, self.linearization, self.subdivision, self.selection)
 
   def _get_linearization(self, linearization_string):
     lin_class = _resolve_linearization(linearization_string)
@@ -67,6 +66,7 @@ class Pipeline:
 
   def update_selection(self, new_selection: str):
     self.selection = self._get_selection(new_selection)
+    self.sampler.update_selection(self.selection)
 
   def update_subdivision(self, new_subdivision: str):
     self.subdivision = self._get_subdivision(new_subdivision)
@@ -94,6 +94,8 @@ def _resolve_data(data):
 
 
 def _resolve_linearization(linearization):
+  if linearization == "test":
+    return LinearizationReaderTest
   if linearization == "z-order":
     return LinearizationReaderZOrder
   elif linearization == "numeric":

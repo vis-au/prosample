@@ -3,10 +3,12 @@ from . import *
 
 
 class Sampler:
-    def __init__(self, data_set_name, linearization: LinearizationReader, subdivision: Subdivision):
+    def __init__(self, data_set_name, linearization: LinearizationReader, subdivision: Subdivision,
+                 selection: Selection):
         self.data_set_name = data_set_name
         self.linearization_frame = linearization
         self.subdivision_frame = subdivision
+        self.selection = selection
         self.dataset_size = -1
         self.pre_processing()
 
@@ -17,6 +19,7 @@ class Sampler:
         self.subdivision_frame.load_linearization(linearization)
         bins = self.subdivision_frame.subdivide()
         self.subdivision = bins
+        self.update_selection(self.selection)
         print("Done with the pre-processing")
 
     def update_subdivision(self, subdivision: Subdivision):
@@ -27,11 +30,15 @@ class Sampler:
         # generate the bins with the new subdivision over the remaining data
         bins = subdivision.subdivide()
         self.subdivision = bins
+        self.selection.load_subdivision(self.subdivision)
         print("Done updating the subdivision")
+
+    def update_selection(self, selection: Selection):
+        selection.load_subdivision(self.subdivision)
+        self.selection = selection
 
     def sample(self, selection: Selection, chunk_size: int = -1):
         # return the next chunk of data points
-        selection.load_subdivision(self.subdivision)
         return selection.next_chunk(chunk_size)
 
     def get_dataset_size(self):
