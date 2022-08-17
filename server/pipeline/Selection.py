@@ -104,28 +104,7 @@ class Selection(ABC):
         steered_chunk = [c for c in steered_chunk if c is not None]
         return np.array(steered_chunk)
 
-    def select_one(self, chunk: np.ndarray, chunk_size: int = -1) -> np.ndarray:
-        pos_in_chunk = 0
-        while pos_in_chunk < chunk_size:
-            bucket_keys = list(self.subdivision.copy().keys())
-
-            # prevent ordering bias when chunk_size is bigger than number of bins
-            random.shuffle(bucket_keys)
-
-            for bucket_key in bucket_keys:
-                if pos_in_chunk >= chunk_size:
-                    break
-                next_index = self.select_element(chunk, pos_in_chunk, bucket_key)
-                pos_in_chunk += 1
-                self.subdivision[bucket_key] = np.delete(
-                    self.subdivision[bucket_key], [next_index], axis=0
-                )
-
-                if len(self.subdivision[bucket_key]) == 0:
-                    del self.subdivision[bucket_key]
-        return chunk
-
-    def select_multi(self, chunk: np.ndarray, chunk_size: int) -> np.ndarray:
+    def select_into_chunk(self, chunk: np.ndarray, chunk_size: int) -> np.ndarray:
         pos_in_chunk = 0
         while pos_in_chunk < chunk_size:
             bucket_keys = list(self.subdivision.copy().keys())
@@ -181,12 +160,7 @@ class Selection(ABC):
         random.seed(self.random_state + self.chunk_counter)
         self.chunk_counter += 1
 
-        if len(self.subdivision[next(iter(self.subdivision))]) == chunk_size:
-            print("selecting one element")
-            return self.select_one(chunk, chunk_size)
-        else:
-            print("selecting multiple elements")
-            return self.select_multi(chunk, chunk_size)
+        return self.select_into_chunk(chunk, chunk_size)
 
     # Selects from bucket bucket_key, expands chunk at index pos_in_chunk with it and returns
     # which index was selected
