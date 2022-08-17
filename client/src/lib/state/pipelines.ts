@@ -28,7 +28,7 @@ function updateRemotePipeline(oldPipeline: PipelineConfig, newPipeline: Pipeline
 export const leftPipelineConfig = writable<PipelineConfig>({
   id: "left",
   linearization: "z-order",
-  subdivision: "standard",
+  subdivision: "cardinality",
   subdivisionParams: {
     subspace: [17, 18],  // pickup location x, y
     k: 1000,
@@ -42,7 +42,7 @@ export const leftPipelineConfig = writable<PipelineConfig>({
 export const rightPipelineConfig = writable<PipelineConfig>({
   id: "right",
   linearization: "z-order",
-  subdivision: "standard",
+  subdivision: "cardinality",
   subdivisionParams: {
     subspace: [17, 18],  // pickup location x, y
     k: 1000,

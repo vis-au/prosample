@@ -17,7 +17,7 @@ export const dimensionsInData = derived([selectedDataset], ([$selectedDataset]) 
   } else if ($selectedDataset.name === "spotify") {
     _dimensionsInData = range(0, 13).map(d => d + "");
   } else if ($selectedDataset.name === "taxis") {
-    _dimensionsInData = range(0, 19).map(d => d + "");
+    _dimensionsInData = range(0, 25).map(d => d + "");
   } else {
     _dimensionsInData = [];
   }
@@ -33,11 +33,12 @@ export const dimensionNames = derived([selectedDataset], ([$selectedDataset]) =>
     return  ["id", "popularity", "duration_ms", "explicit", "danceability", "energy", "loudness",
              "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo"]
   } else if ($selectedDataset.name === "taxis") {
-    return ["tripID", "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime", "passenger_count",
-            "trip_distance", "RatecodeID", "PULocationID", "DOLocationID", "payment_type",
-            "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount",
-            "improvement_surcharge", "total_amount", "PURepresentativeX", "PURepresentativeY",
-            "DORepresentativeX", "DORepresentativeY"];
+    return ["tripID", "VendorID", "tpep_pickup_datetime", "tpep_dropoff_datetime",
+    "passenger_count", "trip_distance", "RatecodeID", "PULocationID", "DOLocationID",
+    "payment_type", "fare_amount", "extra", "mta_tax", "tip_amount", "tolls_amount",
+    "improvement_surcharge", "total_amount", "PURepresentativeX", "PURepresentativeY",
+    "DORepresentativeX", "DORepresentativeY", "normalized_value", "normalized_spatial_lag",
+    "value_is_H", "spatial_lag_is_H"];
   } else {
     return [];
   }
@@ -59,10 +60,11 @@ selectedDataset.subscribe($selectedDataset => {
     maxs = [7.838285e+09, 179.987292, 83.571472, 52.000000];
   } else if ($selectedDataset.name === "taxis") {
     mins = [73.0, 1.0, 1.041384e+18, 1.041384e+18, 0.0, 0.01, 1.0, 1.0, 1.0, 1.0, 0.01, -0.49, 0.0,
-            0.0, 0.0, 0.0, 0.31, -74.197663, 40.543353, -74.254741, 40.504555];
+            0.0, 0.0, 0.0, 0.31, -74.197663, 40.543353, -74.254741, 40.504555, -2.928987, -2.738654,
+            0.0, 0.0];
     maxs = [76955200.0, 4.0, 1.607632e+18, 1.607634e+18, 9.0, 63.30, 99.0, 263.0, 263.0, 4.0,
             398.00, 17.50, 0.5, 300.0, 950.7, 0.3, 1003.50, -73.702319, 40.912294, -73.701511,
-            40.914637];
+            40.914637, 60.361013, 26.416724, 1.0, 1.0];
   }
 
   _dimensionExtents.mins = mins;
