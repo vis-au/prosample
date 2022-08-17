@@ -165,11 +165,6 @@ class Selection(ABC):
     # Selects from bucket bucket_key, expands chunk at index pos_in_chunk with it and returns
     # which index was selected
     @abstractmethod
-    def select_element(self, chunk: np.ndarray, pos_in_chunk: int, bucket_key: str or int) -> int:
-        pass
-
-    # Same as select_element, but selects multiple items per run
-    @abstractmethod
     def select_elements(
         self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int, bucket_key: int
     ) -> list[int]:
@@ -177,12 +172,6 @@ class Selection(ABC):
 
 
 class SelectionRandom(Selection):
-
-    def select_element(self, chunk, pos_in_chunk, bucket_index):
-        subdivision_size = len(self.subdivision[bucket_index])
-        next_index = random.randint(0, subdivision_size - 1)
-        chunk[pos_in_chunk] = self.subdivision[bucket_index][next_index]
-        return next_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         subdivision_size = len(self.subdivision[bucket_key])
@@ -198,11 +187,6 @@ class SelectionRandom(Selection):
 
 
 class SelectionFirst(Selection):
-
-    def select_element(self, chunk, pos_in_chunk, bucket_key):
-        next_index = 0
-        chunk[pos_in_chunk] = self.subdivision[bucket_key][next_index]
-        return next_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         indeces = range(0, n_elements)
@@ -222,12 +206,6 @@ class SelectionMinimum(Selection):
     def load_subdivision(self, subdivision):
         super()._load_subdivision_sorted(subdivision, self.attribute)
 
-    def select_element(self, chunk, pos_in_chunk, bucket_key):
-        min_indexes = np.array(self.subdivision[bucket_key]).argmin(axis=0)  # <-- Slow
-        min_index = min_indexes[self.attribute]
-        chunk[pos_in_chunk] = self.subdivision[bucket_key][min_index]
-        return min_index
-
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         n_min_indeces = np.arange(0, n_elements)
 
@@ -245,12 +223,6 @@ class SelectionMaximum(Selection):
 
     def load_subdivision(self, subdivision):
         super()._load_subdivision_sorted(subdivision, self.attribute)
-
-    def select_element(self, chunk, pos_in_chunk, bucket_key):
-        max_indexes = np.array(self.subdivision[bucket_key]).argmax(axis=0)  # <-- Slow
-        max_index = max_indexes[self.attribute]
-        chunk[pos_in_chunk] = self.subdivision[bucket_key][max_index]
-        return max_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         size = len(self.subdivision[bucket_key])
@@ -270,13 +242,6 @@ class SelectionMedian(Selection):
 
     def load_subdivision(self, subdivision):
         super()._load_subdivision_sorted(subdivision, self.attribute)
-
-    def select_element(self, chunk, pos_in_chunk, bucket_key):
-        subdivision_size = len(self.subdivision[bucket_key])
-        med = int(subdivision_size / 2)
-        median_index = np.argsort(np.array(self.subdivision[bucket_key])[:, 3])[med]  # <-- Slow
-        chunk[pos_in_chunk] = self.subdivision[bucket_key][median_index]
-        return median_index
 
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         # the central element in sorted_indeces is the index of the "median" in the bucket
