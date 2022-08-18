@@ -275,7 +275,8 @@ class SelectionSpatialAutoCorrelation(Selection):
         self.value_h_index = value_h_index
         self.lag_h_index = lag_h_index
 
-    def select_elements(self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int, bucket_key: int) -> list[int]:
+    def select_elements(self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int,
+                        bucket_key: int) -> list[int]:
         bucket = self.subdivision[bucket_key]
         indeces = []
 

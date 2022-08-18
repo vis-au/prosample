@@ -56,8 +56,10 @@ class Pipeline:
       return None
 
     # some selection strategies work on specific dimensions, so pass that parameter in those cases
-    if sel_class not in [SelectionFirst, SelectionRandom]:
+    if sel_class not in [SelectionFirst, SelectionRandom, SelectionSpatialAutoCorrelation]:
       return sel_class(self.config["dimension"])
+    elif sel_class == SelectionSpatialAutoCorrelation:
+      return sel_class(self.config["params"]["value_h_index"], self.config["params"]["lag_h_index"])
     else:
       return sel_class()
 
@@ -134,5 +136,7 @@ def _resolve_selection(selection):
     return SelectionMaximum
   elif selection == "median":
     return SelectionMedian
+  elif selection == "autocorrelation":
+    return SelectionSpatialAutoCorrelation
   else:
     return None
