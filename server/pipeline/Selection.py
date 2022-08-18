@@ -264,3 +264,38 @@ class SelectionMedian(Selection):
         chunk[pos_in_chunk:pos_in_chunk+n_elements] = bucket[n_median_indeces]
 
         return list(n_median_indeces)
+
+
+class SelectionSpatialAutoCorrelation(Selection):
+    value_h_index = 0
+    lag_h_index = 0
+
+    def __init__(self, value_h_index: int, lag_h_index: int) -> None:
+        super().__init__()
+        self.value_h_index = value_h_index
+        self.lag_h_index = lag_h_index
+
+    def select_elements(self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int, bucket_key: int) -> list[int]:
+        bucket = self.subdivision[bucket_key]
+        indeces = []
+
+        # we should select up to n_elements. find out how many of those should be HH, HL, LH, and LL
+        for value_is_H in [True, False]:
+            for lag_is_H in [True, False]:
+                # find all candidates in this quadrant
+                bucket_value_h = bucket[:, self.value_h_index] == value_is_H
+                bucket_lag_h = bucket[:, self.lag_h_index] == lag_is_H
+
+                # select up to 25% points in this quadrant, but at least 1
+                n_selection = max(n_elements // 4, 1)
+                candidate_indeces = list((bucket_value_h & bucket_lag_h).nonzero()[0][:n_selection])
+                indeces += candidate_indeces
+
+        random.shuffle(indeces)
+
+        # make sure that at most n_elements are selected. This can be useful when n_elements < 4,
+        # since we are selecting at least 1 element per quadrant.
+        indeces = indeces[:n_elements]
+        chunk[pos_in_chunk:pos_in_chunk + len(indeces)] = bucket[indeces]
+
+        return indeces
