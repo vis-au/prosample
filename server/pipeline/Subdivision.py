@@ -71,7 +71,7 @@ class SubdivisionRandom(Subdivision):
         return subdivision
 
 
-class SubdivisionDistance(Subdivision):
+class SubdivisionCohesion(Subdivision):
     def __init__(self, attributes: list[int], n_bins: int) -> None:
         super().__init__()
         self.attributes = attributes

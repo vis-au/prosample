@@ -40,7 +40,7 @@ class Pipeline:
     elif sub_class == SubdivisionNaiveStratified:
       subspace = self.config["params"]["subspace"]
       subdivision = sub_class(chunk_size=1000, attribute=subspace[0])
-    elif sub_class == SubdivisionDistance:
+    elif sub_class == SubdivisionCohesion:
       subspace = self.config["params"]["subspace"]
       subdivision = sub_class(n_bins=100, attributes=subspace)
     elif sub_class is not None:
@@ -119,8 +119,8 @@ def _resolve_subdivision(subdivision):
     return SubdivisionCardinality
   elif subdivision == "stratified":
     return SubdivisionNaiveStratified
-  elif subdivision == "distance":
-    return SubdivisionDistance
+  elif subdivision == "cohesion":
+    return SubdivisionCohesion
   else:
     return None
 

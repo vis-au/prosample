@@ -31,7 +31,7 @@ function pipelineConfigToURLParams(configuration: PipelineConfig) {
 function getParamsForSubdivision(subdivision: SubdivisionType, params: SubdivisionParamType) {
   let url = "params=-1";
 
-  if (subdivision === "distance") {
+  if (subdivision === "cohesion") {
     const subspace = params.subspace.join(":");
     url = `params=subspace&subspace=${subspace}`
   } else {
