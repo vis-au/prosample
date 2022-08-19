@@ -16,12 +16,12 @@ class Linearization(ABC):
         self.data_set_name = data_set_name
         self.dimensions = dimensions
         self.linearization = None
-        self.header = ''
+        self.header = ""
         self.data = self.read_data()
 
     def read_data(self):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_to_read = str(current_folder) + '/input_files/' + self.data_set_name + 'Data.csv'
+        file_to_read = str(current_folder) + "/input_files/" + self.data_set_name + "Data.csv"
 
         df = pd.read_csv(file_to_read, delimiter=";", header=None)
         df = df.drop(self.exclude_attributes, axis=1)
@@ -37,10 +37,10 @@ class Linearization(ABC):
 
     def write_data(self, linearization_type):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_name = self.data_set_name + 'Linearization' + linearization_type + '.csv'
-        file_name = str(current_folder) + '/output_files/' + file_name
+        file_name = self.data_set_name + "Linearization" + linearization_type + ".csv"
+        file_name = str(current_folder) + "/../linearization_files/" + file_name
         pd.DataFrame(self.linearization).to_csv(file_name, sep=";", header=False, index=False)
-        print('Linearized file into folder output_files')
+        print(f"Saved linearized data in {file_name}")
 
 
 class LinearizationRandom(Linearization):
@@ -85,12 +85,12 @@ class LinearizationZOrder2D(Linearization):
         )
 
         self.linearization = self.data[indexes]
-        self.write_data('ZOrder')
+        self.write_data("ZOrder")
 
     def find_extrema(self):
         data_dimension = len(self.data[0])
-        mins = np.full(data_dimension, float('inf'))
-        maxs = np.full(data_dimension, float('-inf'))
+        mins = np.full(data_dimension, float("inf"))
+        maxs = np.full(data_dimension, float("-inf"))
 
         for data_point in self.data:
             for attribute_index in range(data_dimension):
@@ -107,42 +107,42 @@ class LinearizationZOrder2D(Linearization):
         def compare(i, j):
             if data[i][0] == data[j][0] and data[i][1] == data[j][1]:
                 return 0
-            ixbin, iybin = '', ''
-            jxbin, jybin = '', ''
+            ixbin, iybin = "", ""
+            jxbin, jybin = "", ""
             xl, xr, yl, yr = 0, 1, 0, 1
             while ixbin == jxbin and iybin == jybin:
                 xm = (xl + xr) / 2
                 ym = (yl + yr) / 2
                 if data[i][0] > xm:
-                    ixbin += '1'
+                    ixbin += "1"
                 else:
-                    ixbin += '0'
+                    ixbin += "0"
                 if data[j][0] > xm:
-                    jxbin += '1'
+                    jxbin += "1"
                 else:
-                    jxbin += '0'
+                    jxbin += "0"
 
                 if data[i][1] > ym:
-                    iybin += '1'
+                    iybin += "1"
                 else:
-                    iybin += '0'
+                    iybin += "0"
                 if data[j][1] > ym:
-                    jybin += '1'
+                    jybin += "1"
                 else:
-                    jybin += '0'
+                    jybin += "0"
 
-                if ixbin[-1] == '1':
+                if ixbin[-1] == "1":
                     xl = xm
                 else:
                     xr = xm
 
-                if iybin[-1] == '1':
+                if iybin[-1] == "1":
                     yl = ym
                 else:
                     yr = ym
 
-            ipos = ''.join(''.join(x) for x in zip(iybin, ixbin))
-            jpos = ''.join(''.join(x) for x in zip(jybin, jxbin))
+            ipos = "".join("".join(x) for x in zip(iybin, ixbin))
+            jpos = "".join("".join(x) for x in zip(jybin, jxbin))
 
             if ipos < jpos:
                 return -1
@@ -165,12 +165,12 @@ class LinearizationZOrderKD(Linearization):
         )
 
         self.linearization = self.data[indexes]
-        self.write_data('ZOrder')
+        self.write_data("ZOrder")
 
     def find_extrema(self):
         data_dimension = len(self.data[0])
-        mins = np.full(data_dimension, float('inf'))
-        maxs = np.full(data_dimension, float('-inf'))
+        mins = np.full(data_dimension, float("inf"))
+        maxs = np.full(data_dimension, float("-inf"))
 
         for data_point in self.data:
             for attribute_index in range(data_dimension):
@@ -188,8 +188,8 @@ class LinearizationZOrderKD(Linearization):
             if np.equal(data[i], data[j]).all():
                 return 0
 
-            ipos = [''] * dimensions
-            jpos = [''] * dimensions
+            ipos = [""] * dimensions
+            jpos = [""] * dimensions
 
             leftBounds = np.full(dimensions, 0.0)
             rightBounds = np.full(dimensions, 1.0)
@@ -198,24 +198,24 @@ class LinearizationZOrderKD(Linearization):
                 mids = (leftBounds + rightBounds) / 2
                 for dim in range(dimensions):
                     if data[i][dim] > mids[dim]:
-                        ipos[dim] += '1'
+                        ipos[dim] += "1"
                     else:
-                        ipos[dim] += '0'
+                        ipos[dim] += "0"
                     if data[j][dim] > mids[dim]:
-                        jpos[dim] += '1'
+                        jpos[dim] += "1"
                     else:
-                        jpos[dim] += '0'
+                        jpos[dim] += "0"
 
                 for dim in range(dimensions):
-                    if ipos[dim][-1] == '1':
+                    if ipos[dim][-1] == "1":
                         leftBounds[dim] = mids[dim]
                     else:
                         rightBounds[dim] = mids[dim]
 
             izip = zip(*ipos[::-1])
             jzip = zip(*jpos[::-1])
-            iposition = ''.join(''.join(x) for x in izip)
-            jposition = ''.join(''.join(x) for x in jzip)
+            iposition = "".join("".join(x) for x in izip)
+            jposition = "".join("".join(x) for x in jzip)
             if iposition < jposition:
                 return -1
             else:
@@ -232,7 +232,7 @@ class LinearizationNearestNeighbour(Linearization):
         indexes = self.construct_nn_order_kd(data_dim)
 
         self.linearization = self.data[indexes]
-        self.write_data('NN')
+        self.write_data("NN")
 
     def construct_nn_order_kd(self, data):
         no_of_points = len(data)
@@ -246,7 +246,7 @@ class LinearizationNearestNeighbour(Linearization):
         counter = 1
 
         no_of_neighbours = 50                                   # <-- Hardcoded (50)
-        kdt = KDTree(data, leaf_size=30, metric='euclidean')    # <-- Hardcoded (euclidean)
+        kdt = KDTree(data, leaf_size=30, metric="euclidean")    # <-- Hardcoded (euclidean)
         neighbours = kdt.query(data, k=no_of_neighbours, return_distance=False)
 
         for iter in range(no_of_points-1):
