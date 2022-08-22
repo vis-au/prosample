@@ -91,6 +91,8 @@ def _resolve_data(data):
     return SPOTIFY
   elif data == "taxis":
     return TAXIS
+  elif data == "test":
+    return TEST
   else:
     return None
 
