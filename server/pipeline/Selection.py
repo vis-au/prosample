@@ -12,14 +12,13 @@ class Selection(ABC):
 
     def __init__(self, random_state=0) -> None:
         super().__init__()
-        self.steering_filters = {}  # a dict mapping a steered dimension to a min-max filter.
+        self.steering_filters = (
+            {}
+        )  # a dict mapping a steered dimension to a min-max filter.
         self.random_state = random_state  # used for seeding randomness
 
     def steer(self, dimension: int = None, min_value: int = 0, max_value: int = 1):
-        steering_filter = {
-            "min_value": float(min_value),
-            "max_value": float(max_value)
-        }
+        steering_filter = {"min_value": float(min_value), "max_value": float(max_value)}
         self.steering_filters[dimension] = steering_filter
 
     def clear_steering(self):
@@ -29,9 +28,9 @@ class Selection(ABC):
         self.subdivision = subdivision
 
     def _load_subdivision_sorted(self, subdivision, attribute: int):
-        '''Auxilary function for subdivsions that select elements based on some order in the bucket.
-           Rather than sorting the buckets before each selection, this function sorts the data once.
-           This is done for performance reasons.'''
+        """Auxilary function for subdivsions that select elements based on some order in the bucket.
+        Rather than sorting the buckets before each selection, this function sorts the data once.
+        This is done for performance reasons."""
         _subdivision = {}
 
         bucket_keys = list(subdivision.copy().keys())
@@ -43,21 +42,31 @@ class Selection(ABC):
 
     def is_steered_subspace_empty(self):
         # FIXME: this is a sinful hack, compacting all items into a numpy array for "fast" checking
-        all_items = np.array(list(itertools.chain.from_iterable(list(self.subdivision.values()))))
-        check = np.full(len(all_items), True)  # boolean index indicating items matching steering
+        all_items = np.array(
+            list(itertools.chain.from_iterable(list(self.subdivision.values())))
+        )
+        check = np.full(
+            len(all_items), True
+        )  # boolean index indicating items matching steering
 
         for dim in self.steering_filters:
             min_value = self.steering_filters[dim]["min_value"]
             max_value = self.steering_filters[dim]["max_value"]
             dim = int(dim)
-            check = (all_items[:, dim] >= min_value) & (all_items[:, dim] <= max_value) & check
+            check = (
+                (all_items[:, dim] >= min_value)
+                & (all_items[:, dim] <= max_value)
+                & check
+            )
 
         is_empty = check.sum() == 0
         return is_empty
 
     def get_indeces_matching_steering_in_bucket(self, bucket_index: int) -> List[int]:
         bucket = np.array(self.subdivision[bucket_index])
-        check = np.full(len(bucket), True)  # boolean index indiciating items matching steering
+        check = np.full(
+            len(bucket), True
+        )  # boolean index indiciating items matching steering
 
         for dim in self.steering_filters:
             min_value = self.steering_filters[dim]["min_value"]
@@ -93,9 +102,7 @@ class Selection(ABC):
             buckets[b][matching_index] = None  # set flag for deletion
 
         for b in buckets:
-            self.subdivision[b] = [
-                item for item in buckets[b] if item is not None
-            ]
+            self.subdivision[b] = [item for item in buckets[b] if item is not None]
 
             # delete the entire bucket if it's empty
             if len(self.subdivision[b]) == 0:
@@ -113,16 +120,22 @@ class Selection(ABC):
             random.shuffle(bucket_keys)
 
             # select evenly from all bins, but at least 1 item (for cases where division is 0)
-            n_elements_per_bucket = max((chunk_size - pos_in_chunk) // len(bucket_keys), 1)
+            n_elements_per_bucket = max(
+                (chunk_size - pos_in_chunk) // len(bucket_keys), 1
+            )
 
             for bucket_key in bucket_keys:
                 if pos_in_chunk >= chunk_size:
                     break
 
                 # ensure to only select at most as many items as there are in the bucket
-                n_elements = min(len(self.subdivision[bucket_key]), n_elements_per_bucket)
+                n_elements = min(
+                    len(self.subdivision[bucket_key]), n_elements_per_bucket
+                )
 
-                next_indeces = self.select_elements(n_elements, chunk, pos_in_chunk, bucket_key)
+                next_indeces = self.select_elements(
+                    n_elements, chunk, pos_in_chunk, bucket_key
+                )
                 next_indeces.sort(reverse=True)
                 pos_in_chunk += len(next_indeces)
 
@@ -172,27 +185,25 @@ class Selection(ABC):
 
 
 class SelectionRandom(Selection):
-
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         subdivision_size = len(self.subdivision[bucket_key])
         indeces = sample_without_replacement(
             n_population=subdivision_size,
             n_samples=n_elements,
-            random_state=random.randint(0, subdivision_size - 1)
+            random_state=random.randint(0, subdivision_size - 1),
         )
 
         bucket = self.subdivision[bucket_key]
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[indeces]
+        chunk[pos_in_chunk : pos_in_chunk + n_elements] = bucket[indeces]
         return list(indeces)
 
 
 class SelectionFirst(Selection):
-
     def select_elements(self, n_elements, chunk, pos_in_chunk, bucket_key):
         indeces = range(0, n_elements)
 
         bucket = self.subdivision[bucket_key]
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[indeces]
+        chunk[pos_in_chunk : pos_in_chunk + n_elements] = bucket[indeces]
         return list(indeces)
 
 
@@ -210,7 +221,7 @@ class SelectionMinimum(Selection):
         n_min_indeces = np.arange(0, n_elements)
 
         bucket = self.subdivision[bucket_key]
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_min_indeces]
+        chunk[pos_in_chunk : pos_in_chunk + n_elements] = bucket[n_min_indeces]
         return list(n_min_indeces)
 
 
@@ -229,7 +240,7 @@ class SelectionMaximum(Selection):
         n_max_indeces = np.arange(size - n_elements, size)
 
         bucket = self.subdivision[bucket_key]
-        chunk[pos_in_chunk: pos_in_chunk + n_elements] = bucket[n_max_indeces]
+        chunk[pos_in_chunk : pos_in_chunk + n_elements] = bucket[n_max_indeces]
         return list(n_max_indeces)
 
 
@@ -250,7 +261,9 @@ class SelectionMedian(Selection):
         # padding around the center position. If even number of elements is returned, right end
         # of the window is bigger than left end by 1
         pad_left = (n_elements - 1) // 2
-        pad_right = (n_elements - 1) // 2 + 1 if n_elements % 2 == 0 else n_elements // 2
+        pad_right = (
+            (n_elements - 1) // 2 + 1 if n_elements % 2 == 0 else n_elements // 2
+        )
 
         # as a heuristic, get n/2 elements before and after that element as "medians"
         if len(self.subdivision[bucket_key]) <= n_elements:
@@ -258,10 +271,12 @@ class SelectionMedian(Selection):
             n_median_indeces = np.arange(0, len(self.subdivision[bucket_key]))
         else:
             # otherwise us a window centered around center_pos
-            n_median_indeces = np.arange(center_pos - pad_left, center_pos + pad_right + 1)
+            n_median_indeces = np.arange(
+                center_pos - pad_left, center_pos + pad_right + 1
+            )
 
         bucket = self.subdivision[bucket_key]
-        chunk[pos_in_chunk:pos_in_chunk+n_elements] = bucket[n_median_indeces]
+        chunk[pos_in_chunk : pos_in_chunk + n_elements] = bucket[n_median_indeces]
 
         return list(n_median_indeces)
 
@@ -275,8 +290,9 @@ class SelectionSpatialAutoCorrelation(Selection):
         self.value_h_index = value_h_index
         self.lag_h_index = lag_h_index
 
-    def select_elements(self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int,
-                        bucket_key: int) -> list[int]:
+    def select_elements(
+        self, n_elements: int, chunk: np.ndarray, pos_in_chunk: int, bucket_key: int
+    ) -> list[int]:
         bucket = self.subdivision[bucket_key]
         indeces = []
 
@@ -289,7 +305,9 @@ class SelectionSpatialAutoCorrelation(Selection):
 
                 # select up to 25% points in this quadrant, but at least 1
                 n_selection = max(n_elements // 4, 1)
-                candidate_indeces = list((bucket_value_h & bucket_lag_h).nonzero()[0][:n_selection])
+                candidate_indeces = list(
+                    (bucket_value_h & bucket_lag_h).nonzero()[0][:n_selection]
+                )
                 indeces += candidate_indeces
 
         random.shuffle(indeces)
@@ -297,6 +315,6 @@ class SelectionSpatialAutoCorrelation(Selection):
         # make sure that at most n_elements are selected. This can be useful when n_elements < 4,
         # since we are selecting at least 1 element per quadrant.
         indeces = indeces[:n_elements]
-        chunk[pos_in_chunk:pos_in_chunk + len(indeces)] = bucket[indeces]
+        chunk[pos_in_chunk : pos_in_chunk + len(indeces)] = bucket[indeces]
 
         return indeces

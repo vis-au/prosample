@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
 import numpy as np
-import pandas as pd
-from scipy.stats import mode
 from sklearn.utils.random import sample_without_replacement
 
 
 class Subdivision(ABC):
-
     def load_linearization(self, linearization):
         self.linearization = linearization
 
@@ -27,7 +24,7 @@ class SubdivisionCardinality(Subdivision):
         subdivision = {}
         division_number = 0
         for i in range(0, no_of_points, bucket_size):
-            next_division = self.linearization[i:i + bucket_size]
+            next_division = self.linearization[i : i + bucket_size]
             subdivision[division_number] = next_division
             division_number += 1
         return subdivision
@@ -43,9 +40,7 @@ class SubdivisionRandom(Subdivision):
 
         # generate n_bins indeces to split up the linearized data
         bin_edges = sample_without_replacement(
-            n_population=len(self.linearization),
-            n_samples=self.n_bins,
-            random_state=0
+            n_population=len(self.linearization), n_samples=self.n_bins, random_state=0
         )
         bin_edges = bin_edges[np.argsort(bin_edges)]
 
@@ -53,15 +48,15 @@ class SubdivisionRandom(Subdivision):
             if i == 0:
                 first = 0
                 last = bin_edges[i]
-                subdivision[i] = self.linearization[first:last + 1]
+                subdivision[i] = self.linearization[first : last + 1]
             elif i == self.n_bins - 1:
                 first = bin_edges[i - 1]
                 last = -1
-                subdivision[i] = self.linearization[first+1:]
+                subdivision[i] = self.linearization[first + 1 :]
             else:
                 first = bin_edges[i - 1]
                 last = bin_edges[i]
-                subdivision[i] = self.linearization[first+1:last+1]
+                subdivision[i] = self.linearization[first + 1 : last + 1]
 
         # throw out empty bins (can happen when two edges are right after each one another)
         for i in range(self.n_bins):
@@ -88,21 +83,23 @@ class SubdivisionCohesion(Subdivision):
         X_[-1] = X[0]
 
         X_jump = np.linalg.norm(X - X_, axis=1)  # computes euclidean distance
-        biggest_jump_indeces = np.argsort(X_jump)[-self.n_bins-1:]  # one larger than n_bins
+        biggest_jump_indeces = np.argsort(X_jump)[
+            -self.n_bins - 1 :
+        ]  # one larger than n_bins
 
         for i in range(self.n_bins):
             if i == 0:
                 first = 0
                 last = biggest_jump_indeces[i]
-                subdivision[i] = self.linearization[first:last + 1]
+                subdivision[i] = self.linearization[first : last + 1]
             elif i == self.n_bins - 1:
                 first = biggest_jump_indeces[i - 1]
                 last = -1
-                subdivision[i] = self.linearization[first+1:]
+                subdivision[i] = self.linearization[first + 1 :]
             else:
                 first = biggest_jump_indeces[i - 1]
                 last = biggest_jump_indeces[i]
-                subdivision[i] = self.linearization[first+1:last+1]
+                subdivision[i] = self.linearization[first + 1 : last + 1]
 
         # throw out empty bins (can happen when two jumps are right after each one another)
         for i in range(self.n_bins):

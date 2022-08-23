@@ -3,8 +3,13 @@ from . import *
 
 
 class Sampler:
-    def __init__(self, data_set_name, linearization: LinearizationReader, subdivision: Subdivision,
-                 selection: Selection):
+    def __init__(
+        self,
+        data_set_name,
+        linearization: LinearizationReader,
+        subdivision: Subdivision,
+        selection: Selection,
+    ):
         self.data_set_name = data_set_name
         self.linearization_frame = linearization
         self.subdivision_frame = subdivision

@@ -1,5 +1,5 @@
-MOUNTAIN_PEAKS = 'mountainPeaks'
-TREES = 'trees'
-SPOTIFY = 'spotify'
-TAXIS = 'taxis'
-TEST = 'test'
+MOUNTAIN_PEAKS = "mountainPeaks"
+TREES = "trees"
+SPOTIFY = "spotify"
+TAXIS = "taxis"
+TEST = "test"

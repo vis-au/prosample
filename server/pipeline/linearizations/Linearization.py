@@ -10,7 +10,6 @@ from sklearn.neighbors import KDTree
 
 
 class Linearization(ABC):
-
     def __init__(self, data_set_name, dimensions, exclude_attributes=[]):
         self.exclude_attributes = exclude_attributes
         self.data_set_name = data_set_name
@@ -21,7 +20,9 @@ class Linearization(ABC):
 
     def read_data(self):
         current_folder = pathlib.Path(__file__).parent.absolute()
-        file_to_read = str(current_folder) + "/datasets/" + self.data_set_name + "Data.csv"
+        file_to_read = (
+            str(current_folder) + "/datasets/" + self.data_set_name + "Data.csv"
+        )
 
         df = pd.read_csv(file_to_read, delimiter=";", header=None)
         df = df.drop(self.exclude_attributes, axis=1)
@@ -39,7 +40,9 @@ class Linearization(ABC):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_name = self.data_set_name + "Linearization" + linearization_type + ".csv"
         file_name = str(current_folder) + "/../linearization_files/" + file_name
-        pd.DataFrame(self.linearization).to_csv(file_name, sep=";", header=False, index=False)
+        pd.DataFrame(self.linearization).to_csv(
+            file_name, sep=";", header=False, index=False
+        )
         print(f"Saved linearized data in {file_name}")
 
 
@@ -52,7 +55,9 @@ class LinearizationRandom(Linearization):
 
 
 class LinearizationNumericAttr(Linearization):
-    def __init__(self, data_set_name, dimensions, sort_attr: int, exclude_attributes=[]):
+    def __init__(
+        self, data_set_name, dimensions, sort_attr: int, exclude_attributes=[]
+    ):
         super().__init__(data_set_name, dimensions, exclude_attributes)
         self.sort_attr = sort_attr
 
@@ -74,7 +79,6 @@ class LinearizationDatetimeAttr(LinearizationNumericAttr):
 
 
 class LinearizationZOrder2D(Linearization):
-
     def linearize(self):
         mins, maxs = self.find_extrema()
         diffs = maxs - mins
@@ -103,7 +107,6 @@ class LinearizationZOrder2D(Linearization):
         return mins, maxs
 
     def construct_z_order_2d(self, indexes, data):
-
         def compare(i, j):
             if data[i][0] == data[j][0] and data[i][1] == data[j][1]:
                 return 0
@@ -154,14 +157,14 @@ class LinearizationZOrder2D(Linearization):
 
 
 class LinearizationZOrderKD(Linearization):
-
     def linearize(self):
         mins, maxs = self.find_extrema()
         diffs = maxs - mins
         normalized_data = (self.data - mins) / diffs
 
         indexes = self.construct_z_order_kd(
-            list(range(len(normalized_data))), normalized_data[:, 1:self.dimensions+1]
+            list(range(len(normalized_data))),
+            normalized_data[:, 1 : self.dimensions + 1],
         )
 
         self.linearization = self.data[indexes]
@@ -226,9 +229,8 @@ class LinearizationZOrderKD(Linearization):
 
 
 class LinearizationNearestNeighbour(Linearization):
-
     def linearize(self):
-        data_dim = self.data[:, 1:self.dimensions + 1]
+        data_dim = self.data[:, 1 : self.dimensions + 1]
         indexes = self.construct_nn_order_kd(data_dim)
 
         self.linearization = self.data[indexes]
@@ -240,16 +242,18 @@ class LinearizationNearestNeighbour(Linearization):
 
         indexes = np.full(no_of_points, None)
 
-        current_index = 0                                       # <-- Hardcoded (0)
+        current_index = 0  # <-- Hardcoded (0)
 
         indexes[0] = current_index
         counter = 1
 
-        no_of_neighbours = 50                                   # <-- Hardcoded (50)
-        kdt = KDTree(data, leaf_size=30, metric="euclidean")    # <-- Hardcoded (euclidean)
+        no_of_neighbours = 50  # <-- Hardcoded (50)
+        kdt = KDTree(
+            data, leaf_size=30, metric="euclidean"
+        )  # <-- Hardcoded (euclidean)
         neighbours = kdt.query(data, k=no_of_neighbours, return_distance=False)
 
-        for iter in range(no_of_points-1):
+        for iter in range(no_of_points - 1):
             current_neighbours = neighbours[current_index]
 
             found = False
@@ -279,7 +283,9 @@ class LinearizationNearestNeighbour(Linearization):
 
 
 class LinearizationGeoZorder(Linearization):
-    def __init__(self, data_set_name, dimensions, lat: int, lng: int, exclude_attributes=[]):
+    def __init__(
+        self, data_set_name, dimensions, lat: int, lng: int, exclude_attributes=[]
+    ):
         super().__init__(data_set_name, dimensions, exclude_attributes)
         self.lat = lat  # attribute containing latitude
         self.lng = lng  # attribute containing longitude
@@ -288,8 +294,7 @@ class LinearizationGeoZorder(Linearization):
         # this generates a hash for every element of the data, and sorting by that hash gives
         # the zorder of the data
         hashes = pd.DataFrame(self.data).apply(
-            lambda row: pm.interleave_latlng(row[self.lat], row[self.lng]),
-            axis=1
+            lambda row: pm.interleave_latlng(row[self.lat], row[self.lng]), axis=1
         )
         order = np.argsort(hashes)
         self.linearization = self.data[order]

@@ -9,8 +9,8 @@ class LinearizationReader(ABC):
     def read_linearization(self, data_set_name):
         current_folder = pathlib.Path(__file__).parent.absolute()
         file_name = f"{data_set_name}{self.file_ending}"
-        file_to_read = current_folder / 'linearization_files' / file_name
-        linearization = np.genfromtxt(file_to_read, skip_header=1, delimiter=';')
+        file_to_read = current_folder / "linearization_files" / file_name
+        linearization = np.genfromtxt(file_to_read, skip_header=1, delimiter=";")
         return linearization
 
 
