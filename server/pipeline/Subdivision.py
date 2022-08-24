@@ -108,6 +108,62 @@ class SubdivisionCohesion(Subdivision):
         return subdivision
 
 
+class SubdivisionCoverage(Subdivision):
+    attribute: int = -1
+    low_quantile: float = 0.05
+    high_quantile: float = 0.95
+
+    def __init__(self, attribute: int, low_quantile: float = 0.05, high_quantile: float = 0.95):
+        super().__init__()
+        self.attribute = attribute
+        self.low_quantile = low_quantile
+        self.high_quantile = high_quantile
+
+    def subdivide(self):
+        subdivision = {}
+
+        X = self.linearization[:, self.attribute]
+
+        # find all instances outside the 0.05 quantiles
+        low_value = np.quantile(X, self.low_quantile)
+        high_value = np.quantile(X, self.high_quantile)
+
+        is_low = X < low_value
+        is_high = X > high_value
+
+        # divide the data into bins that contain both the "min" and the "max"
+        bin_edge_indeces = []
+
+        bin_has_low = True
+        bin_has_high = True
+
+        # detect bin edges, i.e., every time a low and a high value lie on the same segment
+        for i in range(len(X)):
+            bin_has_low = bin_has_low or is_low[i]
+            bin_has_high = bin_has_high or is_high[i]
+
+            if bin_has_low and bin_has_high:
+                bin_edge_indeces += [i]
+                bin_has_low = False
+                bin_has_high = False
+
+        # put all items into their bins
+        bin_edge_indeces = sorted(bin_edge_indeces)
+        previous_index = 0
+        for i, edge_index in enumerate(bin_edge_indeces):
+            # avoid creating empty bins
+            if len(self.linearization[previous_index:edge_index]) == 0:
+                continue
+
+            subdivision[i] = self.linearization[previous_index:edge_index]
+            previous_index = edge_index
+
+        # create a bin for the remaining items "after" the last bin edge
+        subdivision[len(bin_edge_indeces)] = self.linearization[previous_index:]
+
+        return subdivision
+
+
 class SubdivisionNaiveStratified(Subdivision):
     def __init__(self, chunk_size: int, attribute: int) -> None:
         super().__init__()

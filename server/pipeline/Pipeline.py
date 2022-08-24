@@ -45,6 +45,9 @@ class Pipeline:
         elif sub_class == SubdivisionCohesion:
             subspace = self.config["params"]["subspace"]
             subdivision = sub_class(n_bins=100, attributes=subspace)
+        elif sub_class == SubdivisionCoverage:
+            attribute = self.config["params"]["coverage"]
+            subdivision = sub_class(attribute=attribute)
         elif sub_class is not None:
             subdivision = sub_class()
 
@@ -57,7 +60,8 @@ class Pipeline:
             print("cannot resolve selection.")
             return None
 
-        # some selection strategies work on specific dimensions, so pass that parameter in those cases
+        # some selection strategies work on specific dimensions, so pass that parameter in those
+        # cases
         if sel_class not in [
             SelectionFirst,
             SelectionRandom,
@@ -132,6 +136,8 @@ def _resolve_subdivision(subdivision):
         return SubdivisionNaiveStratified
     elif subdivision == "cohesion":
         return SubdivisionCohesion
+    elif subdivision == "coverage":
+        return SubdivisionCoverage
     else:
         return None
 
