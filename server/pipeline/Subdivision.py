@@ -113,7 +113,7 @@ class SubdivisionCoverage(Subdivision):
     low_quantile: float = 0.05
     high_quantile: float = 0.95
 
-    def __init__(self, attribute: int, low_quantile: float = 0.05, high_quantile: float = 0.95):
+    def __init__(self, attribute: int, low_quantile: float = 0, high_quantile: float = 1):
         super().__init__()
         self.attribute = attribute
         self.low_quantile = low_quantile
