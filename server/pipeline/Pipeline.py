@@ -39,7 +39,7 @@ class Pipeline:
 
         if sub_class == SubdivisionCardinality:
             subdivision = sub_class(chunk_size=1000)
-        elif sub_class == SubdivisionNaiveStratified:
+        elif sub_class == SubdivisionInterval:
             subspace = self.config["params"]["subspace"]
             subdivision = sub_class(chunk_size=1000, attribute=subspace[0])
         elif sub_class == SubdivisionCohesion:
@@ -132,12 +132,12 @@ def _resolve_linearization(linearization):
 def _resolve_subdivision(subdivision):
     if subdivision == "cardinality":
         return SubdivisionCardinality
-    elif subdivision == "stratified":
-        return SubdivisionNaiveStratified
     elif subdivision == "cohesion":
         return SubdivisionCohesion
     elif subdivision == "coverage":
         return SubdivisionCoverage
+    elif subdivision == "interval":
+        return SubdivisionInterval
     else:
         return None
 

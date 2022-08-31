@@ -164,13 +164,15 @@ class SubdivisionCoverage(Subdivision):
         return subdivision
 
 
-class SubdivisionNaiveStratified(Subdivision):
+class SubdivisionInterval(Subdivision):
     def __init__(self, chunk_size: int, attribute: int) -> None:
         super().__init__()
         self.chunk_size = chunk_size
         self.attribute = attribute
 
     def subdivide(self):
+        # NOTE: this subdivision requires that the data was sorted by self.attribute in the
+        # linearization step, otherwise it re-sorts the input (breaking the linearization idea)
         subdivision = {}
 
         X = self.linearization[:, self.attribute]
