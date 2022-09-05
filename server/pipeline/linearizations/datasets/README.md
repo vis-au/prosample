@@ -5,4 +5,4 @@ Linearization-file convention:
 
 - In folder pipeline/linearizations/datasets/
 - One header line, specifying the attributes
-- Naming convention: dataset_name + 'Data.csv' (e.g. 'mountainPeaksData.csv')
+- Naming convention: dataset_name + 'Data.csv' (e.g. 'taxisData.csv')
