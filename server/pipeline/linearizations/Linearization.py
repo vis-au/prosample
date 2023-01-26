@@ -70,7 +70,7 @@ class LinearizationNumericAttr(Linearization):
 
 class LinearizationDatetimeAttr(LinearizationNumericAttr):
     def linearize(self):
-        attr = self.data[:, self.sort_attr].astype(np.datetime64)
+        attr = self.data[:, self.sort_attr]
         attr_datetime = pd.to_datetime(attr)
         order = np.argsort(attr_datetime)
         self.linearization = self.data[order]

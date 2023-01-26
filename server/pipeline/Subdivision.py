@@ -76,8 +76,9 @@ class SubdivisionCohesion(Subdivision):
         subdivision = {}
 
         # find the n_bins biggest jumps in the data along the attribute column
-        X = self.linearization[:, self.attributes]
+        X = self.linearization[:, self.attributes].astype(np.float64)
 
+        # creates a copy of X where rows are shifted by 1 for faster subtraction
         X_ = np.empty_like(X)
         X_[:-1] = X[1:]
         X_[-1] = X[0]
